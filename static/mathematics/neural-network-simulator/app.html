@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Backprop Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom transitions for smoother UI updates */
+        .node-text { font-family: 'Courier New', monospace; font-weight: bold; }
+        canvas { touch-action: none; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 flex justify-between items-center shadow-md shrink-0">
+        <div>
+            <h1 class="text-xl font-bold text-blue-400">NeuralNet<span class="text-white">Vis</span></h1>
+            <p class="text-xs text-slate-400">Backpropagation Visualizer</p>
+        </div>
+        <div class="flex gap-4 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-500"></span> Positive Weight
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span> Negative Weight
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Left Panel: Visualization -->
+        <div class="relative flex-1 bg-slate-900 flex justify-center items-center p-4 overflow-hidden group">
+            <canvas id="networkCanvas" class="w-full h-full max-w-4xl object-contain"></canvas>
+            
+            <!-- Overlay Labels -->
+            <div class="absolute top-4 left-4 text-slate-500 font-mono text-sm">Input Layer</div>
+            <div class="absolute top-4 left-1/2 -translate-x-1/2 text-slate-500 font-mono text-sm">Hidden Layer</div>
+            <div class="absolute top-4 right-4 text-slate-500 font-mono text-sm">Output Layer</div>
+        </div>
+
+        <!-- Right Panel: Controls & Stats -->
+        <div class="w-full lg:w-96 bg-slate-800 border-l border-slate-700 flex flex-col shadow-xl shrink-0 z-10">
+            
+            <!-- Controls Section -->
+            <div class="p-6 border-b border-slate-700 space-y-6">
+
+                <!-- Task Selector -->
+                <div class="space-y-2">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Learning Task</h2>
+                    <select id="taskSelect" class="w-full bg-slate-700 border border-slate-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                        <option value="XOR">XOR (Exclusive OR)</option>
+                        <option value="AND">AND Gate</option>
+                        <option value="OR">OR Gate</option>
+                        <option value="NOR">NOR Gate</option>
+                        <option value="NAND">NAND Gate</option>
+                    </select>
+                </div>
+                
+                <!-- Manual Inputs (Inference) -->
+                <div class="space-y-3">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Input Signals (Forward Pass)</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button id="btnInput1" onclick="toggleInput(0)" class="p-3 rounded bg-slate-700 hover:bg-slate-600 transition border border-slate-600 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">Input A</span>
+                            <span id="valInput1" class="font-mono font-bold text-green-400">0</span>
+                        </button>
+                        <button id="btnInput2" onclick="toggleInput(1)" class="p-3 rounded bg-slate-700 hover:bg-slate-600 transition border border-slate-600 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">Input B</span>
+                            <span id="valInput2" class="font-mono font-bold text-green-400">0</span>
+                        </button>
+                    </div>
+                    <div class="p-3 bg-slate-900/50 rounded border border-slate-700 flex justify-between items-center">
+                        <span class="text-xs text-slate-400">Expected Output (<span id="targetLabel">XOR</span>):</span>
+                        <span id="targetOutput" class="font-mono font-bold text-yellow-400">0</span>
+                    </div>
+                    <div class="p-3 bg-blue-900/20 rounded border border-blue-800 flex justify-between items-center">
+                        <span class="text-xs text-blue-300">Network Prediction:</span>
+                        <span id="netPrediction" class="font-mono font-bold text-white">0.50</span>
+                    </div>
+                </div>
+
+                <!-- Training Controls -->
+                <div class="space-y-3 pt-4 border-t border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Training Controls</h2>
+                    
+                    <div class="flex gap-2">
+                        <button id="btnTrain" class="flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded font-medium transition shadow-lg shadow-green-900/50">
+                            Start Training
+                        </button>
+                        <button id="btnReset" class="px-4 bg-red-600 hover:bg-red-500 text-white py-2 rounded font-medium transition shadow-lg shadow-red-900/50">
+                            Reset
+                        </button>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Learning Rate</span>
+                            <span id="lrValue">0.3</span>
+                        </div>
+                        <input type="range" id="lrSlider" min="0.01" max="1.0" step="0.01" value="0.3" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Simulation Speed</span>
+                        </div>
+                        <input type="range" id="speedSlider" min="1" max="50" step="1" value="5" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats / Graph -->
+            <div class="flex-1 p-6 flex flex-col min-h-0">
+                <div class="flex justify-between items-end mb-2">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Loss Graph</h2>
+                    <span id="lossValue" class="text-xs font-mono text-red-400">Loss: 0.0000</span>
+                </div>
+                <div class="relative w-full flex-1 bg-slate-900 rounded border border-slate-700 overflow-hidden">
+                    <canvas id="lossCanvas" class="w-full h-full"></canvas>
+                </div>
+                <div class="mt-2 flex justify-between text-xs text-slate-500 font-mono">
+                    <span>Epochs: <span id="epochValue" class="text-slate-300">0</span></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Logic -->
+    <script>
+        /* -------------------------------------------------------------------------
+           MATH & UTILS
+           ------------------------------------------------------------------------- */
+        function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+        function dSigmoid(x) { return x * (1 - x); } // Derivative assuming x is already sigmoid(z)
+        function randomWeight() { return Math.random() * 2 - 1; } // -1 to 1
+
+        /* -------------------------------------------------------------------------
+           NEURAL NETWORK CLASSES
+           ------------------------------------------------------------------------- */
+        class Neuron {
+            constructor(layerIndex, index) {
+                this.layerIndex = layerIndex;
+                this.index = index;
+                this.bias = randomWeight();
+                this.output = 0;
+                this.delta = 0; // Error term for backprop
+                this.connections = []; // Incoming connections
+            }
+        }
+
+        class Connection {
+            constructor(fromNeuron, toNeuron) {
+                this.fromNeuron = fromNeuron;
+                this.toNeuron = toNeuron;
+                this.weight = randomWeight();
+                this.change = 0; // For momentum (optional, keeping simple SGD for now)
+            }
+        }
+
+        class NeuralNetwork {
+            constructor(layers = [2, 3, 1]) {
+                this.layers = []; // Array of arrays of Neurons
+                this.learningRate = 0.3;
+                this.init(layers);
+            }
+
+            init(topology) {
+                this.layers = [];
+                // 1. Create Neurons
+                for (let i = 0; i < topology.length; i++) {
+                    let layer = [];
+                    for (let n = 0; n < topology[i]; n++) {
+                        layer.push(new Neuron(i, n));
+                    }
+                    this.layers.push(layer);
+                }
+
+                // 2. Create Connections (Full Mesh)
+                // Loop through layers, skipping the output layer for "source"
+                for (let i = 0; i < this.layers.length - 1; i++) {
+                    let currentLayer = this.layers[i];
+                    let nextLayer = this.layers[i+1];
+                    
+                    nextLayer.forEach(nextNeuron => {
+                        currentLayer.forEach(prevNeuron => {
+                            let conn = new Connection(prevNeuron, nextNeuron);
+                            nextNeuron.connections.push(conn);
+                        });
+                    });
+                }
+            }
+
+            // Forward Propagation
+            predict(inputs) {
+                // Set input layer
+                for (let i = 0; i < inputs.length; i++) {
+                    this.layers[0][i].output = inputs[i];
+                }
+
+                // Propagate forward
+                for (let i = 1; i < this.layers.length; i++) {
+                    let layer = this.layers[i];
+                    layer.forEach(neuron => {
+                        let sum = neuron.bias;
+                        neuron.connections.forEach(conn => {
+                            sum += conn.weight * conn.fromNeuron.output;
+                        });
+                        neuron.output = sigmoid(sum);
+                    });
+                }
+
+                // Return output of last layer
+                return this.layers[this.layers.length - 1].map(n => n.output);
+            }
+
+            // Backpropagation
+            train(inputs, targets) {
+                // 1. Forward pass first
+                this.predict(inputs);
+
+                // 2. Calculate Output Errors (Gradients)
+                let outputLayer = this.layers[this.layers.length - 1];
+                outputLayer.forEach((neuron, i) => {
+                    let error = targets[i] - neuron.output;
+                    // Gradient = Error * Derivative of Activation
+                    neuron.delta = error * dSigmoid(neuron.output);
+                });
+
+                // 3. Calculate Hidden Layer Errors (Backpropagate)
+                // Loop backwards from output-1 to 1
+                for (let i = this.layers.length - 2; i > 0; i--) {
+                    let layer = this.layers[i];
+                    let nextLayer = this.layers[i+1];
+
+                    layer.forEach(neuron => {
+                        let errorSum = 0;
+                        // Sum of (NextNeuronDelta * WeightToThatNeuron)
+                        nextLayer.forEach(nextNeuron => {
+                            let conn = nextNeuron.connections.find(c => c.fromNeuron === neuron);
+                            errorSum += nextNeuron.delta * conn.weight;
+                        });
+                        neuron.delta = errorSum * dSigmoid(neuron.output);
+                    });
+                }
+
+                // 4. Update Weights and Biases
+                for (let i = 1; i < this.layers.length; i++) {
+                    let layer = this.layers[i];
+                    layer.forEach(neuron => {
+                        // Update Weights
+                        neuron.connections.forEach(conn => {
+                            conn.weight += this.learningRate * neuron.delta * conn.fromNeuron.output;
+                        });
+                        // Update Bias
+                        neuron.bias += this.learningRate * neuron.delta;
+                    });
+                }
+
+                // Return error for stats (Mean Squared Error)
+                let errorSum = 0;
+                outputLayer.forEach((n, i) => {
+                    errorSum += Math.pow(targets[i] - n.output, 2);
+                });
+                return errorSum / outputLayer.length;
+            }
+        }
+
+        /* -------------------------------------------------------------------------
+           APP CONTROLLER
+           ------------------------------------------------------------------------- */
+        const network = new NeuralNetwork([2, 3, 1]);
+        
+        // State
+        let isTraining = false;
+        let manualInputs = [0, 0];
+        let trainingSpeed = 5;
+        let epochs = 0;
+        let totalEpochs = 0;
+        let lossHistory = [];
+        const maxLossPoints = 100;
+        let animationFrameId;
+        let currentTask = 'XOR';
+
+        // Training Datasets
+        const datasets = {
+            'XOR': [
+                { inputs: [0, 0], targets: [0] },
+                { inputs: [0, 1], targets: [1] },
+                { inputs: [1, 0], targets: [1] },
+                { inputs: [1, 1], targets: [0] }
+            ],
+            'AND': [
+                { inputs: [0, 0], targets: [0] },
+                { inputs: [0, 1], targets: [0] },
+                { inputs: [1, 0], targets: [0] },
+                { inputs: [1, 1], targets: [1] }
+            ],
+            'OR': [
+                { inputs: [0, 0], targets: [0] },
+                { inputs: [0, 1], targets: [1] },
+                { inputs: [1, 0], targets: [1] },
+                { inputs: [1, 1], targets: [1] }
+            ],
+            'NOR': [
+                { inputs: [0, 0], targets: [1] },
+                { inputs: [0, 1], targets: [0] },
+                { inputs: [1, 0], targets: [0] },
+                { inputs: [1, 1], targets: [0] }
+            ],
+            'NAND': [
+                { inputs: [0, 0], targets: [1] },
+                { inputs: [0, 1], targets: [1] },
+                { inputs: [1, 0], targets: [1] },
+                { inputs: [1, 1], targets: [0] }
+            ]
+        };
+
+        /* -------------------------------------------------------------------------
+           VISUALIZATION
+           ------------------------------------------------------------------------- */
+        const canvas = document.getElementById('networkCanvas');
+        const ctx = canvas.getContext('2d');
+        const lossCanvas = document.getElementById('lossCanvas');
+        const lossCtx = lossCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            lossCanvas.width = lossCanvas.parentElement.clientWidth;
+            lossCanvas.height = lossCanvas.parentElement.clientHeight;
+            drawNetwork();
+            drawLossGraph();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawNetwork() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const layerGap = canvas.width / (network.layers.length + 1);
+            const nodeRadius = 25;
+
+            // 1. Calculate Node Positions
+            network.layers.forEach((layer, lIndex) => {
+                const x = (lIndex + 1) * layerGap;
+                const nodeGap = canvas.height / (layer.length + 1);
+                
+                layer.forEach((neuron, nIndex) => {
+                    neuron.x = x;
+                    neuron.y = (nIndex + 1) * nodeGap;
+                });
+            });
+
+            // 2. Draw Connections (Weights)
+            network.layers.forEach(layer => {
+                layer.forEach(neuron => {
+                    neuron.connections.forEach(conn => {
+                        const start = conn.fromNeuron;
+                        const end = conn.toNeuron;
+
+                        ctx.beginPath();
+                        ctx.moveTo(start.x, start.y);
+                        ctx.lineTo(end.x, end.y);
+                        
+                        // Style based on weight
+                        const width = Math.min(Math.abs(conn.weight) * 2 + 0.5, 8);
+                        ctx.lineWidth = width;
+                        
+                        // Blue for positive, Red for negative
+                        if (conn.weight > 0) {
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${Math.min(Math.abs(conn.weight), 1)})`; // Blue-500
+                        } else {
+                            ctx.strokeStyle = `rgba(239, 68, 68, ${Math.min(Math.abs(conn.weight), 1)})`; // Red-500
+                        }
+                        
+                        ctx.stroke();
+                    });
+                });
+            });
+
+            // 3. Draw Nodes
+            network.layers.forEach((layer, lIndex) => {
+                layer.forEach(neuron => {
+                    ctx.beginPath();
+                    ctx.arc(neuron.x, neuron.y, nodeRadius, 0, Math.PI * 2);
+                    
+                    // Fill based on activation (black to white/yellow)
+                    const val = neuron.output;
+                    // Use a gradient or color mix based on value
+                    // 0 = dark slate, 1 = bright cyan
+                    const r = 15 + (val * 20); // Slate-900ish
+                    const g = 23 + (val * 200);
+                    const b = 42 + (val * 200);
+                    
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fill();
+                    
+                    // Border
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#cbd5e1'; // Slate-300
+                    
+                    // Highlight input nodes if active
+                    if(lIndex === 0 && neuron.output === 1) {
+                        ctx.strokeStyle = '#4ade80'; // Green-400
+                        ctx.lineWidth = 5;
+                    }
+                    ctx.stroke();
+
+                    // Text Value inside node
+                    ctx.fillStyle = val > 0.5 ? '#000' : '#fff';
+                    ctx.font = 'bold 12px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(val.toFixed(2), neuron.x, neuron.y);
+
+                    // Draw Bias (small text above)
+                    if(lIndex > 0) {
+                        ctx.fillStyle = '#94a3b8'; // Slate-400
+                        ctx.font = '10px monospace';
+                        ctx.fillText(`b:${neuron.bias.toFixed(2)}`, neuron.x, neuron.y - nodeRadius - 8);
+                    }
+                });
+            });
+        }
+
+        function drawLossGraph() {
+            const w = lossCanvas.width;
+            const h = lossCanvas.height;
+            lossCtx.clearRect(0, 0, w, h);
+            
+            if (lossHistory.length < 2) return;
+
+            lossCtx.beginPath();
+            lossCtx.strokeStyle = '#f87171'; // Red-400
+            lossCtx.lineWidth = 2;
+
+            const step = w / maxLossPoints;
+            
+            lossHistory.forEach((loss, i) => {
+                // Normalize loss (assuming loss usually 0-1ish, but can spike)
+                // Map 0 to h, 1 to 0 (invert Y)
+                const y = h - (Math.min(loss, 1) * h * 0.9) - 5; 
+                const x = i * step;
+                
+                if (i === 0) lossCtx.moveTo(x, y);
+                else lossCtx.lineTo(x, y);
+            });
+            lossCtx.stroke();
+        }
+
+        /* -------------------------------------------------------------------------
+           LOGIC & LOOP
+           ------------------------------------------------------------------------- */
+        
+        // UI Elements
+        const taskSelect = document.getElementById('taskSelect');
+        const btnInput1 = document.getElementById('btnInput1');
+        const btnInput2 = document.getElementById('btnInput2');
+        const valInput1 = document.getElementById('valInput1');
+        const valInput2 = document.getElementById('valInput2');
+        const targetLabel = document.getElementById('targetLabel');
+        const targetOutput = document.getElementById('targetOutput');
+        const netPrediction = document.getElementById('netPrediction');
+        const btnTrain = document.getElementById('btnTrain');
+        const btnReset = document.getElementById('btnReset');
+        const lrSlider = document.getElementById('lrSlider');
+        const lrValue = document.getElementById('lrValue');
+        const speedSlider = document.getElementById('speedSlider');
+        const lossDisplay = document.getElementById('lossValue');
+        const epochDisplay = document.getElementById('epochValue');
+
+        function toggleInput(index) {
+            manualInputs[index] = manualInputs[index] === 0 ? 1 : 0;
+            updateUI();
+            // If not training, run a prediction immediately to show result
+            if (!isTraining) {
+                const output = network.predict(manualInputs);
+                updatePredictionUI(output[0]);
+                drawNetwork();
+            }
+        }
+
+        function updateUI() {
+            valInput1.textContent = manualInputs[0];
+            valInput2.textContent = manualInputs[1];
+            
+            // Highlight active buttons
+            btnInput1.className = `p-3 rounded transition border flex justify-between items-center ${manualInputs[0] ? 'bg-green-900/50 border-green-500' : 'bg-slate-700 border-slate-600'}`;
+            btnInput2.className = `p-3 rounded transition border flex justify-between items-center ${manualInputs[1] ? 'bg-green-900/50 border-green-500' : 'bg-slate-700 border-slate-600'}`;
+
+            // Determine expected output based on current task
+            targetLabel.textContent = currentTask;
+            
+            // Find the matching target from the dataset
+            const data = datasets[currentTask];
+            const match = data.find(d => d.inputs[0] === manualInputs[0] && d.inputs[1] === manualInputs[1]);
+            const expected = match ? match.targets[0] : 0;
+            
+            targetOutput.textContent = expected;
+        }
+
+        function updatePredictionUI(val) {
+            netPrediction.textContent = val.toFixed(4);
+            // Color code prediction
+            if (val > 0.9) netPrediction.className = "font-mono font-bold text-green-400";
+            else if (val < 0.1) netPrediction.className = "font-mono font-bold text-slate-200";
+            else netPrediction.className = "font-mono font-bold text-yellow-400";
+        }
+
+        function resetTraining() {
+            network.init([2, 3, 1]);
+            totalEpochs = 0;
+            lossHistory = [];
+            isTraining = false;
+            btnTrain.textContent = "Start Training";
+            btnTrain.className = "flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded font-medium transition shadow-lg shadow-green-900/50";
+            
+            // Reset Graph
+            lossCtx.clearRect(0, 0, lossCanvas.width, lossCanvas.height);
+            lossDisplay.textContent = "Loss: 0.0000";
+            epochDisplay.textContent = "0";
+            
+            drawNetwork();
+        }
+
+        function loop() {
+            if (isTraining) {
+                let totalLoss = 0;
+                const data = datasets[currentTask];
+                
+                // Run X epochs per frame based on speed slider
+                for (let k = 0; k < trainingSpeed; k++) {
+                    // Pick random training sample from CURRENT dataset
+                    const sample = data[Math.floor(Math.random() * data.length)];
+                    const loss = network.train(sample.inputs, sample.targets);
+                    totalLoss += loss;
+                    totalEpochs++;
+                }
+
+                // Record stats
+                const avgLoss = totalLoss / trainingSpeed;
+                lossHistory.push(avgLoss);
+                if (lossHistory.length > maxLossPoints) lossHistory.shift();
+                
+                lossDisplay.textContent = `Loss: ${avgLoss.toFixed(5)}`;
+                epochDisplay.textContent = totalEpochs;
+            }
+
+            // Always predict based on MANUAL inputs for visualization
+            const output = network.predict(manualInputs);
+            updatePredictionUI(output[0]);
+
+            // Render
+            drawNetwork();
+            drawLossGraph();
+
+            animationFrameId = requestAnimationFrame(loop);
+        }
+
+        /* -------------------------------------------------------------------------
+           EVENT LISTENERS
+           ------------------------------------------------------------------------- */
+        
+        taskSelect.addEventListener('change', (e) => {
+            currentTask = e.target.value;
+            resetTraining();
+            updateUI();
+        });
+
+        btnTrain.addEventListener('click', () => {
+            isTraining = !isTraining;
+            btnTrain.textContent = isTraining ? "Pause Training" : "Resume Training";
+            btnTrain.className = isTraining 
+                ? "flex-1 bg-yellow-600 hover:bg-yellow-500 text-white py-2 rounded font-medium transition shadow-lg" 
+                : "flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded font-medium transition shadow-lg shadow-green-900/50";
+        });
+
+        btnReset.addEventListener('click', resetTraining);
+
+        lrSlider.addEventListener('input', (e) => {
+            network.learningRate = parseFloat(e.target.value);
+            lrValue.textContent = network.learningRate;
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            trainingSpeed = parseInt(e.target.value);
+        });
+
+        // Initialize
+        resizeCanvas();
+        updateUI();
+        loop(); // Start render loop
+
+    </script>
+</body>
+</html>
