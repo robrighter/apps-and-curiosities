@@ -160,6 +160,20 @@ body {
     letter-spacing: 0.02em;
 }
 
+.experiment-header h3 a {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.experiment-header h3 a:visited {
+    color: var(--text-color);
+}
+
+.experiment-header h3 a:hover {
+    color: var(--accent-color);
+}
+
 .experiment-content {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -256,6 +270,20 @@ body {
     font-weight: 700;
     margin-bottom: 0.5rem;
     letter-spacing: 0.02em;
+}
+
+.project-card h3 a {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.project-card h3 a:visited {
+    color: var(--text-color);
+}
+
+.project-card h3 a:hover {
+    color: var(--accent-color);
 }
 
 .project-card p {
