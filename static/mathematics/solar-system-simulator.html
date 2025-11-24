@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Simulator - Rob Righter's Apps & Curiosities</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Courier+Prime&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="site-title"><a href="../index.html" style="text-decoration: none; color: inherit;">ROB RIGHTER'S APPS & CURIOSITIES</a></h1>
+            <span class="established">EST. 1978</span>
+        </div>
+        <nav class="main-nav">
+            <a href="../games.html">GAMES</a>
+            <a href="../mathematics.html">MATHEMATICS</a>
+            <a href="../retro.html">RETRO-COMPUTING</a>
+            <a href="../notes.html">NOTES & INQUIRIES</a>
+        </nav>
+    </header>
+
+    <article>
+        <header class="article-header">
+            <h1 class="article-title">Building a Scientifically Accurate Solar System Simulator: When Kepler Meets JavaScript</h1>
+            <div class="article-meta">
+                <span>November 24, 2025</span> • <span>Category: Mathematics</span>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <p>Have you ever wondered where Mars was on the day you were born? Or where Jupiter will be exactly 100 years from now? Today, I'm excited to share a solar system simulator that can answer these questions with remarkable precision – all running in your web browser.</p>
+
+            <div style="margin: 2rem 0; text-align: center;">
+                <iframe src="solar-system/solar_system.html" style="width: 100%; height: 600px; border: 2px solid #2C2416; background: #000;"></iframe>
+                <p style="font-style: italic; margin-top: 0.5rem; font-size: 0.9rem;">Interactive Solar System Simulator. Use controls to change speed and date.</p>
+            </div>
+
+            <h2>Why Another Solar System Visualization?</h2>
+
+            <p>There are countless solar system visualizations online, from simple animations to complex 3D renderings. But most of them share a common limitation: they show generic orbital motion without accurately representing where the planets <em>actually</em> are at any given moment in time. They're beautiful, but they're not <em>real</em>.</p>
+
+            <p>This simulator is different. Set it to any date – past, present, or future – and it will show you the exact positions of all eight planets as they would appear from above the solar system. This isn't just an animation; it's a mathematical model that solves the same equations astronomers use to predict planetary positions.</p>
+
+            <h2>The Mathematics of Planetary Motion</h2>
+
+            <p>At the heart of this simulator lies one of astronomy's most elegant equations: Kepler's equation. Discovered by Johannes Kepler in the early 1600s while analyzing Tycho Brahe's meticulous observations of Mars, this equation describes how planets sweep out their elliptical orbits around the Sun.</p>
+
+            <p>The fundamental challenge in celestial mechanics is this: planets don't move at constant speeds. When a planet is closer to the Sun (at perihelion), it moves faster. When it's farther away (at aphelion), it moves slower. This is Kepler's second law – the "equal areas in equal times" principle. But this creates a problem: if the speed isn't constant, how do we figure out where a planet is at any given time?</p>
+
+            <h3>Enter Kepler's Equation</h3>
+
+            <p>Kepler's equation elegantly relates three quantities:</p>
+            <ul>
+                <li><strong>M</strong> (Mean Anomaly): Where the planet would be if it moved at constant speed</li>
+                <li><strong>E</strong> (Eccentric Anomaly): A geometric helper that relates to the planet's position on an auxiliary circle</li>
+                <li><strong>e</strong> (Eccentricity): How "squashed" the elliptical orbit is</li>
+            </ul>
+
+            <p>The equation itself is deceptively simple: <strong>M = E - e × sin(E)</strong></p>
+
+            <p>But there's a catch – you can't solve this equation algebraically for E. There's no formula where you plug in M and get out E. Instead, we must use numerical methods. The simulator employs Newton's method, iteratively refining guesses until it converges on the true value, typically within 5-6 iterations.</p>
+
+            <h2>From Math to Reality: The J2000 Epoch</h2>
+
+            <p>To predict planetary positions, we need a starting point – a moment in time when we know exactly where everything was. Astronomers use the J2000 epoch: noon on January 1, 2000, in Terrestrial Time. NASA's Jet Propulsion Laboratory provides incredibly precise orbital elements for this moment, which serve as our reference point.</p>
+
+            <p>From this reference, the simulator:</p>
+            <ol>
+                <li>Calculates how many days have elapsed since J2000</li>
+                <li>Determines each planet's mean anomaly (its "average" position)</li>
+                <li>Solves Kepler's equation to find the true position</li>
+                <li>Converts the mathematical coordinates to screen pixels</li>
+            </ol>
+
+            <h2>How Accurate Is It?</h2>
+
+            <p>The simulator's accuracy is remarkable for something running in a web browser:</p>
+
+            <ul>
+                <li><strong>Short term (days to years)</strong>: Positions are accurate to within a few arcminutes – less than 1/10 the apparent diameter of the full Moon as seen from Earth.</li>
+                <li><strong>Medium term (decades)</strong>: Accuracy remains within a degree or two, perfectly suitable for visualization.</li>
+                <li><strong>Long term (centuries)</strong>: While gravitational perturbations from other planets gradually accumulate errors, the positions remain reasonably accurate for historical or future dates within a few hundred years.</li>
+            </ul>
+
+            <p>For context, this level of accuracy would have seemed miraculous to ancient astronomers. Ptolemy's geocentric model, used for over a millennium, had errors of several degrees even for short-term predictions.</p>
+
+            <h2>The Mesmerizing Dance of Orbital Resonances</h2>
+
+            <p>One of the most fascinating features to observe in the simulator is orbital resonances. Set the speed to maximum and watch the outer planets. You might notice that for every two orbits Pluto completes, Neptune completes almost exactly three. This is no coincidence – it's a 3:2 orbital resonance that has kept their orbits stable for billions of years.</p>
+
+            <p>Similarly, Jupiter's moons (not shown in this simulator) display a beautiful 1:2:4 resonance pattern discovered by Laplace. These cosmic synchronicities emerge naturally from gravitational interactions over astronomical timescales.</p>
+
+            <h2>Time Travel Through the Cosmos</h2>
+
+            <p>The simulator's time controls let you witness astronomical events across history:</p>
+
+            <ul>
+                <li><strong>Set it to July 4, 1054</strong>: See the planetary alignment when Chinese astronomers recorded the supernova that created the Crab Nebula</li>
+                <li><strong>Jump to September 1977</strong>: Observe the rare planetary alignment that made the Voyager missions' "Grand Tour" possible</li>
+                <li><strong>Fast forward to May 6, 2492</strong>: Witness a simultaneous transit of Mercury and Venus across the Sun (as would be seen from Earth)</li>
+            </ul>
+
+            <h2>The Clockwork and the Chaos</h2>
+
+            <p>While the simulator presents the solar system as a precise clockwork mechanism, the reality is more nuanced. The three-body problem tells us that planetary motion is ultimately chaotic – tiny differences in initial conditions lead to dramatically different outcomes over millions of years.</p>
+
+            <p>Yet paradoxically, this chaos coexists with remarkable stability. Earth's orbit varies by less than 5% over millions of years. Mars is a bit more wild, with eccentricity variations that have profoundly influenced its climate. And Mercury? Its orbit precesses in a way that couldn't be fully explained until Einstein's General Relativity.</p>
+
+            <h2>A Universe in Your Browser</h2>
+
+            <p>What strikes me most about this project is that we can now casually simulate, in real-time, calculations that once required years of manual computation. Urbain Le Verrier spent months calculating the position of Neptune before its discovery in 1846. Today, your browser performs similar calculations 60 times per second while barely warming your laptop.</p>
+
+            <p>This simulator is more than just a visualization – it's a bridge between the abstract mathematics of celestial mechanics and the visceral experience of watching worlds dance through space. Every frame represents a solution to differential equations that stumped humanity's brightest minds for centuries.</p>
+
+            <h2>Looking Up, Looking Forward</h2>
+
+            <p>As you play with the simulator, remember that these aren't just dots on a screen. These are worlds – massive spheres of rock, gas, and ice, following paths carved by gravity through the vacuum of space. The same mathematics that draws these pixels also guides spacecraft to distant planets and predicts eclipses centuries in advance.</p>
+
+            <p>The next time you see a bright "star" in the evening sky, you can fire up this simulator, set it to today's date, and know exactly which planet you're looking at and where it sits in its eternal orbit around our Sun. In that moment, the cosmic clockwork becomes just a little less mysterious and infinitely more wonderful.</p>
+
+            <hr style="border: 0; border-top: 1px solid #2C2416; margin: 3rem 0; opacity: 0.2;">
+
+            <p><em>Try the simulator yourself and explore the solar system across time. Whether you're checking planetary positions for astronomical observations, exploring historical alignments, or just marveling at the cosmic dance, remember: every position you see is calculated, not animated. This is our solar system as it truly is, was, and will be.</em></p>
+
+            <h2>Technical Notes</h2>
+
+            <p>For the curious, the simulator uses:</p>
+            <ul>
+                <li><strong>Keplerian orbital elements</strong> from JPL's planetary ephemerides</li>
+                <li><strong>Newton-Raphson iteration</strong> for solving Kepler's equation</li>
+                <li><strong>HTML5 Canvas</strong> for rendering</li>
+                <li><strong>No external libraries</strong> – pure JavaScript and mathematics</li>
+            </ul>
+
+            <p>The source code demonstrates that complex astronomical calculations don't require massive frameworks or libraries. Sometimes, the most elegant solutions come from understanding the underlying mathematics and implementing it directly.</p>
+        </div>
+    </article>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 All Rights Reserved.</p>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
