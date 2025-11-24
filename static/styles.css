@@ -111,7 +111,7 @@ body {
     padding: 0 1rem;
 }
 
-/* Featured Experiment Section */
+/* Featured Experiment Section - Most Recent Article */
 .featured-experiment {
     background: white;
     border: 2px solid var(--border-color);
@@ -139,6 +139,15 @@ body {
     opacity: 0.1;
 }
 
+.experiment-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
 .experiment-header {
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 1rem;
@@ -146,31 +155,24 @@ body {
 }
 
 .experiment-header h2 {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    color: var(--accent-color);
-    margin-bottom: 0.5rem;
-}
-
-.experiment-header h3 {
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: 0.02em;
+    margin: 0;
 }
 
-.experiment-header h3 a {
+.experiment-header h2 a {
     text-decoration: none;
     color: var(--text-color);
     transition: color 0.3s ease;
 }
 
-.experiment-header h3 a:visited {
+.experiment-header h2 a:visited {
     color: var(--text-color);
 }
 
-.experiment-header h3 a:hover {
+.experiment-header h2 a:hover {
     color: var(--accent-color);
 }
 
@@ -181,7 +183,7 @@ body {
     align-items: start;
 }
 
-.diagram-container {
+.experiment-thumbnail {
     background: var(--bg-color);
     border: 1px solid var(--border-color);
     padding: 1rem;
@@ -190,10 +192,11 @@ body {
     align-items: center;
 }
 
-.neural-network {
+.experiment-thumbnail img {
     width: 100%;
     height: auto;
     max-width: 300px;
+    display: block;
 }
 
 .experiment-description p {
@@ -202,11 +205,25 @@ body {
     font-size: 0.95rem;
 }
 
+.experiment-more-link {
+    color: #6366F1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.experiment-more-link:hover {
+    text-decoration: underline;
+}
+
 .category-tag {
     font-family: 'Courier Prime', monospace;
     font-size: 0.85rem !important;
     color: var(--accent-color);
     font-style: italic;
+    display: block;
+    margin-top: 1rem;
 }
 
 /* Projects Grid */
@@ -400,6 +417,14 @@ body {
 @media (max-width: 768px) {
     .experiment-content {
         grid-template-columns: 1fr;
+    }
+
+    .experiment-thumbnail {
+        max-width: 100%;
+    }
+
+    .experiment-header h2 {
+        font-size: 1.5rem;
     }
 
     .projects-grid {
