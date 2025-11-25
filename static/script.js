@@ -9,13 +9,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Add typewriter effect to latest experiment description
-    const experimentDescription = document.querySelector('.experiment-description p:first-child');
-    if (experimentDescription && !sessionStorage.getItem('typedOnce')) {
-        const originalText = experimentDescription.textContent;
-        experimentDescription.textContent = '';
-        typeWriter(experimentDescription, originalText, 0);
-        sessionStorage.setItem('typedOnce', 'true');
+    // Select and display random featured experiment
+    const articles = [
+        {
+            title: "NEURAL NETWORK VISUALIZER",
+            url: "mathematics/neural-network-simulator/index.html",
+            image: "mathematics/neural-network-simulator/nn.png",
+            description: "Artificial Intelligence often feels like magic—a \"black box\" where data goes in and answers come out, with little visibility into the machinery in between. This Neural Network Visualizer is designed to strip away that mystery. It offers a real-time window into the microscopic decisions that power modern AI, scaling down the complexity of massive language models into a single, observable Multi-Layer Perceptron (MLP). By focusing on fundamental logic problems like the XOR gate, we can witness the foundational \"spark\" of learning that occurs when a machine figures out a pattern it wasn't explicitly programmed to solve.",
+            category: "Category: Mathematics"
+        },
+        {
+            title: "LUNAR LANDER",
+            url: "games/luner-lander/index.html",
+            image: "games/luner-lander/ll.png",
+            description: "A faithful recreation of Atari's 1979 vector graphics classic. Physics simulation with authentic gravity mechanics, thrust control, and precision landing challenges.",
+            category: "Category: Games"
+        },
+        {
+            title: "SOLAR SYSTEM SIMULATOR",
+            url: "mathematics/solar-system-simulator/index.html",
+            image: "mathematics/solar-system-simulator/ss.png",
+            description: "Scientifically accurate solar system simulator. Models celestial mechanics using Kepler's equations. Set it to any date and see the exact positions of all eight planets.",
+            category: "Category: Mathematics"
+        }
+    ];
+
+    // Pick a random article for featured experiment
+    const featuredLink = document.getElementById('featured-link');
+    if (featuredLink) {
+        const randomArticle = articles[Math.floor(Math.random() * articles.length)];
+
+        featuredLink.textContent = randomArticle.title;
+        featuredLink.href = randomArticle.url;
+        document.getElementById('featured-img').src = randomArticle.image;
+        document.getElementById('featured-img').alt = randomArticle.title;
+        document.getElementById('featured-description').textContent = randomArticle.description;
+        document.getElementById('featured-more-link').href = randomArticle.url;
+        document.getElementById('featured-category').textContent = randomArticle.category;
     }
 
     // Smooth scroll for navigation links
@@ -83,14 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addPrintingStamp();
     }
 });
-
-// Typewriter effect function
-function typeWriter(element, text, index) {
-    if (index < text.length) {
-        element.textContent += text.charAt(index);
-        setTimeout(() => typeWriter(element, text, index + 1), 20);
-    }
-}
 
 // Animate neural network connections
 function animateNeuralNetwork() {
