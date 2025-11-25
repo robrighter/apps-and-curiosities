@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mystery of the Mechanical Turk - Rob Righter's Apps & Curiosities</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Courier+Prime&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="site-title"><a href="../../index.html" style="text-decoration: none; color: inherit;">ROB RIGHTER'S APPS & CURIOSITIES</a></h1>
+            <span class="established">EST. 1978</span>
+        </div>
+        <nav class="main-nav">
+            <a href="../../games.html">GAMES</a>
+            <a href="../../mathematics.html">MATHEMATICS</a>
+            <a href="../../retro.html">RETRO-COMPUTING</a>
+            <a href="../../notes.html">NOTES & INQUIRIES</a>
+        </nav>
+    </header>
+
+    <article>
+        <header class="article-header">
+            <h1 class="article-title">Neural Network Simulator</h1>
+            <div class="article-meta">
+                <span>By Rob Righter</span>
+                <span>Published: November 25, 2025</span>
+                <span>Category: Mathematics</span>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <div class="article-text">
+            <p>Artificial Intelligence often feels like magic—a "black box" where data goes in and answers come out, with little visibility into the machinery in between. This Neural Network Visualizer is designed to strip away that mystery. It offers a real-time window into the microscopic decisions that power modern AI, scaling down the complexity of massive language models into a single, observable Multi-Layer Perceptron (MLP). By focusing on fundamental logic problems like the XOR gate, we can witness the foundational "spark" of learning that occurs when a machine figures out a pattern it wasn't explicitly programmed to solve.</p>
+            <p>At the heart of the simulation lies the architecture of thought: neurons and synapses. You see the network not as a static equation, but as a living web of connections. The "neurons" (circles) act as decision-making units, lighting up when activated, while the "synapses" (lines) represent the strength of opinion between them. A thick blue line is a strong endorsement; a thick red line is a firm rejection. As you toggle inputs manually, you are witnessing Forward Propagation—the flow of information from cause to effect. The network takes what it sees, processes it through layers of hidden logic, and offers a prediction.</p>
+
+            <p>However, the true spectacle is Backpropagation—the act of learning itself. When you hit "Start Training," the application accelerates time, simulating thousands of trial-and-error attempts per second. You can watch the weights shift and evolve as the network makes mistakes, calculates its error, and rewires itself to be more accurate. It is a visual story of adaptation: chaotic randomness slowly organizing itself into a structured solution. Whether it is mastering the simplicity of an 'AND' gate or the non-linear complexity of 'XOR', this simulator provides a front-row seat to the moment a collection of math equations becomes intelligent.</p>
+        <h1>How the Neural Network Visualizer Works</h1>
+    
+    <p>This application visualizes a <strong>Multi-Layer Perceptron (MLP)</strong>, a fundamental type of artificial neural network, as it learns to solve logic problems like <strong>XOR (Exclusive OR)</strong>.</p>
+
+    <h2>1. The Objective: The XOR Problem</h2>
+    <p>The network is trying to learn a specific logic gate. For XOR, the rules are:</p>
+    <ul>
+        <li><strong>Input [0, 0]</strong> &rarr; Output <strong>0</strong></li>
+        <li><strong>Input [1, 1]</strong> &rarr; Output <strong>0</strong></li>
+        <li><strong>Input [0, 1]</strong> &rarr; Output <strong>1</strong></li>
+        <li><strong>Input [1, 0]</strong> &rarr; Output <strong>1</strong></li>
+    </ul>
+    <p>This is a classic benchmark in AI history. A simple, single-layer network cannot solve this because the data is not "linearly separable" (you can't draw a single straight line to separate the 0s from the 1s). This is why the visualization includes a <strong>Hidden Layer</strong> (the middle column of nodes), which allows the network to learn complex, non-linear patterns.</p>
+
+    <h2>2. Visual Elements</h2>
+    <ul>
+        <li><strong>Neurons (Circles):</strong> These represent the inputs, processing units, and output. When a neuron lights up (becomes opaque and colorful), it has a high "activation" (near 1.0). Dark neurons have low activation (near 0.0).</li>
+        <li><strong>Weights (Lines):</strong> The lines connecting neurons represent "synapses" or weights.
+            <ul>
+                <li><strong>Blue Lines:</strong> Positive weights. If the previous neuron is active, it <em>encourages</em> the next neuron to activate.</li>
+                <li><strong>Red Lines:</strong> Negative weights. If the previous neuron is active, it <em>suppresses</em> the next neuron.</li>
+                <li><strong>Thickness:</strong> The absolute strength of the connection. Thicker lines mean the connection has a stronger influence.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>3. The Math: The Calculus of Backpropagation</h2>
+    <p>While the visualization shows lines growing and shrinking, the underlying engine is pure calculus. The goal of training is to minimize the <strong>Loss Function</strong> (Cost), usually defined as the Mean Squared Error:</p>
+    
+    <div class="math-block">
+        C = 1/2 * (y - a)<sup>2</sup>
+    </div>
+
+    <p>Where:</p>
+    <ul>
+        <li><em>C</em> is the Cost (Error).</li>
+        <li><em>y</em> is the Target (the correct answer, e.g., 1).</li>
+        <li><em>a</em> is the Activation (the network's guess, e.g., 0.8).</li>
+    </ul>
+
+    <p>To minimize this error, we need to change the weight <em>w</em>. But how do we know which way to change it? We use the <strong>Chain Rule</strong> to find the derivative of the Cost with respect to the weight (&part;C/&part;w).</p>
+    
+    <p>The Chain Rule tells us that a small change in weight <em>w</em> causes a chain reaction:</p>
+    <ol>
+        <li>Change in weight <em>w</em> &rarr; Change in weighted sum <em>z</em></li>
+        <li>Change in sum <em>z</em> &rarr; Change in activation <em>a</em></li>
+        <li>Change in activation <em>a</em> &rarr; Change in Cost <em>C</em></li>
+    </ol>
+
+    <p>Mathematically, this is expressed as:</p>
+    <div class="math-block">
+        &part;C/&part;w = (&part;z/&part;w) &middot; (&part;a/&part;z) &middot; (&part;C/&part;a)
+    </div>
+
+    <p>Let's break down each term:</p>
+    <ol>
+        <li><strong>&part;z/&part;w (The Input):</strong> Since <code>z = w &middot; input + b</code>, the derivative with respect to <em>w</em> is simply the <strong>input</strong> from the previous neuron.</li>
+        <li><strong>&part;a/&part;z (The Activation Derivative):</strong> We use the Sigmoid function &sigma;(z). Its derivative is computationally beautiful: <code>&sigma;'(z) = &sigma;(z)(1 - &sigma;(z))</code>. This measures how sensitive the neuron is to changes.</li>
+        <li><strong>&part;C/&part;a (The Error):</strong> The derivative of the cost function is simply <code>(a - y)</code>. This is the raw difference between the guess and the answer.</li>
+    </ol>
+
+    <p><strong>Putting it together:</strong><br>
+    To update a weight connecting Neuron A to Neuron B, we calculate:</p>
+    <div class="math-block">
+        &Delta;w = -learning_rate &middot; (Error &middot; SigmoidDerivative &middot; Input)
+    </div>
+
+    <h2>4. The Process: Forward vs. Backward</h2>
+
+    <h3>Forward Propagation (Inference)</h3>
+    <p>When you toggle the input buttons, data flows from left to right.</p>
+    <ol>
+        <li>The <strong>Input Layer</strong> receives your values (0 or 1).</li>
+        <li>These values travel down the weighted lines.</li>
+        <li>Each neuron in the <strong>Hidden Layer</strong> sums up the inputs. If the weighted sum is high, the neuron "fires".</li>
+        <li>This repeats until the <strong>Output Layer</strong> produces a final prediction.</li>
+    </ol>
+
+    <h3>Backpropagation (Training)</h3>
+    <p>When you click "Start Training," the network performs thousands of cycles per second:</p>
+    <ol>
+        <li><strong>Guess:</strong> It runs a forward pass with random inputs.</li>
+        <li><strong>Measure Error:</strong> It compares its guess to the actual answer.</li>
+        <li><strong>Backpropagate:</strong> It calculates the gradients using the calculus described above. It moves backward from Output to Input, assigning "blame" to every connection.</li>
+        <li><strong>Update:</strong> It tweaks the weights (making lines bluer, redder, thicker, or thinner) to reduce the error slightly for the next time.</li>
+    </ol>
+
+    <h2>5. The Loss Graph</h2>
+    <p>The red graph at the bottom shows the <strong>Mean Squared Error</strong>.</p>
+    <ul>
+        <li>At the start, the line is high because the network is guessing randomly.</li>
+        <li>As training progresses, the line drops.</li>
+        <li>When the line hits near-zero, the network has successfully "learned" the XOR pattern.</li>
+    </ul>    
+        
+        
+        
+        
+        
+        </div>
+
+            <aside class="article-illustration">
+                <div class="illustration-container">
+                    <img src="./ll.png" alt="neural network visualization">
+                    <p class="illustration-caption">Multi Layer Perceptron (MLP) Architecture</p>
+                </div>
+
+                <div class="illustration-container">
+                    <p><a href="./app.html">Open the Simulator</a></p>
+                </div>
+            </aside>
+        </div>
+
+        <footer class="article-footer" style="text-align: center; padding: 2rem; border-top: 1px solid var(--border-color);">
+            <nav style="font-family: 'Courier Prime', monospace; font-size: 0.9rem;">
+                <a href="../../index.html" style="color: var(--accent-color); text-decoration: none;">← Return to Home</a>
+                <span style="margin: 0 1rem;">|</span>
+                <a href="../../games.html" style="color: inherit; text-decoration: none;">Games</a> |
+                <a href="../../mathematics.html" style="color: inherit; text-decoration: none;">Mathematics</a> |
+                <a href="../../retro.html" style="color: inherit; text-decoration: none;">Retro</a> |
+                <a href="../../notes.html" style="color: inherit; text-decoration: none;">Notes</a>
+            </nav>
+        </footer>
+    </article>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
