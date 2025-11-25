@@ -22,14 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
             title: "LUNAR LANDER",
             url: "games/luner-lander/index.html",
             image: "games/luner-lander/ll.png",
-            description: "A faithful recreation of Atari's 1979 vector graphics classic. Physics simulation with authentic gravity mechanics, thrust control, and precision landing challenges.",
+            description: "There's something timeless about Atari's 1979 arcade classic Lunar Lander. Before polygons, before texture mapping, before ray tracing—there were vectors. Crisp white lines glowing against the infinite black of space, a tiny spacecraft fighting gravity with nothing but thrust and nerve. This recreation brings that classic to your browser, complete with authentic physics simulation using Newtonian mechanics. Fight lunar gravity as you pilot your lander to the surface, balancing thrust and rotation to achieve a safe touchdown. The original wasn't just a game—it was one of the first physics simulations accessible to the general public.",
             category: "Category: Games"
         },
         {
             title: "SOLAR SYSTEM SIMULATOR",
             url: "mathematics/solar-system-simulator/index.html",
             image: "mathematics/solar-system-simulator/ss.png",
-            description: "Scientifically accurate solar system simulator. Models celestial mechanics using Kepler's equations. Set it to any date and see the exact positions of all eight planets.",
+            description: "Have you ever wondered where Mars was on the day you were born? Or where Jupiter will be exactly 100 years from now? This solar system simulator can answer these questions with remarkable precision. Set it to any date – past, present, or future – and it will show you the exact positions of all eight planets as they would appear from above the solar system. This isn't just an animation; it's a mathematical model that solves the same equations astronomers use to predict planetary positions using Kepler's equations and celestial mechanics.",
             category: "Category: Mathematics"
         }
     ];
