@@ -42,10 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const featuredCategory = document.getElementById('featured-category');
 
     // Only proceed if all required elements exist
-    while( !(featuredLink && featuredImg && featuredDescription && featuredMoreLink && featuredCategory) ){
-        //do nothing
-        console.log("Waiting for featured elements to load...");
-    }
+
     if (featuredLink && featuredImg && featuredDescription && featuredMoreLink && featuredCategory) {
         const randomArticle = articles[Math.floor(Math.random() * articles.length)];
 
