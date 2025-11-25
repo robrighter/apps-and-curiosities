@@ -36,16 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Pick a random article for featured experiment
     const featuredLink = document.getElementById('featured-link');
-    if (featuredLink) {
+    const featuredImg = document.getElementById('featured-img');
+    const featuredDescription = document.getElementById('featured-description');
+    const featuredMoreLink = document.getElementById('featured-more-link');
+    const featuredCategory = document.getElementById('featured-category');
+
+    // Only proceed if all required elements exist
+    if (featuredLink && featuredImg && featuredDescription && featuredMoreLink && featuredCategory) {
         const randomArticle = articles[Math.floor(Math.random() * articles.length)];
 
         featuredLink.textContent = randomArticle.title;
         featuredLink.href = randomArticle.url;
-        document.getElementById('featured-img').src = randomArticle.image;
-        document.getElementById('featured-img').alt = randomArticle.title;
-        document.getElementById('featured-description').textContent = randomArticle.description;
-        document.getElementById('featured-more-link').href = randomArticle.url;
-        document.getElementById('featured-category').textContent = randomArticle.category;
+        featuredImg.src = randomArticle.image;
+        featuredImg.alt = randomArticle.title;
+        featuredDescription.textContent = randomArticle.description;
+        featuredMoreLink.href = randomArticle.url;
+        featuredCategory.textContent = randomArticle.category;
     }
 
     // Smooth scroll for navigation links
