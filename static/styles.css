@@ -112,7 +112,8 @@ body {
 }
 
 /* Featured Experiment Section - Most Recent Article */
-.featured-experiment {
+.featured-experiment,
+.article-preview {
     background: white;
     border: 2px solid var(--border-color);
     padding: 2rem;
@@ -121,7 +122,8 @@ body {
     position: relative;
 }
 
-.featured-experiment::before {
+.featured-experiment::before,
+.article-preview::before {
     content: '';
     position: absolute;
     top: -2px;
