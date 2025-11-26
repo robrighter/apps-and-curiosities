@@ -45,12 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const featuredLink = document.getElementById('featured-link');
     const featuredImg = document.getElementById('featured-img');
     const featuredDescription = document.getElementById('featured-description');
-    const featuredMoreLink = document.getElementById('featured-more-link');
     const featuredCategory = document.getElementById('featured-category');
 
     // Only proceed if all required elements exist
 
-    if (featuredLink && featuredImg && featuredDescription && featuredMoreLink && featuredCategory) {
+    if (featuredLink && featuredImg && featuredDescription && featuredCategory) {
         const randomArticle = articles[Math.floor(Math.random() * articles.length)];
 
         featuredLink.textContent = randomArticle.title;
@@ -58,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
         featuredImg.src = randomArticle.image;
         featuredImg.alt = randomArticle.title;
         featuredDescription.textContent = randomArticle.description;
-        featuredMoreLink.href = randomArticle.url;
         featuredCategory.textContent = randomArticle.category;
     }
 

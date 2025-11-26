@@ -363,8 +363,12 @@ body {
 
 /* Collapsed sidebar state - triggered by scrolling */
 .article-content.sidebar-collapsed {
-    grid-template-columns: 4.5fr 0.5fr;
-    gap: 2rem;
+    grid-template-columns: 4.7fr 0.3fr;
+    gap: 1rem;
+}
+
+.article-content.sidebar-collapsed .illustration-container img{
+    width:200px
 }
 
 .article-text {
@@ -375,7 +379,6 @@ body {
 .article-text p {
     margin-bottom: 1.5rem;
     text-align: justify;
-    text-indent: 2em;
 }
 
 .article-text p:first-of-type::first-letter {
@@ -424,7 +427,7 @@ body {
 
 /* App link button styling */
 .article-illustration .illustration-container p a {
-    display: inline-block;
+    display: block;
     padding: 0.75rem 1.5rem;
     background-color: var(--text-color);
     color: var(--bg-color);
@@ -437,6 +440,8 @@ body {
     transition: all 0.3s ease;
     text-transform: uppercase;
     box-shadow: 2px 2px 5px var(--shadow-color);
+    width: 100%;
+    text-align: center;
 }
 
 .article-illustration .illustration-container p a:hover {
@@ -596,7 +601,7 @@ body {
     opacity: 0.9;
 }
 
-.article-info .category {
+.article-info .category, .experiment-content .category {
     font-family: 'Courier Prime', monospace;
     font-size: 0.8rem;
     color: var(--accent-color);
