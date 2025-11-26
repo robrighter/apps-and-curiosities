@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bringing Back the Classic: Building a Lunar Lander Game - Rob Righter's Apps & Curiosities</title>
+    <title>The TRS-80: A Journey Back to 1977 - Rob Righter's Apps & Curiosities</title>
     <link rel="stylesheet" href="../../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,113 +25,212 @@
 
     <article>
         <header class="article-header">
-            <h1 class="article-title">Bringing Back the Classic: Building a Lunar Lander Game</h1>
+            <h1 class="article-title">The TRS-80: A Journey Back to 1977</h1>
             <div class="article-meta">
                 <span>By Rob Righter</span>
-                <span>Published: November 25, 2025</span>
-                <span>Category: Games</span>
+                <span>Published: November 26, 2025</span>
+                <span>Category: Retro-Computing</span>
             </div>
         </header>
 
         <div class="article-content">
             <div class="article-text">
-            <p>There's something timeless about Atari's 1979 arcade classic <em>Lunar Lander</em>. Before polygons, before texture mapping, before ray tracing—there were vectors. Crisp white lines glowing against the infinite black of space, a tiny spacecraft fighting gravity with nothing but thrust and nerve.</p>
+            <p><em>Reliving the Dawn of Personal Computing with a Browser-Based Emulator</em></p>
 
-            <p>I recently rebuilt this classic as a browser game, and I want to share both how to play it and what makes its physics simulation tick.</p>
+            <h2>A Gift That Changed Everything</h2>
 
-            <h2>A Brief History</h2>
+            <p>I was twelve years old when my grandmother handed me a heavy beige box she'd picked up at a garage sale. "I thought you might like this computer thing," she said with a knowing smile. That "computer thing" was a Radio Shack TRS-80 Model I, and it would change the trajectory of my entire life.</p>
 
-            <p>The original Lunar Lander wasn't just a game—it was one of the first physics simulations accessible to the general public. The concept actually predates the arcade cabinet, originating in text-based versions from the late 1960s that ran on university mainframes. Students would input thrust values and watch numbers scroll by, hoping they hadn't cratered into the lunar surface.</p>
+            <p>She had no idea what it was, really—just that her grandson was curious about technology, and this contraption with its chunky keyboard and mysterious cables seemed like it might spark something. She paid maybe twenty dollars for it. What she actually gave me was a portal into a world of infinite possibility.</p>
 
-            <p>Atari's vector graphics version transformed this into something visceral. That glowing lander, the jagged moonscape, the throttle lever you could feel in your hand—it made orbital mechanics <em>feel</em> real.</p>
+            <p>I spent countless hours in my bedroom, the green phosphor glow of the monitor illuminating my face late into the night, typing in BASIC programs from magazines, debugging line by line, learning that a missing semicolon could bring everything crashing down. That TRS-80 taught me patience, logic, and the pure joy of making a machine do exactly what you tell it to do.</p>
 
-            <h2>How to Play</h2>
+            <p>Now, decades later, I've built a browser-based emulator to recapture that magic—and to share it with anyone who wants to experience what personal computing felt like at the very beginning.</p>
 
-            <p>The premise is deceptively simple: land your spacecraft safely on one of the flat landing pads scattered across the lunar terrain.</p>
+            <h2>The Birth of a Revolution: A History of the TRS-80</h2>
 
-            <p><strong>Controls:</strong></p>
+            <h3>The Trinity of 1977</h3>
+
+            <p>The year 1977 was a watershed moment in computing history. Three machines arrived almost simultaneously, forever changing the relationship between humans and computers: the Apple II, the Commodore PET, and the TRS-80. These were the "1977 Trinity," and they brought computing out of hobbyist garages and into living rooms across America.</p>
+
+            <p>The TRS-80—officially the TRS-80 Micro Computer System, with "TRS" standing for Tandy Radio Shack—was announced on August 3, 1977. It was the brainchild of Don French, a buyer for Radio Shack who saw the potential for a pre-assembled personal computer, and Steve Leininger, the engineer who designed it.</p>
+
+            <h3>An Unexpected Phenomenon</h3>
+
+            <p>Radio Shack's parent company, Tandy Corporation, was conservative in its expectations. They manufactured only 3,000 units initially, figuring they might sell them over the course of a year to electronics hobbyists. They were spectacularly wrong.</p>
+
+            <p>The TRS-80 sold out in less than a month. Orders flooded in—over 10,000 in the first month alone. By the end of 1977, Radio Shack had a backlog of over 100,000 orders. The demand was so overwhelming that the company had to scramble to ramp up production.</p>
+
+            <h3>Why the TRS-80 Won (At First)</h3>
+
+            <p>Several factors contributed to the TRS-80's explosive success:</p>
+
+            <p><strong>Price Point</strong>: At $599.95 for a complete system (including monitor, keyboard, and 4KB of RAM), the TRS-80 undercut the Apple II ($1,298 without a monitor) and was comparable to the Commodore PET ($795).</p>
+
+            <p><strong>Retail Distribution</strong>: Radio Shack had over 3,000 stores across America. You could walk into your local mall, see a working computer, and buy one on the spot. Apple and Commodore had nothing close to this retail presence.</p>
+
+            <p><strong>Complete Package</strong>: Unlike many competitors, the TRS-80 came as a complete, ready-to-use system. No soldering, no hunting for compatible monitors, no assembly required.</p>
+
+            <p><strong>Level II BASIC</strong>: The included BASIC interpreter, developed by Microsoft (one of their earliest major contracts), was powerful and relatively easy to learn.</p>
+
+            <h3>The Hardware</h3>
+
+            <p>The original TRS-80 Model I was built around the Zilog Z80 processor running at 1.77 MHz. It came with 4KB of RAM (expandable to 16KB, later 48KB with the Expansion Interface), and could display 64 characters across 16 lines in glowing green phosphor.</p>
+
+            <p>Storage was initially via cassette tape—programs could take several minutes to load, accompanied by the distinctive warbling and screeching sounds that anyone who lived through the era remembers viscerally. Later, the Expansion Interface added floppy disk support, transforming the machine into a more serious computing platform.</p>
+
+            <p>The keyboard was integrated into the main unit, a silver-gray housing that would become iconic. The separate monitor sat atop it, creating the distinctive silhouette that graced countless dens and bedrooms throughout the late 1970s and early 1980s.</p>
+
+            <h3>The "Trash-80" and Its Legacy</h3>
+
+            <p>Critics and competitors mockingly called it the "Trash-80," but owners wore the nickname as a badge of honor. Yes, the keyboard had issues (early models suffered from "keyboard bounce," registering multiple keystrokes). Yes, the cassette storage was unreliable. Yes, the graphics were primitive even by the standards of the day.</p>
+
+            <p>But none of that mattered. The TRS-80 was <em>accessible</em>. It invited experimentation. It came with a manual that assumed you knew nothing and taught you everything. It spawned magazines (80 Micro, 80-US), user groups, and a thriving software ecosystem.</p>
+
+            <p>The TRS-80 line continued with the Model II (aimed at business), Model III (an integrated design), Model 4, and the portable Model 100. Radio Shack also released the TRS-80 Color Computer ("CoCo"), which developed its own devoted following.</p>
+
+            <h3>The End of an Era</h3>
+
+            <p>By the mid-1980s, the IBM PC and its clones had come to dominate business computing, while the Commodore 64 ruled the home market. Radio Shack struggled to keep pace, and the TRS-80 line gradually faded away. The last models were discontinued in the early 1990s.</p>
+
+            <p>But the TRS-80's influence endures. It was many people's first computer. It launched careers. It demonstrated that computers weren't just for corporations and universities—they were for everyone.</p>
+
+            <h2>The Emulator: Bringing the TRS-80 to Your Browser</h2>
+
+            <p>I built this emulator as an act of preservation and nostalgia. It recreates the experience of using a TRS-80 Model I, complete with the iconic green phosphor display, the warm wood-grain aesthetic of 1970s electronics, and a library of software on virtual floppy diskettes.</p>
+
+            <h3>Features</h3>
+
+            <p><strong>Authentic Presentation</strong>: The emulator is housed in a virtual wood-grain cabinet, true to the furniture-style electronics of the era. The CRT monitor features subtle scanlines and the characteristic green glow of phosphor displays.</p>
+
+            <p><strong>Working BASIC Interpreter</strong>: The heart of the TRS-80 experience was Level II BASIC, and this emulator includes a functional BASIC interpreter. You can write programs, save them in memory, and run them just like you would have in 1978.</p>
+
+            <p><strong>Software Library</strong>: Eight virtual diskettes contain ready-to-run programs:</p>
             <ul>
-                <li><strong>↑ or W</strong> — Fire your main engine (thrust)</li>
-                <li><strong>← → or A/D</strong> — Rotate left and right</li>
-                <li><strong>Space</strong> — Start a new game or continue after landing</li>
+                <li><strong>Level II BASIC</strong> — Boot directly to the BASIC prompt</li>
+                <li><strong>Space Invaders</strong> — Defend Earth from alien invasion</li>
+                <li><strong>Snake</strong> — The classic snake game</li>
+                <li><strong>Lunar Lander</strong> — Land your spacecraft safely on the moon</li>
+                <li><strong>Cave Adventure</strong> — A text adventure game with treasures and dragons</li>
+                <li><strong>Scientific Calculator</strong> — A full-featured calculator with trig functions</li>
+                <li><strong>Blackjack</strong> — Try your luck at the card table</li>
+                <li><strong>Memory Match</strong> — Test your memory with this card-matching game</li>
             </ul>
 
-            <p><strong>The Goal:</strong></p>
+            <p><strong>View the Source Code</strong>: After playing any game, you can type <code>LIST</code> at the BASIC prompt to see its complete source code—just like curious kids did in the 1970s and 80s, learning to program by studying and modifying existing programs.</p>
 
-            <p>Touch down on a yellow landing pad. Smaller pads offer higher score multipliers (up to 5×), but demand more precision. As you approach, the pad changes color to tell you if you're safe:</p>
+            <h3>How to Use the Emulator</h3>
 
-            <ul>
-                <li><strong>Yellow</strong> — Default state, you're not close enough for the system to assess</li>
-                <li><strong>Green</strong> — Safe to land! Your speed and angle are within tolerances</li>
-                <li><strong>Red</strong> — Danger! You're coming in too fast or at too steep an angle</li>
-            </ul>
-
-            <p>For a successful landing, you need low velocity and a relatively upright orientation. Come in too hot, tilt too far, or miss the pad entirely, and you'll experience rapid unplanned disassembly.</p>
-
-            <h2>The Physics: How Gravity Simulation Works</h2>
-
-            <p>What makes Lunar Lander satisfying isn't luck—it's physics. Every moment of gameplay emerges from a handful of simple rules applied consistently.</p>
-
-            <h3>The Gravity Model</h3>
-
-            <p>Real lunar gravity is about 1.62 m/s², roughly one-sixth of Earth's. In the game, we simulate this with a constant downward acceleration applied every frame:</p>
-
-            <pre><code>velocity_y = velocity_y + GRAVITY</code></pre>
-
-            <p>This is numerical integration at its simplest—Euler's method. Each tick of the game clock, gravity adds a small increment to your downward velocity. Leave the throttle alone, and you'll accelerate toward the surface in a perfect parabolic arc, just as Galileo described four centuries ago.</p>
-
-            <h3>Thrust and Rotation</h3>
-
-            <p>Your engine applies force in whatever direction the lander is pointing. Rotate the ship and fire thrust, and you get:</p>
-
-            <pre><code>velocity_x = velocity_x + sin(angle) × THRUST_POWER
-velocity_y = velocity_y - cos(angle) × THRUST_POWER</code></pre>
-
-            <p>The sine and cosine functions decompose your thrust into horizontal and vertical components. Point straight up and you fight gravity directly. Tilt sideways and you can arrest horizontal drift—or create it.</p>
-
-            <p>This is the essential challenge: you have one engine that pushes one direction, but you need to control motion in two dimensions. Every correction in one axis affects the other. Learning to balance these competing demands is what transforms button-mashing into piloting.</p>
-
-            <h3>Why It Feels Right</h3>
-
-            <p>The magic of this simulation is that it follows Newton's laws faithfully. Objects in motion stay in motion. Forces cause acceleration, not velocity. There's no friction in space to slow you down—if you're drifting left, you'll keep drifting left until you thrust right.</p>
-
-            <p>This creates emergent complexity from simple rules. New players often over-correct: they thrust too hard, overshoot, thrust the other way, overshoot again, oscillating wildly until they either stabilize or crash. Experienced players develop an intuition for orbital mechanics without ever studying physics formally.</p>
-
-            <h3>The Landing Calculation</h3>
-
-            <p>When you touch down, the game checks three things:</p>
+            <h4>Getting Started</h4>
 
             <ol>
-                <li><strong>Speed</strong> — Is your total velocity (combining horizontal and vertical) below the safe threshold?</li>
-                <li><strong>Angle</strong> — Is the lander close enough to vertical?</li>
-                <li><strong>Position</strong> — Are you actually on a landing pad?</li>
+                <li><strong>Click the screen</strong> to give it focus (this allows keyboard input to be captured).</li>
+                <li><strong>Insert a diskette</strong> by clicking on any of the floppy disks in the Software Library at the bottom. The disk drive LED will flash red as the program loads.</li>
+                <li><strong>Wait for the prompt</strong> — after loading, you'll either see a game start or the <code>READY</code> prompt, depending on the software.</li>
             </ol>
 
-            <p>All three must be true for a successful landing. The color-coded pads give you real-time feedback on the first two conditions as you approach, turning the final descent into a tension-filled negotiation between what you want to do and what physics will allow.</p>
+            <h4>Playing the Games</h4>
 
-            <h2>The Vector Aesthetic</h2>
+            <p>Each game displays its controls when it starts. Common controls include:</p>
 
-            <p>I deliberately styled this version to evoke those original arcade cabinets. White lines on black, no fills, subtle glow effects—the vector look isn't just nostalgia, it's clarity. Every line means something. The terrain is readable at a glance, the lander's orientation is unambiguous, and the thrust flame tells you exactly when you're burning fuel.</p>
+            <table>
+                <tr>
+                    <th>Game</th>
+                    <th>Controls</th>
+                </tr>
+                <tr>
+                    <td>Space Invaders</td>
+                    <td><code>A</code>/<code>D</code> or Arrow Keys to move, <code>SPACE</code> to fire, <code>Q</code> to quit</td>
+                </tr>
+                <tr>
+                    <td>Snake</td>
+                    <td><code>W</code>/<code>A</code>/<code>S</code>/<code>D</code> or Arrow Keys to change direction, <code>Q</code> to quit</td>
+                </tr>
+                <tr>
+                    <td>Lunar Lander</td>
+                    <td><code>A</code>/<code>D</code> to rotate, <code>SPACE</code> for thrust, <code>Q</code> to abort</td>
+                </tr>
+                <tr>
+                    <td>Adventure</td>
+                    <td><code>N</code>/<code>S</code>/<code>E</code>/<code>W</code> to move, <code>GET</code>/<code>DROP</code>/<code>INV</code>/<code>LOOK</code>/<code>ATTACK</code> commands</td>
+                </tr>
+                <tr>
+                    <td>Blackjack</td>
+                    <td><code>H</code> to hit, <code>S</code> to stand, enter bet amounts when prompted</td>
+                </tr>
+                <tr>
+                    <td>Memory Match</td>
+                    <td>Enter coordinates like <code>A1</code>, <code>B3</code>, etc.</td>
+                </tr>
+            </table>
 
-            <p>There's a lesson here for modern game design: sometimes constraints produce better results than freedom. Vector displays couldn't render filled polygons, so designers learned to communicate everything through line and motion. The result was games that felt futuristic precisely because they were so abstract.</p>
+            <h4>Using BASIC</h4>
 
-            <h2>Try It Yourself</h2>
+            <p>When you're at the <code>READY</code> prompt, you can type BASIC commands:</p>
 
-            <p>The game runs in any modern browser—no installation required. Challenge yourself to land on the smallest pad, or see how much fuel you can conserve. Each landing carries your score forward, so there's always pressure to push for one more successful descent.</p>
+            <p><strong>Immediate Commands:</strong></p>
+            <ul>
+                <li><code>PRINT 2+2</code> — Calculate and display results</li>
+                <li><code>CLS</code> — Clear the screen</li>
+                <li><code>LIST</code> — Show the current program in memory</li>
+                <li><code>RUN</code> — Execute the current program</li>
+                <li><code>NEW</code> — Clear the program from memory</li>
+            </ul>
 
-            <p>And if you crater into the lunar surface? That's fine. Even the Apollo astronauts needed practice. Hit space and try again.</p>
+            <p><strong>Writing Programs:</strong></p>
 
-            <p>The Moon isn't going anywhere.</p>
+            <p>Type line numbers followed by BASIC statements:</p>
+
+            <pre><code>10 PRINT "HELLO, WORLD!"
+20 FOR I = 1 TO 10
+30 PRINT I
+40 NEXT I
+50 END
+RUN</code></pre>
+
+            <p><strong>Breaking Out of Programs:</strong></p>
+
+            <p>Press <code>ESC</code> at any time to break out of a running program. You'll see <code>?BREAK AT LINE XXX</code> and return to the <code>READY</code> prompt.</p>
+
+            <p><strong>Returning to BASIC:</strong></p>
+
+            <p>Type <code>SYSTEM</code> from anywhere to reset and return to the BASIC prompt.</p>
+
+            <h4>Viewing Game Source Code</h4>
+
+            <p>One of the joys of early computing was learning by reading code. After loading any game:</p>
+
+            <ol>
+                <li>Quit the game (press <code>Q</code> or let it end naturally)</li>
+                <li>At the <code>READY</code> prompt, type <code>LIST</code></li>
+                <li>Scroll through to see the complete BASIC source code</li>
+            </ol>
+
+            <p>The code is written in authentic TRS-80 BASIC style, with line numbers, <code>GOSUB</code> subroutines, <code>FOR</code>/<code>NEXT</code> loops, and all the idioms of the era.</p>
+
+            <h2>Why This Matters</h2>
+
+            <p>There's a reason so many technologists of a certain age get misty-eyed talking about their first computers. These machines weren't just tools—they were teachers, playgrounds, and windows into a new way of thinking.</p>
+
+            <p>The TRS-80 arrived at the perfect moment: powerful enough to be useful, simple enough to be understood, and cheap enough to be accessible. It invited you to look under the hood, to type <code>LIST</code> and see how things worked, to modify and experiment and break things and fix them again.</p>
+
+            <p>That spirit of accessible, explorable computing is something we've lost in the age of sealed devices and app stores. Modern computers are vastly more powerful, but they're also more opaque. The journey from curiosity to creation is longer and more obscured.</p>
+
+            <p>This emulator is my small attempt to preserve a piece of that original magic. Whether you're a veteran of the 8-bit era revisiting old memories, or a curious newcomer wondering what all the fuss was about, I hope you'll spend a few minutes with this virtual TRS-80.</p>
+
+            <p>Load up Space Invaders. Type <code>10 PRINT "HELLO"</code> and press <code>RUN</code>. Feel the satisfying clunk of those virtual keys and watch the green phosphor glow.</p>
+
+            <p>And maybe, just maybe, you'll understand why a twelve-year-old kid stayed up way past his bedtime, bathed in that eerie green light, absolutely certain that the future had arrived in his bedroom—courtesy of a grandmother who found a treasure at a garage sale.</p>
         </div>
 
             <aside class="article-illustration">
                 <div class="illustration-container">
-                    <img src="./t80.png" alt="Lunar Lander game screenshot">
-                    <p class="illustration-caption">Vector graphics lunar lander with physics simulation</p>
+                    <img src="./t80.png" alt="TRS-80 Model I Emulator">
+                    <p class="illustration-caption">TRS-80 Model I emulator with authentic green phosphor display</p>
                 </div>
 
                 <div class="illustration-container">
-                    <p><a href="./app.html">Play the Game</a></p>
+                    <p><a href="./app.html">Try the Emulator</a></p>
                 </div>
             </aside>
         </div>

@@ -31,6 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
             image: "mathematics/solar-system-simulator/ss.png",
             description: "Have you ever wondered where Mars was on the day you were born? Or where Jupiter will be exactly 100 years from now? This solar system simulator can answer these questions with remarkable precision. Set it to any date – past, present, or future – and it will show you the exact positions of all eight planets as they would appear from above the solar system. This isn't just an animation; it's a mathematical model that solves the same equations astronomers use to predict planetary positions using Kepler's equations and celestial mechanics.",
             category: "Category: Mathematics"
+        },
+        {
+            title: "TRS-80 MODEL I EMULATOR",
+            url: "retro-computing/trs-80-emulator/index.html",
+            image: "retro-computing/trs-80-emulator/t80.png",
+            description: "I was twelve years old when my grandmother handed me a heavy beige box from a garage sale—a Radio Shack TRS-80 Model I that would change my life. Now I've built a browser-based emulator to recapture that magic. Experience the dawn of personal computing with an authentic recreation featuring green phosphor display, working BASIC interpreter, and eight classic programs on virtual floppy diskettes. Load up Space Invaders, write your own BASIC programs, or type LIST to see source code just like curious kids did in 1977. This is what personal computing felt like at the very beginning.",
+            category: "Category: Retro-Computing"
         }
     ];
 
