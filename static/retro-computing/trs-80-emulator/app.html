@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRS-80 Model I Emulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Righteous&family=Russo+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --screen-green: #33ff33;
+            --screen-amber: #ffb000;
+            --screen-dark: #0a1a0a;
+            --wood-dark: #3d2314;
+            --wood-medium: #5c3a21;
+            --wood-light: #8b5a2b;
+            --wood-highlight: #a67c52;
+            --brass: #b8860b;
+            --brass-light: #daa520;
+            --cream: #f5f5dc;
+            --burnt-orange: #cc5500;
+            --avocado: #568203;
+            --harvest-gold: #da9100;
+        }
+
+        body {
+            background: 
+                radial-gradient(ellipse at top, #2d1b0e 0%, #1a0f08 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'VT323', monospace;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Shag carpet texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Radio Shack Header */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .radio-shack-logo {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            color: #ff3333;
+            text-shadow: 
+                0 0 30px rgba(255, 51, 51, 0.6),
+                3px 3px 0 #660000,
+                -1px -1px 0 #ff6666;
+            letter-spacing: 6px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-family: 'Righteous', cursive;
+            font-size: 1.1rem;
+            color: var(--harvest-gold);
+            letter-spacing: 4px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Main Computer Unit */
+        .computer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            animation: fadeIn 1s ease-out 0.3s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Wood Cabinet for Monitor */
+        .cabinet {
+            background: 
+                linear-gradient(90deg, 
+                    var(--wood-dark) 0%, 
+                    var(--wood-medium) 3%, 
+                    var(--wood-light) 15%,
+                    var(--wood-highlight) 30%,
+                    var(--wood-light) 50%,
+                    var(--wood-highlight) 70%,
+                    var(--wood-light) 85%,
+                    var(--wood-medium) 97%,
+                    var(--wood-dark) 100%
+                );
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 
+                0 15px 50px rgba(0,0,0,0.7),
+                inset 0 2px 0 rgba(255,255,255,0.1),
+                inset 0 -3px 0 rgba(0,0,0,0.3),
+                inset 3px 0 8px rgba(0,0,0,0.2),
+                inset -3px 0 8px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Wood grain texture */
+        .cabinet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q25 18 50 20 T100 20' stroke='rgba(0,0,0,0.1)' fill='none' stroke-width='0.5'/%3E%3Cpath d='M0 40 Q25 42 50 40 T100 40' stroke='rgba(0,0,0,0.08)' fill='none' stroke-width='0.5'/%3E%3Cpath d='M0 60 Q25 58 50 60 T100 60' stroke='rgba(0,0,0,0.1)' fill='none' stroke-width='0.5'/%3E%3Cpath d='M0 80 Q25 82 50 80 T100 80' stroke='rgba(0,0,0,0.08)' fill='none' stroke-width='0.5'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Monitor inside cabinet */
+        .monitor {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            border: 3px solid #111;
+            box-shadow: 
+                inset 0 2px 5px rgba(255,255,255,0.05),
+                0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .monitor-frame {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .monitor-left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .brand-plate {
+            background: linear-gradient(180deg, var(--brass-light) 0%, var(--brass) 50%, #8b6914 100%);
+            padding: 8px 12px;
+            border-radius: 3px;
+            text-align: center;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .brand-plate .brand {
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.7rem;
+            color: #1a1a1a;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        .brand-plate .model {
+            font-family: 'Righteous', cursive;
+            font-size: 1rem;
+            color: #2a1a0a;
+            letter-spacing: 2px;
+        }
+
+        .power-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background: #111;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .power-led {
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff00, 0 0 15px #00ff00, inset 0 -2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px #00ff00, 0 0 15px #00ff00; }
+            50% { opacity: 0.8; box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00; }
+        }
+
+        .power-label {
+            font-size: 0.6rem;
+            color: #888;
+            font-family: 'VT323', monospace;
+            letter-spacing: 1px;
+        }
+
+        .screen-bezel {
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 
+                inset 0 5px 20px rgba(0,0,0,0.9),
+                0 2px 0 rgba(255,255,255,0.05);
+            border: 2px solid #222;
+        }
+
+        .screen {
+            width: 640px;
+            height: 384px;
+            background: var(--screen-dark);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.5),
+                inset 0 0 10px rgba(51, 255, 51, 0.03);
+        }
+
+        /* CRT Effects */
+        .screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.08) 0px,
+                    rgba(0, 0, 0, 0.08) 1px,
+                    transparent 1px,
+                    transparent 3px
+                );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.25) 100%);
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        /* Phosphor glow effect */
+        .screen-glow {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 25px;
+            box-shadow: inset 0 0 20px rgba(51, 255, 51, 0.08);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Terminal Display */
+        #terminal {
+            width: 100%;
+            height: 100%;
+            padding: 12px 15px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            color: var(--screen-green);
+            background: transparent;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.3;
+            text-shadow: 0 0 8px var(--screen-green), 0 0 2px var(--screen-green);
+            position: relative;
+            z-index: 5;
+        }
+
+        #terminal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #terminal::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+        }
+
+        #terminal::-webkit-scrollbar-thumb {
+            background: var(--screen-green);
+            border-radius: 4px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 18px;
+            background: var(--screen-green);
+            animation: blink 0.6s infinite;
+            vertical-align: bottom;
+            box-shadow: 0 0 10px var(--screen-green);
+        }
+
+        @keyframes blink {
+            0%, 45% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Hidden Input */
+        #hidden-input {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+
+        /* Disk Drive Unit - Wood Style */
+        .disk-drive-unit {
+            background: 
+                linear-gradient(90deg, 
+                    var(--wood-dark) 0%, 
+                    var(--wood-medium) 3%, 
+                    var(--wood-light) 20%,
+                    var(--wood-highlight) 50%,
+                    var(--wood-light) 80%,
+                    var(--wood-medium) 97%,
+                    var(--wood-dark) 100%
+                );
+            border-radius: 0 0 12px 12px;
+            padding: 15px 25px;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.5),
+                inset 0 2px 0 rgba(255,255,255,0.1),
+                inset 0 -2px 0 rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-top: -5px;
+            position: relative;
+        }
+
+        .drive-face {
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            padding: 12px 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid #111;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .drive-label {
+            font-family: 'Righteous', cursive;
+            font-size: 0.75rem;
+            color: var(--brass-light);
+            letter-spacing: 2px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .disk-slot {
+            width: 140px;
+            height: 6px;
+            background: linear-gradient(180deg, #000 0%, #1a1a1a 50%, #000 100%);
+            border-radius: 1px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .drive-led {
+            width: 10px;
+            height: 10px;
+            background: #330000;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+
+        .drive-led.active {
+            background: #ff3300;
+            box-shadow: 0 0 10px #ff3300, 0 0 20px #ff3300, 0 0 30px #ff6600;
+        }
+
+        /* Diskette Library - Wooden Storage Box */
+        .diskette-library {
+            background: 
+                linear-gradient(180deg,
+                    var(--wood-highlight) 0%,
+                    var(--wood-light) 5%,
+                    var(--wood-medium) 95%,
+                    var(--wood-dark) 100%
+                );
+            border-radius: 10px;
+            padding: 20px 25px 25px 25px;
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.6),
+                inset 0 2px 0 rgba(255,255,255,0.15),
+                inset 0 -3px 0 rgba(0,0,0,0.3),
+                inset 2px 0 5px rgba(0,0,0,0.1),
+                inset -2px 0 5px rgba(0,0,0,0.1);
+            margin-top: 25px;
+            animation: fadeIn 1s ease-out 0.9s both;
+            position: relative;
+        }
+
+        /* Brass corner accents */
+        .diskette-library::before,
+        .diskette-library::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 3px solid var(--brass);
+            border-radius: 0 0 8px 0;
+        }
+
+        .diskette-library::before {
+            top: 8px;
+            left: 8px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 8px 0 0 0;
+        }
+
+        .diskette-library::after {
+            bottom: 8px;
+            right: 8px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .library-title {
+            font-family: 'Righteous', cursive;
+            font-size: 1.1rem;
+            color: var(--brass-light);
+            text-align: center;
+            margin-bottom: 18px;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+            letter-spacing: 3px;
+            border-bottom: 2px solid var(--brass);
+            padding-bottom: 10px;
+        }
+
+        .diskette-rack {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        /* Redesigned Diskettes - More readable */
+        .diskette {
+            width: 90px;
+            height: 95px;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 30%, #0a0a0a 100%);
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 
+                3px 3px 8px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #333;
+        }
+
+        .diskette:hover {
+            transform: translateY(-8px) rotate(-2deg);
+            box-shadow: 
+                5px 12px 20px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .diskette:active {
+            transform: translateY(-4px);
+        }
+
+        /* Metal slider at top */
+        .diskette::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15px;
+            right: 15px;
+            height: 8px;
+            background: linear-gradient(180deg, #666 0%, #444 50%, #333 100%);
+            border-radius: 0 0 2px 2px;
+        }
+
+        .diskette-label {
+            position: absolute;
+            top: 15px;
+            left: 6px;
+            right: 6px;
+            height: 45px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-family: 'VT323', monospace;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            padding: 5px 3px;
+            line-height: 1.2;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.5),
+                0 1px 2px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .diskette-hole {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 18px;
+            background: 
+                linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            border-radius: 2px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Hub ring inside hole */
+        .diskette-hole::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border: 2px solid #333;
+            border-radius: 50%;
+        }
+
+        .diskette-notch {
+            position: absolute;
+            right: 4px;
+            top: 45px;
+            width: 8px;
+            height: 20px;
+            background: linear-gradient(90deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-radius: 2px;
+            box-shadow: inset 1px 0 2px rgba(0,0,0,0.5);
+        }
+
+        /* Diskette Label Colors - More vibrant 70s palette */
+        .diskette[data-color="white"] .diskette-label { 
+            background: linear-gradient(180deg, #ffffff 0%, #e8e8e8 100%); 
+        }
+        .diskette[data-color="red"] .diskette-label { 
+            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a5a 100%); 
+        }
+        .diskette[data-color="blue"] .diskette-label { 
+            background: linear-gradient(180deg, #74b9ff 0%, #5aa0e6 100%); 
+        }
+        .diskette[data-color="green"] .diskette-label { 
+            background: linear-gradient(180deg, #7bed9f 0%, #5ed67a 100%); 
+        }
+        .diskette[data-color="yellow"] .diskette-label { 
+            background: linear-gradient(180deg, #ffeaa7 0%, #f5d789 100%); 
+        }
+        .diskette[data-color="orange"] .diskette-label { 
+            background: linear-gradient(180deg, #ffbe76 0%, #f0a854 100%); 
+        }
+        .diskette[data-color="purple"] .diskette-label { 
+            background: linear-gradient(180deg, #a29bfe 0%, #8c82f0 100%); 
+        }
+        .diskette[data-color="pink"] .diskette-label { 
+            background: linear-gradient(180deg, #fd79a8 0%, #f06292 100%); 
+        }
+
+        /* Instructions */
+        .instructions {
+            margin-top: 20px;
+            color: var(--harvest-gold);
+            font-size: 1rem;
+            text-align: center;
+            animation: fadeIn 1s ease-out 1.2s both;
+            font-family: 'Righteous', cursive;
+            letter-spacing: 1px;
+        }
+
+        .instructions kbd {
+            background: var(--wood-dark);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--brass);
+            color: var(--screen-green);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+        }
+
+        /* Game specific styles */
+        .game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .screen {
+                width: 100%;
+                max-width: 500px;
+                height: 300px;
+            }
+            
+            .radio-shack-logo {
+                font-size: 2rem;
+            }
+            
+            .diskette-rack {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .diskette {
+                width: 85px;
+                height: 90px;
+            }
+
+            .monitor-frame {
+                flex-direction: column;
+            }
+
+            .monitor-left-panel {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="radio-shack-logo">RADIO SHACK</div>
+        <div class="tagline">A DIVISION OF TANDY CORPORATION</div>
+    </div>
+
+    <div class="computer-container">
+        <div class="cabinet">
+            <div class="monitor">
+                <div class="monitor-frame">
+                    <div class="monitor-left-panel">
+                        <div class="brand-plate">
+                            <span class="brand">RADIO SHACK</span>
+                            <span class="model">TRS-80</span>
+                        </div>
+                        <div class="power-section">
+                            <div class="power-led"></div>
+                            <span class="power-label">POWER</span>
+                        </div>
+                    </div>
+                    <div class="screen-bezel">
+                        <div class="screen" id="screen">
+                            <div class="screen-glow"></div>
+                            <div id="terminal"></div>
+                            <canvas id="game-canvas" class="game-canvas"></canvas>
+                            <input type="text" id="hidden-input" autocomplete="off" autofocus>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disk-drive-unit">
+            <div class="drive-face">
+                <span class="drive-label">DISK DRIVE 0</span>
+                <div class="disk-slot"></div>
+                <div class="drive-led" id="drive-led"></div>
+            </div>
+        </div>
+
+        <div class="diskette-library">
+            <div class="library-title">✦ SOFTWARE LIBRARY ✦</div>
+            <div class="diskette-rack">
+                <div class="diskette" data-color="white" data-disk="basic" title="BASIC Interpreter">
+                    <div class="diskette-label">LEVEL II<br>BASIC</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="red" data-disk="invaders" title="Space Invaders">
+                    <div class="diskette-label">SPACE<br>INVADERS</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="blue" data-disk="snake" title="Snake Game">
+                    <div class="diskette-label">SNAKE<br>GAME</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="green" data-disk="lander" title="Lunar Lander">
+                    <div class="diskette-label">LUNAR<br>LANDER</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="yellow" data-disk="adventure" title="Text Adventure">
+                    <div class="diskette-label">CAVE<br>ADVENTURE</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="orange" data-disk="calculator" title="Calculator">
+                    <div class="diskette-label">SCIENTIFIC<br>CALC</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="purple" data-disk="blackjack" title="Blackjack">
+                    <div class="diskette-label">BLACK<br>JACK</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+                <div class="diskette" data-color="pink" data-disk="memory" title="Memory Game">
+                    <div class="diskette-label">MEMORY<br>MATCH</div>
+                    <div class="diskette-hole"></div>
+                    <div class="diskette-notch"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            Click a diskette to load · <kbd>ESC</kbd> to BREAK · <kbd>LIST</kbd> to view source · <kbd>SYSTEM</kbd> to reset
+        </div>
+    </div>
+
+    <script>
+        // TRS-80 Emulator Core
+        class TRS80Emulator {
+            constructor() {
+                this.terminal = document.getElementById('terminal');
+                this.hiddenInput = document.getElementById('hidden-input');
+                this.driveLed = document.getElementById('drive-led');
+                this.canvas = document.getElementById('game-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.buffer = '';
+                this.inputBuffer = '';
+                this.inputCallback = null;
+                this.currentProgram = null;
+                this.isRunning = false;
+                this.breakRequested = false;
+                
+                // BASIC interpreter state
+                this.variables = {};
+                this.program = {};
+                this.dataPointer = 0;
+                this.dataValues = [];
+                this.forLoops = [];
+                this.gosubStack = [];
+                this.currentLine = 0;
+                
+                this.init();
+            }
+
+            init() {
+                // Set up canvas
+                this.canvas.width = 640;
+                this.canvas.height = 384;
+                
+                // Focus handling
+                document.getElementById('screen').addEventListener('click', () => {
+                    this.hiddenInput.focus();
+                });
+
+                // Keyboard input
+                this.hiddenInput.addEventListener('keydown', (e) => this.handleKeyDown(e));
+                this.hiddenInput.addEventListener('input', (e) => this.handleInput(e));
+                
+                // Global break key handler (ESC or Ctrl+C to break running programs)
+                document.addEventListener('keydown', (e) => {
+                    if ((e.key === 'Escape' || (e.ctrlKey && e.key === 'c')) && this.isRunning) {
+                        this.breakRequested = true;
+                        e.preventDefault();
+                    }
+                });
+
+                // Diskette clicks
+                document.querySelectorAll('.diskette').forEach(disk => {
+                    disk.addEventListener('click', () => this.loadDisk(disk.dataset.disk));
+                });
+
+                // Boot sequence
+                this.boot();
+            }
+
+            async boot() {
+                this.clear();
+                await this.typeText('MEMORY SIZE? ');
+                await this.sleep(500);
+                this.print('');
+                await this.typeText('RADIO SHACK LEVEL II BASIC\n');
+                await this.typeText('(C) 1978 TANDY CORP.\n');
+                await this.typeText('READY\n');
+                this.showPrompt();
+            }
+
+            async loadDisk(diskName) {
+                this.stopCurrentProgram();
+                this.activateDriveLed();
+                
+                this.clear();
+                await this.typeText('LOADING ' + diskName.toUpperCase() + '...\n');
+                await this.sleep(1500);
+                
+                this.deactivateDriveLed();
+                
+                // Load the BASIC source code for the program
+                this.loadProgramSource(diskName);
+                
+                switch(diskName) {
+                    case 'basic':
+                        this.program = {};
+                        this.variables = {};
+                        this.print('READY\n');
+                        this.showPrompt();
+                        break;
+                    case 'invaders':
+                        this.runSpaceInvaders();
+                        break;
+                    case 'snake':
+                        this.runSnake();
+                        break;
+                    case 'lander':
+                        this.runLunarLander();
+                        break;
+                    case 'adventure':
+                        this.runAdventure();
+                        break;
+                    case 'calculator':
+                        this.runCalculator();
+                        break;
+                    case 'blackjack':
+                        this.runBlackjack();
+                        break;
+                    case 'memory':
+                        this.runMemoryGame();
+                        break;
+                }
+            }
+
+            loadProgramSource(diskName) {
+                // Clear existing program and variables
+                this.program = {};
+                this.variables = {};
+                this.forLoops = [];
+                this.gosubStack = [];
+                
+                const programs = {
+                    'invaders': `10 REM *** SPACE INVADERS ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM
+100 CLS
+110 PRINT "*** SPACE INVADERS ***"
+120 PRINT
+130 PRINT "DEFEND EARTH FROM THE ALIEN INVASION!"
+140 PRINT
+150 PRINT "CONTROLS:"
+160 PRINT "  A/LEFT ARROW  - MOVE LEFT"
+170 PRINT "  D/RIGHT ARROW - MOVE RIGHT"
+180 PRINT "  SPACE BAR     - FIRE LASER"
+190 PRINT "  Q             - QUIT GAME"
+200 PRINT
+210 PRINT "PRESS ANY KEY TO START..."
+220 GOSUB 9000: REM WAIT FOR KEY
+230 REM
+240 REM === INITIALIZE GAME ===
+250 PX = 320: REM PLAYER X POSITION
+260 SC = 0: REM SCORE
+270 LV = 3: REM LIVES
+280 AD = 1: REM ALIEN DIRECTION
+290 AS = 1: REM ALIEN SPEED
+300 REM
+310 REM === CREATE ALIENS ===
+320 DIM AX(32), AY(32), AA(32)
+330 FOR I = 0 TO 31
+340   AX(I) = 80 + (I MOD 8) * 60
+350   AY(I) = 50 + INT(I / 8) * 40
+360   AA(I) = 1: REM ALIVE FLAG
+370 NEXT I
+380 REM
+400 REM === MAIN GAME LOOP ===
+410 REM CHECK KEYBOARD INPUT
+420 K$ = INKEY$
+430 IF K$ = "A" OR K$ = CHR$(75) THEN PX = PX - 5
+440 IF K$ = "D" OR K$ = CHR$(77) THEN PX = PX + 5
+450 IF K$ = " " THEN GOSUB 2000: REM FIRE
+460 IF K$ = "Q" THEN 900
+470 IF PX < 30 THEN PX = 30
+480 IF PX > 610 THEN PX = 610
+490 REM
+500 REM === MOVE ALIENS ===
+510 MD = 0: REM MOVE DOWN FLAG
+520 FOR I = 0 TO 31
+530   IF AA(I) = 0 THEN 560
+540   AX(I) = AX(I) + AD * AS
+550   IF AX(I) < 20 OR AX(I) > 620 THEN MD = 1
+560 NEXT I
+570 IF MD = 1 THEN AD = -AD
+580 IF MD = 1 THEN FOR I = 0 TO 31: AY(I) = AY(I) + 15: NEXT I
+590 REM
+600 REM === CHECK COLLISIONS ===
+610 GOSUB 3000
+620 REM
+700 REM === DRAW SCREEN ===
+710 GOSUB 4000
+720 REM
+800 REM === CHECK WIN/LOSE ===
+810 AC = 0: FOR I = 0 TO 31: AC = AC + AA(I): NEXT I
+820 IF AC = 0 THEN PRINT "YOU WIN!": GOTO 900
+830 FOR I = 0 TO 31
+840   IF AA(I) = 1 AND AY(I) > 320 THEN PRINT "GAME OVER!": GOTO 900
+850 NEXT I
+860 GOTO 400
+870 REM
+900 REM === GAME OVER ===
+910 PRINT
+920 PRINT "FINAL SCORE: "; SC
+930 END
+940 REM
+2000 REM === FIRE SUBROUTINE ===
+2010 BX = PX: BY = 350
+2020 FOR T = 1 TO 35
+2030   BY = BY - 10
+2040   REM CHECK HIT
+2050   FOR I = 0 TO 31
+2060     IF AA(I) = 0 THEN 2090
+2070     IF ABS(BX - AX(I)) < 20 AND ABS(BY - AY(I)) < 15 THEN AA(I) = 0: SC = SC + 10
+2080   NEXT I
+2090 NEXT T
+2100 RETURN
+2110 REM
+3000 REM === COLLISION CHECK ===
+3010 REM ALIEN SHOOTING (RANDOM)
+3020 IF RND(100) > 2 THEN RETURN
+3030 SI = INT(RND(32))
+3040 IF AA(SI) = 0 THEN RETURN
+3050 EX = AX(SI): EY = AY(SI)
+3060 FOR T = 1 TO 80
+3070   EY = EY + 4
+3080   IF EY > 350 AND ABS(EX - PX) < 20 THEN LV = LV - 1
+3090 NEXT T
+3100 IF LV <= 0 THEN PRINT "YOU DIED!": GOTO 900
+3110 RETURN
+3120 REM
+4000 REM === DRAW SUBROUTINE ===
+4010 REM (GRAPHICS HANDLED BY MACHINE CODE)
+4020 REM DISPLAY: PLAYER AT PX, ALIENS, SCORE
+4030 RETURN
+4040 REM
+9000 REM === WAIT FOR KEY ===
+9010 K$ = INKEY$
+9020 IF K$ = "" THEN 9010
+9030 RETURN`,
+
+                    'snake': `10 REM *** SNAKE GAME ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM
+100 CLS
+110 PRINT "*** SNAKE ***"
+120 PRINT
+130 PRINT "GUIDE THE SNAKE TO EAT FOOD!"
+140 PRINT "DON'T HIT THE WALLS OR YOURSELF!"
+150 PRINT
+160 PRINT "CONTROLS:"
+170 PRINT "  W/UP    - MOVE UP"
+180 PRINT "  S/DOWN  - MOVE DOWN"
+190 PRINT "  A/LEFT  - MOVE LEFT"
+200 PRINT "  D/RIGHT - MOVE RIGHT"
+210 PRINT "  Q       - QUIT GAME"
+220 PRINT
+230 PRINT "PRESS ANY KEY TO START..."
+240 GOSUB 9000
+250 REM
+300 REM === INITIALIZE ===
+310 GS = 16: REM GRID SIZE
+320 DIM SX(100), SY(100): REM SNAKE BODY
+330 SL = 1: REM SNAKE LENGTH
+340 SX(0) = 20: SY(0) = 12: REM START POS
+350 DX = 1: DY = 0: REM DIRECTION
+360 SC = 0: REM SCORE
+370 REM
+380 REM === PLACE FOOD ===
+390 FX = INT(RND(38)) + 1
+400 FY = INT(RND(22)) + 1
+410 REM
+500 REM === MAIN LOOP ===
+510 K$ = INKEY$
+520 IF K$ = "W" AND DY <> 1 THEN DX = 0: DY = -1
+530 IF K$ = "S" AND DY <> -1 THEN DX = 0: DY = 1
+540 IF K$ = "A" AND DX <> 1 THEN DX = -1: DY = 0
+550 IF K$ = "D" AND DX <> -1 THEN DX = 1: DY = 0
+560 IF K$ = "Q" THEN 900
+570 REM
+600 REM === MOVE SNAKE ===
+610 NX = SX(0) + DX
+620 NY = SY(0) + DY
+630 REM
+640 REM === CHECK WALLS ===
+650 IF NX < 0 OR NX >= 40 THEN 900
+660 IF NY < 0 OR NY >= 24 THEN 900
+670 REM
+680 REM === CHECK SELF ===
+690 FOR I = 0 TO SL - 1
+700   IF NX = SX(I) AND NY = SY(I) THEN 900
+710 NEXT I
+720 REM
+730 REM === UPDATE BODY ===
+740 FOR I = SL TO 1 STEP -1
+750   SX(I) = SX(I-1)
+760   SY(I) = SY(I-1)
+770 NEXT I
+780 SX(0) = NX: SY(0) = NY
+790 REM
+800 REM === CHECK FOOD ===
+810 IF NX = FX AND NY = FY THEN SL = SL + 1: SC = SC + 10: GOSUB 380
+820 REM
+850 REM === DRAW ===
+860 GOSUB 4000
+870 REM
+880 GOTO 500
+890 REM
+900 REM === GAME OVER ===
+910 CLS
+920 PRINT "*** GAME OVER ***"
+930 PRINT
+940 PRINT "FINAL SCORE: "; SC
+950 PRINT "SNAKE LENGTH: "; SL
+960 END
+970 REM
+4000 REM === DRAW SUBROUTINE ===
+4010 REM CLEAR AND REDRAW
+4020 REM (GRAPHICS HANDLED BY MACHINE CODE)
+4030 RETURN
+4040 REM
+9000 REM === WAIT FOR KEY ===
+9010 K$ = INKEY$
+9020 IF K$ = "" THEN 9010
+9030 RETURN`,
+
+                    'lander': `10 REM *** LUNAR LANDER ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM
+100 CLS
+110 PRINT "*** LUNAR LANDER ***"
+120 PRINT
+130 PRINT "LAND THE SPACECRAFT SAFELY ON THE MOON!"
+140 PRINT
+150 PRINT "CONTROLS:"
+160 PRINT "  SPACE - MAIN THRUSTER"
+170 PRINT "  A     - ROTATE LEFT"
+180 PRINT "  D     - ROTATE RIGHT"
+190 PRINT "  Q     - ABORT MISSION"
+200 PRINT
+210 PRINT "LAND WITH VELOCITY < 2 M/S"
+220 PRINT "LAND ON THE FLAT PAD!"
+230 PRINT
+240 PRINT "PRESS ANY KEY TO START..."
+250 GOSUB 9000
+260 REM
+300 REM === INITIALIZE ===
+310 X = 320: Y = 50: REM POSITION
+320 VX = 0.5: VY = 0: REM VELOCITY
+330 A = 0: REM ANGLE (RADIANS)
+340 F = 100: REM FUEL PERCENT
+350 G = 0.02: REM GRAVITY
+360 REM
+400 REM === GENERATE TERRAIN ===
+410 DIM TX(33), TY(33)
+420 TY = 350
+430 FOR I = 0 TO 32
+440   TX(I) = I * 20
+450   IF I >= 14 AND I <= 18 THEN TY(I) = 350: GOTO 470
+460   TY(I) = 300 + INT(RND(70))
+470 NEXT I
+480 REM
+500 REM === MAIN LOOP ===
+510 REM GRAVITY
+520 VY = VY + G
+530 REM
+540 REM === INPUT ===
+550 K$ = INKEY$
+560 IF K$ = "A" THEN A = A - 0.05
+570 IF K$ = "D" THEN A = A + 0.05
+580 IF K$ = " " AND F > 0 THEN GOSUB 2000: REM THRUST
+590 IF K$ = "Q" THEN 900
+600 REM
+610 REM === UPDATE POSITION ===
+620 X = X + VX
+630 Y = Y + VY
+640 IF X < 20 THEN X = 20
+650 IF X > 620 THEN X = 620
+660 REM
+700 REM === CHECK LANDING ===
+710 IF Y < 330 THEN 800
+720 SP = SQR(VX*VX + VY*VY): REM SPEED
+730 OP = 0: REM ON PAD FLAG
+740 IF X > 280 AND X < 360 THEN OP = 1
+750 IF SP < 2 AND OP = 1 AND ABS(A) < 0.3 THEN 950
+760 GOTO 900: REM CRASH
+770 REM
+800 REM === DRAW ===
+810 GOSUB 4000
+820 REM
+830 REM === DISPLAY HUD ===
+840 PRINT "ALT:"; INT(330 - Y); " VEL:"; INT(SP*10)/10; " FUEL:"; INT(F)
+850 REM
+860 GOTO 500
+870 REM
+900 REM === CRASH ===
+910 CLS
+920 PRINT "*** CRASH! ***"
+930 PRINT "THE LANDER IS DESTROYED!"
+940 GOTO 990
+950 REM === SUCCESS ===
+960 CLS
+970 PRINT "*** SUCCESSFUL LANDING! ***"
+980 PRINT "CONGRATULATIONS, COMMANDER!"
+990 END
+1000 REM
+2000 REM === THRUST SUBROUTINE ===
+2010 VX = VX + SIN(A) * 0.05
+2020 VY = VY - COS(A) * 0.08
+2030 F = F - 0.3
+2040 RETURN
+2050 REM
+4000 REM === DRAW SUBROUTINE ===
+4010 REM (GRAPHICS HANDLED BY MACHINE CODE)
+4020 RETURN
+4030 REM
+9000 REM === WAIT FOR KEY ===
+9010 K$ = INKEY$
+9020 IF K$ = "" THEN 9010
+9030 RETURN`,
+
+                    'adventure': `10 REM *** CAVE ADVENTURE ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM A TEXT ADVENTURE GAME
+40 REM
+100 CLS
+110 PRINT "*** CAVE ADVENTURE ***"
+120 PRINT
+130 PRINT "YOU MUST FIND THE TREASURE!"
+140 PRINT "BEWARE THE DRAGON!"
+150 PRINT
+160 PRINT "COMMANDS:"
+170 PRINT "  N,S,E,W - MOVE"
+180 PRINT "  GET     - PICK UP ITEM"
+190 PRINT "  DROP    - DROP ITEM"
+200 PRINT "  INV     - INVENTORY"
+210 PRINT "  LOOK    - LOOK AROUND"
+220 PRINT "  ATTACK  - FIGHT!"
+230 PRINT "  QUIT    - EXIT GAME"
+240 PRINT
+300 REM === INITIALIZE ===
+310 RM = 1: REM CURRENT ROOM
+320 DIM IT$(5): REM INVENTORY
+330 IC = 0: REM INVENTORY COUNT
+340 DA = 1: REM DRAGON ALIVE
+350 REM
+360 REM === ROOM DATA ===
+370 REM ROOM 1: CAVE ENTRANCE
+380 REM ROOM 2: GREAT HALL
+390 REM ROOM 3: ARMORY
+400 REM ROOM 4: LIBRARY  
+410 REM ROOM 5: THRONE ROOM
+420 REM
+500 REM === MAIN LOOP ===
+510 GOSUB 2000: REM SHOW ROOM
+520 INPUT "COMMAND"; C$
+530 C$ = LEFT$(C$, 1)
+540 IF C$ = "N" THEN GOSUB 3100
+550 IF C$ = "S" THEN GOSUB 3200
+560 IF C$ = "E" THEN GOSUB 3300
+570 IF C$ = "W" THEN GOSUB 3400
+580 IF C$ = "G" THEN GOSUB 4000: REM GET
+590 IF C$ = "D" THEN GOSUB 4500: REM DROP
+600 IF C$ = "I" THEN GOSUB 5000: REM INV
+610 IF C$ = "L" THEN GOSUB 2000: REM LOOK
+620 IF C$ = "A" THEN GOSUB 6000: REM ATTACK
+630 IF C$ = "Q" THEN 900
+640 GOTO 500
+650 REM
+900 REM === END ===
+910 PRINT
+920 PRINT "THANKS FOR PLAYING!"
+930 END
+940 REM
+2000 REM === SHOW ROOM ===
+2010 PRINT
+2020 ON RM GOSUB 2100, 2200, 2300, 2400, 2500
+2030 RETURN
+2040 REM
+2100 REM ROOM 1 - CAVE
+2110 PRINT "YOU ARE IN A DARK CAVE."
+2120 PRINT "PASSAGES LEAD NORTH AND EAST."
+2130 PRINT "YOU SEE: TORCH"
+2140 RETURN
+2150 REM
+2200 REM ROOM 2 - HALL
+2210 PRINT "YOU ARE IN A GREAT HALL."
+2220 PRINT "TORCHES LINE THE WALLS."
+2230 PRINT "EXITS: SOUTH, WEST, NORTH"
+2240 RETURN
+2250 REM
+2300 REM ROOM 3 - ARMORY
+2310 PRINT "THIS IS AN OLD ARMORY."
+2320 PRINT "RUSTY WEAPONS HANG ON WALLS."
+2330 PRINT "EXIT: WEST"
+2340 PRINT "YOU SEE: SWORD, SHIELD"
+2350 RETURN
+2360 REM
+2400 REM ROOM 4 - LIBRARY
+2410 PRINT "DUSTY BOOKS FILL SHELVES."
+2420 PRINT "A MYSTERIOUS GLOW EMANATES."
+2430 PRINT "EXIT: EAST"
+2440 PRINT "YOU SEE: BOOK, KEY"
+2450 RETURN
+2460 REM
+2500 REM ROOM 5 - THRONE
+2510 PRINT "THE THRONE ROOM!"
+2520 IF DA = 1 THEN PRINT "A DRAGON GUARDS THE TREASURE!"
+2530 IF DA = 0 THEN PRINT "THE DRAGON LIES DEFEATED."
+2540 PRINT "EXIT: SOUTH"
+2550 IF DA = 0 THEN PRINT "YOU SEE: TREASURE"
+2560 RETURN
+2570 REM
+3100 REM === GO NORTH ===
+3110 IF RM = 1 THEN RM = 2: RETURN
+3120 IF RM = 2 THEN RM = 5: RETURN
+3130 PRINT "YOU CANNOT GO THAT WAY."
+3140 RETURN
+3150 REM
+3200 REM === GO SOUTH ===
+3210 IF RM = 2 THEN RM = 1: RETURN
+3220 IF RM = 5 THEN RM = 2: RETURN
+3230 PRINT "YOU CANNOT GO THAT WAY."
+3240 RETURN
+3250 REM
+3300 REM === GO EAST ===
+3310 IF RM = 1 THEN RM = 3: RETURN
+3320 IF RM = 4 THEN RM = 2: RETURN
+3330 PRINT "YOU CANNOT GO THAT WAY."
+3340 RETURN
+3350 REM
+3400 REM === GO WEST ===
+3410 IF RM = 3 THEN RM = 1: RETURN
+3420 IF RM = 2 THEN RM = 4: RETURN
+3430 PRINT "YOU CANNOT GO THAT WAY."
+3440 RETURN
+3450 REM
+4000 REM === GET ITEM ===
+4010 INPUT "GET WHAT"; I$
+4020 REM CHECK IF ITEM EXISTS
+4030 REM ADD TO INVENTORY
+4040 IC = IC + 1
+4050 IT$(IC) = I$
+4060 PRINT "YOU TAKE THE "; I$
+4070 RETURN
+4080 REM
+4500 REM === DROP ITEM ===
+4510 INPUT "DROP WHAT"; I$
+4520 PRINT "YOU DROP THE "; I$
+4530 RETURN
+4540 REM
+5000 REM === INVENTORY ===
+5010 IF IC = 0 THEN PRINT "EMPTY HANDED.": RETURN
+5020 PRINT "YOU CARRY:"
+5030 FOR I = 1 TO IC
+5040   PRINT "  "; IT$(I)
+5050 NEXT I
+5060 RETURN
+5070 REM
+6000 REM === ATTACK ===
+6010 IF RM <> 5 OR DA = 0 THEN PRINT "NOTHING TO ATTACK.": RETURN
+6020 HS = 0: REM HAS SWORD
+6030 FOR I = 1 TO IC
+6040   IF IT$(I) = "SWORD" THEN HS = 1
+6050 NEXT I
+6060 IF HS = 0 THEN PRINT "YOU HAVE NO WEAPON!": RETURN
+6070 PRINT "YOU SLAY THE DRAGON!"
+6080 DA = 0
+6090 RETURN
+6100 REM
+7000 REM === WIN GAME ===
+7010 CLS
+7020 PRINT "*** CONGRATULATIONS! ***"
+7030 PRINT "YOU FOUND THE TREASURE!"
+7040 PRINT "YOU WIN!"
+7050 END`,
+
+                    'calculator': `10 REM *** SCIENTIFIC CALCULATOR ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM
+100 CLS
+110 PRINT "*** SCIENTIFIC CALCULATOR ***"
+120 PRINT
+130 PRINT "ENTER MATHEMATICAL EXPRESSIONS"
+140 PRINT
+150 PRINT "FUNCTIONS AVAILABLE:"
+160 PRINT "  SIN, COS, TAN - TRIG"
+170 PRINT "  SQRT - SQUARE ROOT"
+180 PRINT "  LOG  - BASE 10 LOG"
+190 PRINT "  LN   - NATURAL LOG"
+200 PRINT "  EXP  - E TO THE X"
+210 PRINT "  ABS  - ABSOLUTE VALUE"
+220 PRINT
+230 PRINT "CONSTANTS:"
+240 PRINT "  PI = 3.14159265"
+250 PRINT "  E  = 2.71828183"
+260 PRINT
+270 PRINT "USE ^ FOR EXPONENTS"
+280 PRINT "TYPE 'QUIT' TO EXIT"
+290 PRINT
+300 REM
+400 REM === MAIN LOOP ===
+410 PRINT
+420 INPUT "CALC> "; E$
+430 IF E$ = "QUIT" THEN 900
+440 IF E$ = "" THEN 400
+450 REM
+500 REM === PARSE EXPRESSION ===
+510 REM REPLACE FUNCTIONS
+520 GOSUB 2000
+530 REM
+600 REM === EVALUATE ===
+610 ON ERROR GOTO 700
+620 R = VAL(E$): REM SIMPLIFIED
+630 PRINT "= "; R
+640 GOTO 400
+650 REM
+700 REM === ERROR ===
+710 PRINT "ERROR: INVALID EXPRESSION"
+720 GOTO 400
+730 REM
+900 REM === EXIT ===
+910 PRINT
+920 PRINT "GOODBYE!"
+930 END
+940 REM
+2000 REM === REPLACE FUNCTIONS ===
+2010 REM THIS WOULD PARSE AND REPLACE
+2020 REM FUNCTION NAMES WITH VALUES
+2030 REM (SIMPLIFIED FOR LISTING)
+2040 RETURN`,
+
+                    'blackjack': `10 REM *** BLACKJACK ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM CASINO CARD GAME
+40 REM
+100 CLS
+110 PRINT "*** BLACKJACK ***"
+120 PRINT
+130 PRINT "TRY TO GET 21 WITHOUT GOING OVER!"
+140 PRINT "DEALER STANDS ON 17."
+150 PRINT
+200 REM === INITIALIZE ===
+210 CH = 100: REM CHIPS
+220 REM
+300 REM === MAIN GAME LOOP ===
+310 IF CH <= 0 THEN 900
+320 PRINT
+330 PRINT "CHIPS: "; CH
+340 INPUT "YOUR BET (0 TO QUIT)"; BT
+350 IF BT = 0 THEN 950
+360 IF BT > CH THEN PRINT "NOT ENOUGH!": GOTO 340
+370 REM
+400 REM === DEAL CARDS ===
+410 GOSUB 5000: P1 = CD: REM PLAYER CARD 1
+420 GOSUB 5000: P2 = CD: REM PLAYER CARD 2
+430 GOSUB 5000: D1 = CD: REM DEALER CARD 1
+440 GOSUB 5000: D2 = CD: REM DEALER CARD 2
+450 REM
+500 REM === SHOW HANDS ===
+510 PRINT
+520 PRINT "DEALER SHOWS: "; D1; " ??"
+530 PT = P1 + P2: REM PLAYER TOTAL
+540 PRINT "YOUR HAND: "; P1; " "; P2; " ("; PT; ")"
+550 REM
+600 REM === PLAYER TURN ===
+610 IF PT >= 21 THEN 700
+620 INPUT "(H)IT OR (S)TAND"; A$
+630 IF A$ = "S" THEN 700
+640 IF A$ <> "H" THEN 620
+650 GOSUB 5000: REM GET CARD
+660 PT = PT + CD
+670 PRINT "YOU DRAW: "; CD; " ("; PT; ")"
+680 GOTO 610
+690 REM
+700 REM === CHECK BUST ===
+710 IF PT > 21 THEN PRINT "BUST!": CH = CH - BT: GOTO 300
+720 REM
+750 REM === DEALER TURN ===
+760 DT = D1 + D2
+770 PRINT
+780 PRINT "DEALER HAS: "; D1; " "; D2; " ("; DT; ")"
+790 IF DT >= 17 THEN 850
+800 GOSUB 5000
+810 DT = DT + CD
+820 PRINT "DEALER DRAWS: "; CD; " ("; DT; ")"
+830 GOTO 790
+840 REM
+850 REM === DETERMINE WINNER ===
+860 IF DT > 21 THEN PRINT "DEALER BUSTS!": CH = CH + BT: GOTO 300
+870 IF PT > DT THEN PRINT "YOU WIN!": CH = CH + BT: GOTO 300
+880 IF PT < DT THEN PRINT "DEALER WINS.": CH = CH - BT: GOTO 300
+890 PRINT "PUSH!": GOTO 300
+895 REM
+900 REM === BROKE ===
+910 PRINT
+920 PRINT "YOU ARE BROKE!"
+930 GOTO 960
+940 REM
+950 REM === QUIT ===
+960 PRINT
+970 PRINT "FINAL CHIPS: "; CH
+980 END
+990 REM
+5000 REM === DRAW CARD ===
+5010 CD = INT(RND(13)) + 1
+5020 IF CD > 10 THEN CD = 10
+5030 RETURN`,
+
+                    'memory': `10 REM *** MEMORY GAME ***
+20 REM BY RADIO SHACK (C) 1978
+30 REM MATCH THE PAIRS!
+40 REM
+100 CLS
+110 PRINT "*** MEMORY GAME ***"
+120 PRINT
+130 PRINT "FIND ALL MATCHING PAIRS!"
+140 PRINT "ENTER COORDINATES LIKE: A1"
+150 PRINT
+160 PRINT "  1 2 3 4"
+170 PRINT "A ? ? ? ?"
+180 PRINT "B ? ? ? ?"
+190 PRINT "C ? ? ? ?"
+200 PRINT "D ? ? ? ?"
+210 PRINT
+220 PRINT "TYPE 'QUIT' TO EXIT"
+230 PRINT
+300 REM === INITIALIZE ===
+310 DIM CD(16): REM CARDS
+320 DIM RV(16): REM REVEALED
+330 DIM MT(16): REM MATCHED
+340 MV = 0: REM MOVE COUNT
+350 MC = 0: REM MATCH COUNT
+360 REM
+370 REM === SHUFFLE CARDS ===
+380 REM SYMBOLS: 1-8 PAIRED
+390 FOR I = 0 TO 7
+400   CD(I) = I + 1
+410   CD(I + 8) = I + 1
+420 NEXT I
+430 REM SHUFFLE
+440 FOR I = 15 TO 1 STEP -1
+450   J = INT(RND(I + 1))
+460   T = CD(I): CD(I) = CD(J): CD(J) = T
+470 NEXT I
+480 REM
+500 REM === MAIN LOOP ===
+510 IF MC = 8 THEN 900
+520 GOSUB 4000: REM SHOW BOARD
+530 PRINT
+540 INPUT "FIRST CARD"; C1$
+550 IF C1$ = "QUIT" THEN 950
+560 GOSUB 5000: I1 = CI
+570 IF I1 < 0 OR MT(I1) = 1 THEN PRINT "INVALID!": GOTO 530
+580 REM
+590 PRINT "CARD 1: "; CD(I1)
+600 INPUT "SECOND CARD"; C2$
+610 IF C2$ = "QUIT" THEN 950
+620 GOSUB 5000: I2 = CI
+630 IF I2 < 0 OR MT(I2) = 1 OR I1 = I2 THEN PRINT "INVALID!": GOTO 600
+640 REM
+650 PRINT "CARD 2: "; CD(I2)
+660 MV = MV + 1
+670 REM
+700 REM === CHECK MATCH ===
+710 IF CD(I1) = CD(I2) THEN 800
+720 PRINT "NO MATCH."
+730 GOTO 500
+740 REM
+800 REM === MATCH FOUND ===
+810 PRINT "MATCH!"
+820 MT(I1) = 1: MT(I2) = 1
+830 MC = MC + 1
+840 GOTO 500
+850 REM
+900 REM === WIN ===
+910 PRINT
+920 PRINT "*** YOU WIN! ***"
+930 PRINT "MOVES: "; MV
+940 GOTO 960
+950 REM === QUIT ===
+960 END
+970 REM
+4000 REM === SHOW BOARD ===
+4010 PRINT "  1 2 3 4"
+4020 FOR R = 0 TO 3
+4030   PRINT CHR$(65 + R); " ";
+4040   FOR C = 0 TO 3
+4050     I = R * 4 + C
+4060     IF MT(I) = 1 THEN PRINT CD(I); " ";: GOTO 4080
+4070     PRINT "? ";
+4080   NEXT C
+4090   PRINT
+4100 NEXT R
+4110 RETURN
+4120 REM
+5000 REM === PARSE COORDINATE ===
+5010 IF LEN(C1$) < 2 THEN CI = -1: RETURN
+5020 R = ASC(LEFT$(C1$, 1)) - 65
+5030 C = VAL(MID$(C1$, 2, 1)) - 1
+5040 IF R < 0 OR R > 3 OR C < 0 OR C > 3 THEN CI = -1: RETURN
+5050 CI = R * 4 + C
+5060 RETURN`
+                };
+                
+                // Parse and load the program
+                const source = programs[diskName];
+                if (source) {
+                    const lines = source.split('\n');
+                    for (let line of lines) {
+                        const match = line.match(/^(\d+)\s+(.*)/);
+                        if (match) {
+                            this.program[match[1]] = match[2];
+                        }
+                    }
+                }
+            }
+
+            activateDriveLed() {
+                this.driveLed.classList.add('active');
+            }
+
+            deactivateDriveLed() {
+                this.driveLed.classList.remove('active');
+            }
+
+            clear() {
+                this.terminal.innerHTML = '';
+                this.buffer = '';
+                this.hideCanvas();
+            }
+
+            hideCanvas() {
+                this.canvas.style.display = 'none';
+                this.terminal.style.display = 'block';
+            }
+
+            showCanvas() {
+                this.canvas.style.display = 'block';
+                this.terminal.style.display = 'none';
+            }
+
+            print(text) {
+                this.buffer += text;
+                this.terminal.innerHTML = this.buffer + '<span class="cursor"></span>';
+                this.terminal.scrollTop = this.terminal.scrollHeight;
+            }
+
+            async typeText(text, speed = 20) {
+                for (let char of text) {
+                    this.buffer += char;
+                    this.terminal.innerHTML = this.buffer + '<span class="cursor"></span>';
+                    this.terminal.scrollTop = this.terminal.scrollHeight;
+                    await this.sleep(speed);
+                }
+            }
+
+            showPrompt() {
+                this.inputBuffer = '';
+                this.terminal.innerHTML = this.buffer + '<span class="cursor"></span>';
+            }
+
+            handleKeyDown(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const input = this.inputBuffer;
+                    this.buffer += input + '\n';
+                    this.inputBuffer = '';
+                    this.hiddenInput.value = '';
+                    
+                    if (this.inputCallback) {
+                        const callback = this.inputCallback;
+                        this.inputCallback = null;
+                        callback(input);
+                    } else {
+                        this.processCommand(input);
+                    }
+                } else if (e.key === 'Backspace') {
+                    if (this.inputBuffer.length > 0) {
+                        this.inputBuffer = this.inputBuffer.slice(0, -1);
+                        this.terminal.innerHTML = this.buffer + this.inputBuffer + '<span class="cursor"></span>';
+                    }
+                    e.preventDefault();
+                }
+            }
+
+            handleInput(e) {
+                const char = e.data;
+                if (char && char !== '\n') {
+                    this.inputBuffer += char.toUpperCase();
+                    this.terminal.innerHTML = this.buffer + this.inputBuffer + '<span class="cursor"></span>';
+                }
+                this.hiddenInput.value = '';
+            }
+
+            async getInput(prompt = '') {
+                if (prompt) {
+                    this.print(prompt);
+                }
+                return new Promise(resolve => {
+                    // Set up break handler for input mode
+                    const breakHandler = (e) => {
+                        if (e.key === 'Escape' || (e.ctrlKey && e.key === 'c')) {
+                            this.breakRequested = true;
+                            document.removeEventListener('keydown', breakHandler);
+                            this.inputCallback = null;
+                            resolve('');
+                            e.preventDefault();
+                        }
+                    };
+                    document.addEventListener('keydown', breakHandler);
+                    
+                    this.inputCallback = (value) => {
+                        document.removeEventListener('keydown', breakHandler);
+                        resolve(value);
+                    };
+                    this.showPrompt();
+                });
+            }
+
+            processCommand(cmd) {
+                const upperCmd = cmd.toUpperCase().trim();
+                
+                if (upperCmd === 'SYSTEM' || upperCmd === 'EXIT' || upperCmd === 'QUIT') {
+                    this.stopCurrentProgram();
+                    this.boot();
+                    return;
+                }
+                
+                if (upperCmd === 'CLS') {
+                    this.clear();
+                    this.showPrompt();
+                    return;
+                }
+                
+                if (upperCmd.startsWith('PRINT ') || upperCmd.startsWith('?')) {
+                    const expr = upperCmd.startsWith('?') ? cmd.substring(1) : cmd.substring(6);
+                    try {
+                        const result = this.evaluateExpression(expr.trim());
+                        this.print(result + '\n');
+                    } catch (e) {
+                        this.print('?SYNTAX ERROR\n');
+                    }
+                    this.showPrompt();
+                    return;
+                }
+                
+                if (upperCmd === 'LIST') {
+                    const lines = Object.keys(this.program).sort((a, b) => parseInt(a) - parseInt(b));
+                    for (let line of lines) {
+                        this.print(line + ' ' + this.program[line] + '\n');
+                    }
+                    this.showPrompt();
+                    return;
+                }
+                
+                if (upperCmd === 'RUN') {
+                    this.runProgram();
+                    return;
+                }
+                
+                if (upperCmd === 'NEW') {
+                    this.program = {};
+                    this.variables = {};
+                    this.print('READY\n');
+                    this.showPrompt();
+                    return;
+                }
+                
+                // Check for line number (program entry)
+                const lineMatch = upperCmd.match(/^(\d+)\s*(.*)/);
+                if (lineMatch) {
+                    const lineNum = lineMatch[1];
+                    const code = cmd.substring(lineMatch[1].length).trim();
+                    if (code) {
+                        this.program[lineNum] = code;
+                    } else {
+                        delete this.program[lineNum];
+                    }
+                    this.showPrompt();
+                    return;
+                }
+                
+                // Direct execution
+                if (upperCmd.startsWith('LET ')) {
+                    try {
+                        this.executeLet(cmd.substring(4));
+                    } catch (e) {
+                        this.print('?SYNTAX ERROR\n');
+                    }
+                    this.showPrompt();
+                    return;
+                }
+                
+                if (upperCmd) {
+                    this.print('?SYNTAX ERROR\n');
+                }
+                this.showPrompt();
+            }
+
+            evaluateExpression(expr) {
+                // Handle string literals
+                if (expr.startsWith('"') && expr.endsWith('"')) {
+                    return expr.slice(1, -1);
+                }
+                
+                // Replace variables
+                let evalExpr = expr;
+                for (let varName in this.variables) {
+                    const regex = new RegExp('\\b' + varName + '\\b', 'gi');
+                    evalExpr = evalExpr.replace(regex, this.variables[varName]);
+                }
+                
+                // Handle BASIC functions
+                evalExpr = evalExpr.replace(/RND\s*\(\s*(\d+)\s*\)/gi, (_, n) => Math.floor(Math.random() * parseInt(n)));
+                evalExpr = evalExpr.replace(/INT\s*\((.*?)\)/gi, (_, n) => Math.floor(eval(n)));
+                evalExpr = evalExpr.replace(/ABS\s*\((.*?)\)/gi, (_, n) => Math.abs(eval(n)));
+                evalExpr = evalExpr.replace(/SQR\s*\((.*?)\)/gi, (_, n) => Math.sqrt(eval(n)));
+                
+                try {
+                    return eval(evalExpr);
+                } catch (e) {
+                    return expr;
+                }
+            }
+
+            executeLet(statement) {
+                const match = statement.match(/([A-Z]\$?)\s*=\s*(.*)/i);
+                if (match) {
+                    const varName = match[1].toUpperCase();
+                    const value = this.evaluateExpression(match[2].trim());
+                    this.variables[varName] = value;
+                }
+            }
+
+            async runProgram() {
+                this.isRunning = true;
+                this.breakRequested = false;
+                const lines = Object.keys(this.program).sort((a, b) => parseInt(a) - parseInt(b));
+                let lineIndex = 0;
+                let iterationCount = 0;
+                const maxIterationsBeforeYield = 50; // Yield to UI every N iterations
+                
+                try {
+                    while (lineIndex < lines.length && this.isRunning && !this.breakRequested) {
+                        const lineNum = lines[lineIndex];
+                        const code = this.program[lineNum];
+                        
+                        // Yield to UI periodically to prevent freezing and allow break detection
+                        iterationCount++;
+                        if (iterationCount >= maxIterationsBeforeYield) {
+                            iterationCount = 0;
+                            await this.sleep(0); // Yield to event loop
+                        }
+                        
+                        // Check for break after yielding
+                        if (this.breakRequested) {
+                            this.print('\n?BREAK AT LINE ' + lineNum + '\n');
+                            break;
+                        }
+                        
+                        const result = await this.executeLine(code, lineNum, lines);
+                        
+                        if (this.breakRequested) {
+                            this.print('\n?BREAK AT LINE ' + lineNum + '\n');
+                            break;
+                        }
+                        
+                        if (result && result.goto) {
+                            lineIndex = lines.indexOf(result.goto.toString());
+                            if (lineIndex === -1) {
+                                this.print('?UNDEFINED LINE NUMBER\n');
+                                break;
+                            }
+                        } else {
+                            lineIndex++;
+                        }
+                    }
+                } catch (e) {
+                    this.print('?ERROR: ' + e.message + '\n');
+                }
+                
+                this.isRunning = false;
+                this.breakRequested = false;
+                this.print('READY\n');
+                this.showPrompt();
+            }
+
+            async executeLine(code, lineNum, allLines) {
+                const upperCode = code.toUpperCase().trim();
+                
+                // Check for break request
+                if (this.breakRequested) {
+                    return null;
+                }
+                
+                if (upperCode.startsWith('PRINT ') || upperCode.startsWith('?')) {
+                    const expr = upperCode.startsWith('?') ? code.substring(1) : code.substring(6);
+                    const result = this.evaluateExpression(expr.trim());
+                    this.print(result + '\n');
+                    return null;
+                }
+                
+                if (upperCode.startsWith('LET ')) {
+                    this.executeLet(code.substring(4));
+                    return null;
+                }
+                
+                if (upperCode.startsWith('GOTO ')) {
+                    return { goto: parseInt(code.substring(5)) };
+                }
+                
+                if (upperCode.startsWith('IF ')) {
+                    const match = code.match(/IF\s+(.+?)\s+THEN\s+(.+)/i);
+                    if (match) {
+                        const condition = this.evaluateExpression(match[1]);
+                        if (condition) {
+                            const thenPart = match[2].trim();
+                            if (/^\d+$/.test(thenPart)) {
+                                return { goto: parseInt(thenPart) };
+                            }
+                            return await this.executeLine(thenPart, lineNum, allLines);
+                        }
+                    }
+                    return null;
+                }
+                
+                if (upperCode.startsWith('INPUT ')) {
+                    const match = code.match(/INPUT\s+(?:"([^"]+)"[,;]\s*)?([A-Z]\$?)/i);
+                    if (match) {
+                        const prompt = match[1] || '';
+                        const varName = match[2].toUpperCase();
+                        const value = await this.getInput(prompt ? prompt : '? ');
+                        if (this.breakRequested) return null;
+                        this.variables[varName] = isNaN(value) || value === '' ? value : parseFloat(value);
+                    } else {
+                        const varName = code.substring(6).trim().toUpperCase();
+                        const value = await this.getInput('? ');
+                        if (this.breakRequested) return null;
+                        this.variables[varName] = isNaN(value) || value === '' ? value : parseFloat(value);
+                    }
+                    return null;
+                }
+                
+                if (upperCode === 'CLS') {
+                    this.clear();
+                    return null;
+                }
+                
+                if (upperCode === 'END' || upperCode === 'STOP') {
+                    this.isRunning = false;
+                    return null;
+                }
+                
+                // FOR loop support
+                if (upperCode.startsWith('FOR ')) {
+                    const match = code.match(/FOR\s+([A-Z])\s*=\s*(.+?)\s+TO\s+(.+?)(?:\s+STEP\s+(.+))?$/i);
+                    if (match) {
+                        const varName = match[1].toUpperCase();
+                        const startVal = this.evaluateExpression(match[2]);
+                        const endVal = this.evaluateExpression(match[3]);
+                        const stepVal = match[4] ? this.evaluateExpression(match[4]) : 1;
+                        
+                        this.variables[varName] = startVal;
+                        
+                        // Find the line after this FOR statement for loop return
+                        const sortedLines = allLines.slice().sort((a, b) => parseInt(a) - parseInt(b));
+                        const currentIndex = sortedLines.indexOf(lineNum.toString());
+                        const nextLineNum = currentIndex < sortedLines.length - 1 
+                            ? sortedLines[currentIndex + 1] 
+                            : lineNum;
+                        
+                        this.forLoops.push({
+                            varName,
+                            endVal,
+                            stepVal,
+                            lineNum: nextLineNum // Return to line AFTER FOR
+                        });
+                    }
+                    return null;
+                }
+                
+                if (upperCode.startsWith('NEXT')) {
+                    const match = code.match(/NEXT\s*([A-Z])?/i);
+                    const varName = match && match[1] ? match[1].toUpperCase() : null;
+                    
+                    if (this.forLoops.length === 0) {
+                        this.print('?NEXT WITHOUT FOR\n');
+                        this.isRunning = false;
+                        return null;
+                    }
+                    
+                    const loop = varName 
+                        ? this.forLoops.find(l => l.varName === varName)
+                        : this.forLoops[this.forLoops.length - 1];
+                    
+                    if (!loop) {
+                        this.print('?NEXT WITHOUT FOR\n');
+                        this.isRunning = false;
+                        return null;
+                    }
+                    
+                    this.variables[loop.varName] += loop.stepVal;
+                    
+                    const done = loop.stepVal > 0 
+                        ? this.variables[loop.varName] > loop.endVal
+                        : this.variables[loop.varName] < loop.endVal;
+                    
+                    if (done) {
+                        this.forLoops = this.forLoops.filter(l => l !== loop);
+                        return null;
+                    } else {
+                        return { goto: parseInt(loop.lineNum) };
+                    }
+                }
+                
+                // GOSUB/RETURN support
+                if (upperCode.startsWith('GOSUB ')) {
+                    const targetLine = parseInt(code.substring(6));
+                    this.gosubStack.push(lineNum);
+                    return { goto: targetLine };
+                }
+                
+                if (upperCode === 'RETURN') {
+                    if (this.gosubStack.length === 0) {
+                        this.print('?RETURN WITHOUT GOSUB\n');
+                        this.isRunning = false;
+                        return null;
+                    }
+                    const returnLine = this.gosubStack.pop();
+                    const lines = Object.keys(this.program).sort((a, b) => parseInt(a) - parseInt(b));
+                    const returnIndex = lines.indexOf(returnLine.toString());
+                    if (returnIndex < lines.length - 1) {
+                        return { goto: parseInt(lines[returnIndex + 1]) };
+                    }
+                    return null;
+                }
+                
+                // REM (comment)
+                if (upperCode.startsWith('REM') || upperCode.startsWith("'")) {
+                    return null;
+                }
+                
+                return null;
+            }
+
+            stopCurrentProgram() {
+                this.isRunning = false;
+                if (this.gameLoop) {
+                    cancelAnimationFrame(this.gameLoop);
+                    this.gameLoop = null;
+                }
+                if (this.gameInterval) {
+                    clearInterval(this.gameInterval);
+                    this.gameInterval = null;
+                }
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // ============ SPACE INVADERS ============
+            async runSpaceInvaders() {
+                this.currentProgram = 'invaders';
+                this.clear();
+                this.print('*** SPACE INVADERS ***\n\n');
+                this.print('CONTROLS:\n');
+                this.print('  A/LEFT  - MOVE LEFT\n');
+                this.print('  D/RIGHT - MOVE RIGHT\n');
+                this.print('  SPACE   - FIRE\n');
+                this.print('  Q       - QUIT\n\n');
+                this.print('PRESS ANY KEY TO START...\n');
+                
+                await this.waitForKey();
+                this.showCanvas();
+                
+                const game = {
+                    player: { x: 320, width: 40, height: 20 },
+                    bullets: [],
+                    aliens: [],
+                    alienBullets: [],
+                    score: 0,
+                    lives: 3,
+                    alienDir: 1,
+                    alienSpeed: 1,
+                    gameOver: false
+                };
+                
+                // Create aliens
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        game.aliens.push({
+                            x: 80 + col * 60,
+                            y: 50 + row * 40,
+                            width: 30,
+                            height: 20,
+                            alive: true
+                        });
+                    }
+                }
+                
+                const keys = {};
+                const keyHandler = (e) => {
+                    keys[e.key.toLowerCase()] = e.type === 'keydown';
+                    if (e.key.toLowerCase() === 'q') {
+                        game.gameOver = true;
+                    }
+                    if (e.key === ' ' && e.type === 'keydown') {
+                        if (game.bullets.length < 3) {
+                            game.bullets.push({ x: game.player.x, y: 350 });
+                        }
+                    }
+                };
+                
+                document.addEventListener('keydown', keyHandler);
+                document.addEventListener('keyup', keyHandler);
+                
+                const gameLoop = () => {
+                    if (game.gameOver || this.currentProgram !== 'invaders') {
+                        document.removeEventListener('keydown', keyHandler);
+                        document.removeEventListener('keyup', keyHandler);
+                        this.hideCanvas();
+                        this.print('\nGAME OVER! SCORE: ' + game.score + '\n');
+                        this.print('READY\n');
+                        this.showPrompt();
+                        return;
+                    }
+                    
+                    // Player movement
+                    if ((keys['a'] || keys['arrowleft']) && game.player.x > 30) game.player.x -= 5;
+                    if ((keys['d'] || keys['arrowright']) && game.player.x < 610) game.player.x += 5;
+                    
+                    // Update bullets
+                    game.bullets = game.bullets.filter(b => {
+                        b.y -= 8;
+                        return b.y > 0;
+                    });
+                    
+                    // Update alien bullets
+                    game.alienBullets = game.alienBullets.filter(b => {
+                        b.y += 4;
+                        // Check player hit
+                        if (b.y > 350 && Math.abs(b.x - game.player.x) < 20) {
+                            game.lives--;
+                            if (game.lives <= 0) game.gameOver = true;
+                            return false;
+                        }
+                        return b.y < 384;
+                    });
+                    
+                    // Move aliens
+                    let moveDown = false;
+                    game.aliens.forEach(a => {
+                        if (a.alive) {
+                            a.x += game.alienDir * game.alienSpeed;
+                            if (a.x < 20 || a.x > 620) moveDown = true;
+                        }
+                    });
+                    
+                    if (moveDown) {
+                        game.alienDir *= -1;
+                        game.aliens.forEach(a => { if (a.alive) a.y += 15; });
+                    }
+                    
+                    // Alien shooting
+                    if (Math.random() < 0.02) {
+                        const aliveAliens = game.aliens.filter(a => a.alive);
+                        if (aliveAliens.length > 0) {
+                            const shooter = aliveAliens[Math.floor(Math.random() * aliveAliens.length)];
+                            game.alienBullets.push({ x: shooter.x, y: shooter.y });
+                        }
+                    }
+                    
+                    // Check bullet-alien collisions
+                    game.bullets.forEach((b, bi) => {
+                        game.aliens.forEach(a => {
+                            if (a.alive && Math.abs(b.x - a.x) < 20 && Math.abs(b.y - a.y) < 15) {
+                                a.alive = false;
+                                game.bullets.splice(bi, 1);
+                                game.score += 10;
+                            }
+                        });
+                    });
+                    
+                    // Check win/lose
+                    if (game.aliens.every(a => !a.alive)) {
+                        game.gameOver = true;
+                    }
+                    if (game.aliens.some(a => a.alive && a.y > 320)) {
+                        game.gameOver = true;
+                    }
+                    
+                    // Draw
+                    this.ctx.fillStyle = '#0a1a0a';
+                    this.ctx.fillRect(0, 0, 640, 384);
+                    
+                    // Draw player
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.fillRect(game.player.x - 20, 360, 40, 15);
+                    this.ctx.fillRect(game.player.x - 5, 350, 10, 10);
+                    
+                    // Draw aliens
+                    game.aliens.forEach(a => {
+                        if (a.alive) {
+                            this.ctx.fillStyle = '#33ff33';
+                            this.ctx.fillRect(a.x - 15, a.y - 10, 30, 20);
+                            this.ctx.fillRect(a.x - 20, a.y - 5, 5, 10);
+                            this.ctx.fillRect(a.x + 15, a.y - 5, 5, 10);
+                        }
+                    });
+                    
+                    // Draw bullets
+                    this.ctx.fillStyle = '#33ff33';
+                    game.bullets.forEach(b => {
+                        this.ctx.fillRect(b.x - 2, b.y, 4, 10);
+                    });
+                    
+                    // Draw alien bullets
+                    this.ctx.fillStyle = '#ff3333';
+                    game.alienBullets.forEach(b => {
+                        this.ctx.fillRect(b.x - 2, b.y, 4, 10);
+                    });
+                    
+                    // Draw UI
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.font = '16px VT323';
+                    this.ctx.fillText('SCORE: ' + game.score, 20, 25);
+                    this.ctx.fillText('LIVES: ' + game.lives, 540, 25);
+                    
+                    this.gameLoop = requestAnimationFrame(gameLoop);
+                };
+                
+                this.gameLoop = requestAnimationFrame(gameLoop);
+            }
+
+            // ============ SNAKE ============
+            async runSnake() {
+                this.currentProgram = 'snake';
+                this.clear();
+                this.print('*** SNAKE ***\n\n');
+                this.print('CONTROLS:\n');
+                this.print('  W/UP    - UP\n');
+                this.print('  S/DOWN  - DOWN\n');
+                this.print('  A/LEFT  - LEFT\n');
+                this.print('  D/RIGHT - RIGHT\n');
+                this.print('  Q       - QUIT\n\n');
+                this.print('PRESS ANY KEY TO START...\n');
+                
+                await this.waitForKey();
+                this.showCanvas();
+                
+                const gridSize = 16;
+                const game = {
+                    snake: [{x: 20, y: 12}],
+                    dir: {x: 1, y: 0},
+                    food: {x: 30, y: 12},
+                    score: 0,
+                    gameOver: false
+                };
+                
+                const keys = {};
+                const keyHandler = (e) => {
+                    const key = e.key.toLowerCase();
+                    if (key === 'q') game.gameOver = true;
+                    if ((key === 'w' || key === 'arrowup') && game.dir.y !== 1) game.dir = {x: 0, y: -1};
+                    if ((key === 's' || key === 'arrowdown') && game.dir.y !== -1) game.dir = {x: 0, y: 1};
+                    if ((key === 'a' || key === 'arrowleft') && game.dir.x !== 1) game.dir = {x: -1, y: 0};
+                    if ((key === 'd' || key === 'arrowright') && game.dir.x !== -1) game.dir = {x: 1, y: 0};
+                };
+                
+                document.addEventListener('keydown', keyHandler);
+                
+                const spawnFood = () => {
+                    game.food = {
+                        x: Math.floor(Math.random() * 38) + 1,
+                        y: Math.floor(Math.random() * 22) + 1
+                    };
+                };
+                
+                const update = () => {
+                    if (game.gameOver || this.currentProgram !== 'snake') {
+                        document.removeEventListener('keydown', keyHandler);
+                        clearInterval(this.gameInterval);
+                        this.hideCanvas();
+                        this.print('\nGAME OVER! SCORE: ' + game.score + '\n');
+                        this.print('READY\n');
+                        this.showPrompt();
+                        return;
+                    }
+                    
+                    // Move snake
+                    const head = {x: game.snake[0].x + game.dir.x, y: game.snake[0].y + game.dir.y};
+                    
+                    // Check walls
+                    if (head.x < 0 || head.x >= 40 || head.y < 0 || head.y >= 24) {
+                        game.gameOver = true;
+                        return;
+                    }
+                    
+                    // Check self collision
+                    if (game.snake.some(s => s.x === head.x && s.y === head.y)) {
+                        game.gameOver = true;
+                        return;
+                    }
+                    
+                    game.snake.unshift(head);
+                    
+                    // Check food
+                    if (head.x === game.food.x && head.y === game.food.y) {
+                        game.score += 10;
+                        spawnFood();
+                    } else {
+                        game.snake.pop();
+                    }
+                    
+                    // Draw
+                    this.ctx.fillStyle = '#0a1a0a';
+                    this.ctx.fillRect(0, 0, 640, 384);
+                    
+                    // Draw snake
+                    this.ctx.fillStyle = '#33ff33';
+                    game.snake.forEach((s, i) => {
+                        this.ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 1, gridSize - 1);
+                    });
+                    
+                    // Draw food
+                    this.ctx.fillStyle = '#ffff33';
+                    this.ctx.fillRect(game.food.x * gridSize, game.food.y * gridSize, gridSize - 1, gridSize - 1);
+                    
+                    // Draw score
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.font = '16px VT323';
+                    this.ctx.fillText('SCORE: ' + game.score, 10, 380);
+                };
+                
+                this.gameInterval = setInterval(update, 100);
+            }
+
+            // ============ LUNAR LANDER ============
+            async runLunarLander() {
+                this.currentProgram = 'lander';
+                this.clear();
+                this.print('*** LUNAR LANDER ***\n\n');
+                this.print('LAND THE SPACECRAFT SAFELY!\n\n');
+                this.print('CONTROLS:\n');
+                this.print('  SPACE - THRUST\n');
+                this.print('  A/D   - ROTATE\n');
+                this.print('  Q     - QUIT\n\n');
+                this.print('LAND WITH VELOCITY < 2 M/S\n\n');
+                this.print('PRESS ANY KEY TO START...\n');
+                
+                await this.waitForKey();
+                this.showCanvas();
+                
+                const game = {
+                    x: 320,
+                    y: 50,
+                    vx: 0.5,
+                    vy: 0,
+                    angle: 0,
+                    fuel: 100,
+                    gameOver: false,
+                    landed: false,
+                    terrain: []
+                };
+                
+                // Generate terrain
+                let ty = 350;
+                for (let tx = 0; tx <= 640; tx += 20) {
+                    if (tx >= 280 && tx <= 360) {
+                        ty = 350; // Landing pad
+                    } else {
+                        ty = 300 + Math.random() * 70;
+                    }
+                    game.terrain.push({x: tx, y: ty});
+                }
+                
+                const keys = {};
+                const keyHandler = (e) => {
+                    keys[e.key.toLowerCase()] = e.type === 'keydown';
+                    keys[e.key] = e.type === 'keydown';
+                    if (e.key.toLowerCase() === 'q') game.gameOver = true;
+                };
+                
+                document.addEventListener('keydown', keyHandler);
+                document.addEventListener('keyup', keyHandler);
+                
+                const gameLoop = () => {
+                    if (game.gameOver || this.currentProgram !== 'lander') {
+                        document.removeEventListener('keydown', keyHandler);
+                        document.removeEventListener('keyup', keyHandler);
+                        this.hideCanvas();
+                        if (game.landed) {
+                            this.print('\n*** SUCCESSFUL LANDING! ***\n');
+                        } else {
+                            this.print('\n*** CRASH! ***\n');
+                        }
+                        this.print('READY\n');
+                        this.showPrompt();
+                        return;
+                    }
+                    
+                    // Physics
+                    game.vy += 0.02; // Gravity
+                    
+                    if (keys['a']) game.angle -= 0.05;
+                    if (keys['d']) game.angle += 0.05;
+                    
+                    if (keys[' '] && game.fuel > 0) {
+                        game.vx += Math.sin(game.angle) * 0.05;
+                        game.vy -= Math.cos(game.angle) * 0.08;
+                        game.fuel -= 0.3;
+                    }
+                    
+                    game.x += game.vx;
+                    game.y += game.vy;
+                    
+                    // Boundary check
+                    if (game.x < 20) game.x = 20;
+                    if (game.x > 620) game.x = 620;
+                    
+                    // Ground collision
+                    if (game.y > 330) {
+                        const speed = Math.sqrt(game.vx * game.vx + game.vy * game.vy);
+                        const onPad = game.x > 280 && game.x < 360;
+                        if (speed < 2 && onPad && Math.abs(game.angle) < 0.3) {
+                            game.landed = true;
+                        }
+                        game.gameOver = true;
+                    }
+                    
+                    // Draw
+                    this.ctx.fillStyle = '#0a1a0a';
+                    this.ctx.fillRect(0, 0, 640, 384);
+                    
+                    // Draw terrain
+                    this.ctx.strokeStyle = '#33ff33';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(game.terrain[0].x, game.terrain[0].y);
+                    game.terrain.forEach(t => this.ctx.lineTo(t.x, t.y));
+                    this.ctx.stroke();
+                    
+                    // Landing pad
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.fillRect(280, 348, 80, 4);
+                    
+                    // Draw lander
+                    this.ctx.save();
+                    this.ctx.translate(game.x, game.y);
+                    this.ctx.rotate(game.angle);
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, -15);
+                    this.ctx.lineTo(-10, 10);
+                    this.ctx.lineTo(10, 10);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+                    
+                    // Thrust flame
+                    if (keys[' '] && game.fuel > 0) {
+                        this.ctx.fillStyle = '#ffff33';
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(-5, 10);
+                        this.ctx.lineTo(0, 25 + Math.random() * 10);
+                        this.ctx.lineTo(5, 10);
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                    }
+                    this.ctx.restore();
+                    
+                    // Draw legs
+                    this.ctx.strokeStyle = '#33ff33';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(game.x - 10, game.y + 10);
+                    this.ctx.lineTo(game.x - 15, game.y + 20);
+                    this.ctx.moveTo(game.x + 10, game.y + 10);
+                    this.ctx.lineTo(game.x + 15, game.y + 20);
+                    this.ctx.stroke();
+                    
+                    // HUD
+                    this.ctx.fillStyle = '#33ff33';
+                    this.ctx.font = '14px VT323';
+                    this.ctx.fillText('ALT: ' + Math.max(0, (330 - game.y)).toFixed(0) + ' M', 20, 25);
+                    this.ctx.fillText('VEL: ' + Math.sqrt(game.vx*game.vx + game.vy*game.vy).toFixed(1) + ' M/S', 20, 45);
+                    this.ctx.fillText('FUEL: ' + Math.max(0, game.fuel).toFixed(0) + '%', 20, 65);
+                    
+                    this.gameLoop = requestAnimationFrame(gameLoop);
+                };
+                
+                this.gameLoop = requestAnimationFrame(gameLoop);
+            }
+
+            // ============ TEXT ADVENTURE ============
+            async runAdventure() {
+                this.currentProgram = 'adventure';
+                this.clear();
+                
+                const rooms = {
+                    start: {
+                        desc: 'YOU ARE IN A DARK CAVE. THERE IS A PASSAGE TO THE NORTH AND EAST.',
+                        north: 'hall',
+                        east: 'armory',
+                        items: ['TORCH']
+                    },
+                    hall: {
+                        desc: 'YOU ARE IN A GREAT HALL. TORCHES LINE THE WALLS. EXITS: SOUTH, WEST, NORTH.',
+                        south: 'start',
+                        west: 'library',
+                        north: 'throne',
+                        items: []
+                    },
+                    armory: {
+                        desc: 'THIS IS AN OLD ARMORY. RUSTY WEAPONS HANG ON THE WALLS. EXIT: WEST.',
+                        west: 'start',
+                        items: ['SWORD', 'SHIELD']
+                    },
+                    library: {
+                        desc: 'DUSTY BOOKS FILL THE SHELVES. THERE IS A MYSTERIOUS GLOW. EXIT: EAST.',
+                        east: 'hall',
+                        items: ['BOOK', 'KEY']
+                    },
+                    throne: {
+                        desc: 'THE THRONE ROOM! A DRAGON GUARDS THE TREASURE!',
+                        south: 'hall',
+                        items: ['TREASURE'],
+                        dragon: true
+                    }
+                };
+                
+                let currentRoom = 'start';
+                let inventory = [];
+                let dragonAlive = true;
+                
+                this.print('*** CAVE ADVENTURE ***\n\n');
+                this.print('COMMANDS: N/S/E/W, GET, DROP, INV, LOOK, ATTACK, QUIT\n\n');
+                
+                const showRoom = () => {
+                    const room = rooms[currentRoom];
+                    this.print('\n' + room.desc + '\n');
+                    if (room.items && room.items.length > 0) {
+                        this.print('YOU SEE: ' + room.items.join(', ') + '\n');
+                    }
+                    if (currentRoom === 'throne' && dragonAlive) {
+                        this.print('THE DRAGON GROWLS AT YOU!\n');
+                    }
+                };
+                
+                showRoom();
+                
+                const gameLoop = async () => {
+                    while (this.currentProgram === 'adventure') {
+                        const input = await this.getInput('>');
+                        const cmd = input.toUpperCase().trim();
+                        const room = rooms[currentRoom];
+                        
+                        if (cmd === 'QUIT' || cmd === 'Q') {
+                            this.print('GOODBYE!\n');
+                            break;
+                        }
+                        
+                        if (cmd === 'N' || cmd === 'NORTH') {
+                            if (room.north) {
+                                if (currentRoom === 'hall' && room.north === 'throne' && dragonAlive && !inventory.includes('SWORD')) {
+                                    this.print('THE DRAGON BLOCKS YOUR PATH!\n');
+                                } else {
+                                    currentRoom = room.north;
+                                    showRoom();
+                                }
+                            } else {
+                                this.print('YOU CANNOT GO THAT WAY.\n');
+                            }
+                        } else if (cmd === 'S' || cmd === 'SOUTH') {
+                            if (room.south) { currentRoom = room.south; showRoom(); }
+                            else this.print('YOU CANNOT GO THAT WAY.\n');
+                        } else if (cmd === 'E' || cmd === 'EAST') {
+                            if (room.east) { currentRoom = room.east; showRoom(); }
+                            else this.print('YOU CANNOT GO THAT WAY.\n');
+                        } else if (cmd === 'W' || cmd === 'WEST') {
+                            if (room.west) { currentRoom = room.west; showRoom(); }
+                            else this.print('YOU CANNOT GO THAT WAY.\n');
+                        } else if (cmd.startsWith('GET ')) {
+                            const item = cmd.substring(4);
+                            if (room.items && room.items.includes(item)) {
+                                if (item === 'TREASURE' && dragonAlive) {
+                                    this.print('THE DRAGON WONT LET YOU!\n');
+                                } else {
+                                    room.items = room.items.filter(i => i !== item);
+                                    inventory.push(item);
+                                    this.print('YOU TAKE THE ' + item + '.\n');
+                                    if (item === 'TREASURE') {
+                                        this.print('\n*** CONGRATULATIONS! YOU WIN! ***\n');
+                                        break;
+                                    }
+                                }
+                            } else {
+                                this.print('YOU DONT SEE THAT HERE.\n');
+                            }
+                        } else if (cmd.startsWith('DROP ')) {
+                            const item = cmd.substring(5);
+                            if (inventory.includes(item)) {
+                                inventory = inventory.filter(i => i !== item);
+                                room.items.push(item);
+                                this.print('YOU DROP THE ' + item + '.\n');
+                            } else {
+                                this.print('YOU DONT HAVE THAT.\n');
+                            }
+                        } else if (cmd === 'INV' || cmd === 'INVENTORY') {
+                            if (inventory.length > 0) {
+                                this.print('YOU CARRY: ' + inventory.join(', ') + '\n');
+                            } else {
+                                this.print('YOU ARE EMPTY-HANDED.\n');
+                            }
+                        } else if (cmd === 'LOOK') {
+                            showRoom();
+                        } else if (cmd === 'ATTACK') {
+                            if (currentRoom === 'throne' && dragonAlive) {
+                                if (inventory.includes('SWORD')) {
+                                    this.print('YOU SLAY THE DRAGON!\n');
+                                    dragonAlive = false;
+                                } else {
+                                    this.print('YOU HAVE NO WEAPON! THE DRAGON BITES YOU!\n');
+                                }
+                            } else {
+                                this.print('THERE IS NOTHING TO ATTACK.\n');
+                            }
+                        } else {
+                            this.print('I DONT UNDERSTAND.\n');
+                        }
+                    }
+                    
+                    this.print('\nREADY\n');
+                    this.currentProgram = null;
+                    this.showPrompt();
+                };
+                
+                gameLoop();
+            }
+
+            // ============ CALCULATOR ============
+            async runCalculator() {
+                this.currentProgram = 'calculator';
+                this.clear();
+                this.print('*** SCIENTIFIC CALCULATOR ***\n\n');
+                this.print('ENTER EXPRESSIONS TO CALCULATE\n');
+                this.print('FUNCTIONS: SIN, COS, TAN, SQRT, LOG, EXP, ABS\n');
+                this.print('CONSTANTS: PI, E\n');
+                this.print('TYPE QUIT TO EXIT\n\n');
+                
+                const gameLoop = async () => {
+                    while (this.currentProgram === 'calculator') {
+                        const input = await this.getInput('CALC> ');
+                        
+                        if (input.toUpperCase() === 'QUIT') {
+                            break;
+                        }
+                        
+                        try {
+                            let expr = input.toUpperCase()
+                                .replace(/SIN/g, 'Math.sin')
+                                .replace(/COS/g, 'Math.cos')
+                                .replace(/TAN/g, 'Math.tan')
+                                .replace(/SQRT/g, 'Math.sqrt')
+                                .replace(/LOG/g, 'Math.log10')
+                                .replace(/LN/g, 'Math.log')
+                                .replace(/EXP/g, 'Math.exp')
+                                .replace(/ABS/g, 'Math.abs')
+                                .replace(/PI/g, 'Math.PI')
+                                .replace(/\bE\b/g, 'Math.E')
+                                .replace(/\^/g, '**');
+                            
+                            const result = eval(expr);
+                            this.print('= ' + result + '\n\n');
+                        } catch (e) {
+                            this.print('ERROR: INVALID EXPRESSION\n\n');
+                        }
+                    }
+                    
+                    this.print('\nREADY\n');
+                    this.currentProgram = null;
+                    this.showPrompt();
+                };
+                
+                gameLoop();
+            }
+
+            // ============ BLACKJACK ============
+            async runBlackjack() {
+                this.currentProgram = 'blackjack';
+                this.clear();
+                this.print('*** BLACKJACK ***\n\n');
+                
+                const suits = ['♠', '♥', '♦', '♣'];
+                const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+                
+                const createDeck = () => {
+                    const deck = [];
+                    for (let s of suits) {
+                        for (let v of values) {
+                            deck.push({suit: s, value: v});
+                        }
+                    }
+                    return deck.sort(() => Math.random() - 0.5);
+                };
+                
+                const cardValue = (card) => {
+                    if (['J', 'Q', 'K'].includes(card.value)) return 10;
+                    if (card.value === 'A') return 11;
+                    return parseInt(card.value);
+                };
+                
+                const handValue = (hand) => {
+                    let total = hand.reduce((sum, c) => sum + cardValue(c), 0);
+                    let aces = hand.filter(c => c.value === 'A').length;
+                    while (total > 21 && aces > 0) {
+                        total -= 10;
+                        aces--;
+                    }
+                    return total;
+                };
+                
+                const showCard = (card) => card.value + card.suit;
+                const showHand = (hand) => hand.map(showCard).join(' ');
+                
+                let chips = 100;
+                
+                const gameLoop = async () => {
+                    while (this.currentProgram === 'blackjack' && chips > 0) {
+                        this.print('CHIPS: ' + chips + '\n');
+                        const betInput = await this.getInput('BET (0 TO QUIT)? ');
+                        const bet = parseInt(betInput);
+                        
+                        if (bet === 0 || isNaN(bet)) break;
+                        if (bet > chips) {
+                            this.print('NOT ENOUGH CHIPS!\n\n');
+                            continue;
+                        }
+                        
+                        const deck = createDeck();
+                        const player = [deck.pop(), deck.pop()];
+                        const dealer = [deck.pop(), deck.pop()];
+                        
+                        this.print('\nDEALER: ' + showCard(dealer[0]) + ' ??\n');
+                        this.print('YOU: ' + showHand(player) + ' (' + handValue(player) + ')\n\n');
+                        
+                        // Player turn
+                        while (handValue(player) < 21) {
+                            const action = await this.getInput('(H)IT OR (S)TAND? ');
+                            if (action.toUpperCase() === 'S') break;
+                            if (action.toUpperCase() === 'H') {
+                                player.push(deck.pop());
+                                this.print('YOU: ' + showHand(player) + ' (' + handValue(player) + ')\n');
+                            }
+                        }
+                        
+                        const playerTotal = handValue(player);
+                        
+                        if (playerTotal > 21) {
+                            this.print('BUST! YOU LOSE.\n\n');
+                            chips -= bet;
+                        } else {
+                            // Dealer turn
+                            this.print('\nDEALER: ' + showHand(dealer) + ' (' + handValue(dealer) + ')\n');
+                            while (handValue(dealer) < 17) {
+                                dealer.push(deck.pop());
+                                this.print('DEALER: ' + showHand(dealer) + ' (' + handValue(dealer) + ')\n');
+                            }
+                            
+                            const dealerTotal = handValue(dealer);
+                            
+                            if (dealerTotal > 21) {
+                                this.print('DEALER BUSTS! YOU WIN!\n\n');
+                                chips += bet;
+                            } else if (playerTotal > dealerTotal) {
+                                this.print('YOU WIN!\n\n');
+                                chips += bet;
+                            } else if (playerTotal < dealerTotal) {
+                                this.print('DEALER WINS.\n\n');
+                                chips -= bet;
+                            } else {
+                                this.print('PUSH!\n\n');
+                            }
+                        }
+                    }
+                    
+                    if (chips <= 0) {
+                        this.print('YOU ARE BROKE!\n');
+                    }
+                    this.print('FINAL CHIPS: ' + chips + '\n');
+                    this.print('\nREADY\n');
+                    this.currentProgram = null;
+                    this.showPrompt();
+                };
+                
+                gameLoop();
+            }
+
+            // ============ MEMORY GAME ============
+            async runMemoryGame() {
+                this.currentProgram = 'memory';
+                this.clear();
+                this.print('*** MEMORY GAME ***\n\n');
+                this.print('MATCH THE PAIRS!\n');
+                this.print('ENTER COORDINATES (E.G. A1)\n');
+                this.print('TYPE QUIT TO EXIT\n\n');
+                
+                const symbols = ['@', '#', '$', '%', '&', '*', '+', '='];
+                let cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+                let revealed = Array(16).fill(false);
+                let matched = Array(16).fill(false);
+                let moves = 0;
+                
+                const showBoard = (temp1 = -1, temp2 = -1) => {
+                    this.print('  1 2 3 4\n');
+                    for (let row = 0; row < 4; row++) {
+                        let line = String.fromCharCode(65 + row) + ' ';
+                        for (let col = 0; col < 4; col++) {
+                            const idx = row * 4 + col;
+                            if (matched[idx] || idx === temp1 || idx === temp2) {
+                                line += cards[idx] + ' ';
+                            } else {
+                                line += '? ';
+                            }
+                        }
+                        this.print(line + '\n');
+                    }
+                    this.print('\n');
+                };
+                
+                const parseCoord = (coord) => {
+                    if (coord.length !== 2) return -1;
+                    const row = coord.charCodeAt(0) - 65;
+                    const col = parseInt(coord[1]) - 1;
+                    if (row < 0 || row > 3 || col < 0 || col > 3) return -1;
+                    return row * 4 + col;
+                };
+                
+                showBoard();
+                
+                const gameLoop = async () => {
+                    while (this.currentProgram === 'memory' && matched.filter(m => m).length < 16) {
+                        const input1 = await this.getInput('FIRST CARD? ');
+                        if (input1.toUpperCase() === 'QUIT') break;
+                        
+                        const idx1 = parseCoord(input1.toUpperCase());
+                        if (idx1 === -1 || matched[idx1]) {
+                            this.print('INVALID!\n');
+                            continue;
+                        }
+                        
+                        showBoard(idx1);
+                        
+                        const input2 = await this.getInput('SECOND CARD? ');
+                        if (input2.toUpperCase() === 'QUIT') break;
+                        
+                        const idx2 = parseCoord(input2.toUpperCase());
+                        if (idx2 === -1 || matched[idx2] || idx1 === idx2) {
+                            this.print('INVALID!\n');
+                            continue;
+                        }
+                        
+                        showBoard(idx1, idx2);
+                        moves++;
+                        
+                        await this.sleep(1000);
+                        
+                        if (cards[idx1] === cards[idx2]) {
+                            matched[idx1] = matched[idx2] = true;
+                            this.print('MATCH!\n\n');
+                        } else {
+                            this.print('NO MATCH.\n\n');
+                        }
+                        
+                        showBoard();
+                    }
+                    
+                    if (matched.filter(m => m).length === 16) {
+                        this.print('*** YOU WIN! ***\n');
+                        this.print('MOVES: ' + moves + '\n');
+                    }
+                    
+                    this.print('\nREADY\n');
+                    this.currentProgram = null;
+                    this.showPrompt();
+                };
+                
+                gameLoop();
+            }
+
+            async waitForKey() {
+                return new Promise(resolve => {
+                    const handler = () => {
+                        document.removeEventListener('keydown', handler);
+                        resolve();
+                    };
+                    document.addEventListener('keydown', handler);
+                });
+            }
+        }
+
+        // Initialize emulator
+        const emulator = new TRS80Emulator();
+    </script>
+</body>
+</html>

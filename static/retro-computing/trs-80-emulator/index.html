@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bringing Back the Classic: Building a Lunar Lander Game - Rob Righter's Apps & Curiosities</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Courier+Prime&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="site-title"><a href="../../index.html" style="text-decoration: none; color: inherit;">ROB RIGHTER'S APPS & CURIOSITIES</a></h1>
+            <span class="established">EST. 1978</span>
+        </div>
+        <nav class="main-nav">
+            <a href="../../games.html">GAMES</a>
+            <a href="../../mathematics.html">MATHEMATICS</a>
+            <a href="../../retro.html">RETRO-COMPUTING</a>
+            <a href="../../notes.html">NOTES & INQUIRIES</a>
+        </nav>
+    </header>
+
+    <article>
+        <header class="article-header">
+            <h1 class="article-title">Bringing Back the Classic: Building a Lunar Lander Game</h1>
+            <div class="article-meta">
+                <span>By Rob Righter</span>
+                <span>Published: November 25, 2025</span>
+                <span>Category: Games</span>
+            </div>
+        </header>
+
+        <div class="article-content">
+            <div class="article-text">
+            <p>There's something timeless about Atari's 1979 arcade classic <em>Lunar Lander</em>. Before polygons, before texture mapping, before ray tracing—there were vectors. Crisp white lines glowing against the infinite black of space, a tiny spacecraft fighting gravity with nothing but thrust and nerve.</p>
+
+            <p>I recently rebuilt this classic as a browser game, and I want to share both how to play it and what makes its physics simulation tick.</p>
+
+            <h2>A Brief History</h2>
+
+            <p>The original Lunar Lander wasn't just a game—it was one of the first physics simulations accessible to the general public. The concept actually predates the arcade cabinet, originating in text-based versions from the late 1960s that ran on university mainframes. Students would input thrust values and watch numbers scroll by, hoping they hadn't cratered into the lunar surface.</p>
+
+            <p>Atari's vector graphics version transformed this into something visceral. That glowing lander, the jagged moonscape, the throttle lever you could feel in your hand—it made orbital mechanics <em>feel</em> real.</p>
+
+            <h2>How to Play</h2>
+
+            <p>The premise is deceptively simple: land your spacecraft safely on one of the flat landing pads scattered across the lunar terrain.</p>
+
+            <p><strong>Controls:</strong></p>
+            <ul>
+                <li><strong>↑ or W</strong> — Fire your main engine (thrust)</li>
+                <li><strong>← → or A/D</strong> — Rotate left and right</li>
+                <li><strong>Space</strong> — Start a new game or continue after landing</li>
+            </ul>
+
+            <p><strong>The Goal:</strong></p>
+
+            <p>Touch down on a yellow landing pad. Smaller pads offer higher score multipliers (up to 5×), but demand more precision. As you approach, the pad changes color to tell you if you're safe:</p>
+
+            <ul>
+                <li><strong>Yellow</strong> — Default state, you're not close enough for the system to assess</li>
+                <li><strong>Green</strong> — Safe to land! Your speed and angle are within tolerances</li>
+                <li><strong>Red</strong> — Danger! You're coming in too fast or at too steep an angle</li>
+            </ul>
+
+            <p>For a successful landing, you need low velocity and a relatively upright orientation. Come in too hot, tilt too far, or miss the pad entirely, and you'll experience rapid unplanned disassembly.</p>
+
+            <h2>The Physics: How Gravity Simulation Works</h2>
+
+            <p>What makes Lunar Lander satisfying isn't luck—it's physics. Every moment of gameplay emerges from a handful of simple rules applied consistently.</p>
+
+            <h3>The Gravity Model</h3>
+
+            <p>Real lunar gravity is about 1.62 m/s², roughly one-sixth of Earth's. In the game, we simulate this with a constant downward acceleration applied every frame:</p>
+
+            <pre><code>velocity_y = velocity_y + GRAVITY</code></pre>
+
+            <p>This is numerical integration at its simplest—Euler's method. Each tick of the game clock, gravity adds a small increment to your downward velocity. Leave the throttle alone, and you'll accelerate toward the surface in a perfect parabolic arc, just as Galileo described four centuries ago.</p>
+
+            <h3>Thrust and Rotation</h3>
+
+            <p>Your engine applies force in whatever direction the lander is pointing. Rotate the ship and fire thrust, and you get:</p>
+
+            <pre><code>velocity_x = velocity_x + sin(angle) × THRUST_POWER
+velocity_y = velocity_y - cos(angle) × THRUST_POWER</code></pre>
+
+            <p>The sine and cosine functions decompose your thrust into horizontal and vertical components. Point straight up and you fight gravity directly. Tilt sideways and you can arrest horizontal drift—or create it.</p>
+
+            <p>This is the essential challenge: you have one engine that pushes one direction, but you need to control motion in two dimensions. Every correction in one axis affects the other. Learning to balance these competing demands is what transforms button-mashing into piloting.</p>
+
+            <h3>Why It Feels Right</h3>
+
+            <p>The magic of this simulation is that it follows Newton's laws faithfully. Objects in motion stay in motion. Forces cause acceleration, not velocity. There's no friction in space to slow you down—if you're drifting left, you'll keep drifting left until you thrust right.</p>
+
+            <p>This creates emergent complexity from simple rules. New players often over-correct: they thrust too hard, overshoot, thrust the other way, overshoot again, oscillating wildly until they either stabilize or crash. Experienced players develop an intuition for orbital mechanics without ever studying physics formally.</p>
+
+            <h3>The Landing Calculation</h3>
+
+            <p>When you touch down, the game checks three things:</p>
+
+            <ol>
+                <li><strong>Speed</strong> — Is your total velocity (combining horizontal and vertical) below the safe threshold?</li>
+                <li><strong>Angle</strong> — Is the lander close enough to vertical?</li>
+                <li><strong>Position</strong> — Are you actually on a landing pad?</li>
+            </ol>
+
+            <p>All three must be true for a successful landing. The color-coded pads give you real-time feedback on the first two conditions as you approach, turning the final descent into a tension-filled negotiation between what you want to do and what physics will allow.</p>
+
+            <h2>The Vector Aesthetic</h2>
+
+            <p>I deliberately styled this version to evoke those original arcade cabinets. White lines on black, no fills, subtle glow effects—the vector look isn't just nostalgia, it's clarity. Every line means something. The terrain is readable at a glance, the lander's orientation is unambiguous, and the thrust flame tells you exactly when you're burning fuel.</p>
+
+            <p>There's a lesson here for modern game design: sometimes constraints produce better results than freedom. Vector displays couldn't render filled polygons, so designers learned to communicate everything through line and motion. The result was games that felt futuristic precisely because they were so abstract.</p>
+
+            <h2>Try It Yourself</h2>
+
+            <p>The game runs in any modern browser—no installation required. Challenge yourself to land on the smallest pad, or see how much fuel you can conserve. Each landing carries your score forward, so there's always pressure to push for one more successful descent.</p>
+
+            <p>And if you crater into the lunar surface? That's fine. Even the Apollo astronauts needed practice. Hit space and try again.</p>
+
+            <p>The Moon isn't going anywhere.</p>
+        </div>
+
+            <aside class="article-illustration">
+                <div class="illustration-container">
+                    <img src="./t80.png" alt="Lunar Lander game screenshot">
+                    <p class="illustration-caption">Vector graphics lunar lander with physics simulation</p>
+                </div>
+
+                <div class="illustration-container">
+                    <p><a href="./app.html">Play the Game</a></p>
+                </div>
+            </aside>
+        </div>
+
+        <footer class="article-footer" style="text-align: center; padding: 2rem; border-top: 1px solid var(--border-color);">
+            <nav style="font-family: 'Courier Prime', monospace; font-size: 0.9rem;">
+                <a href="../../index.html" style="color: var(--accent-color); text-decoration: none;">← Return to Home</a>
+                <span style="margin: 0 1rem;">|</span>
+                <a href="../../games.html" style="color: inherit; text-decoration: none;">Games</a> |
+                <a href="../../mathematics.html" style="color: inherit; text-decoration: none;">Mathematics</a> |
+                <a href="../../retro.html" style="color: inherit; text-decoration: none;">Retro</a> |
+                <a href="../../notes.html" style="color: inherit; text-decoration: none;">Notes</a>
+            </nav>
+        </footer>
+    </article>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
