@@ -112,6 +112,11 @@ document.addEventListener('DOMContentLoaded', function() {
         createAgeSpots();
     }
 
+    // Scroll-based sidebar collapse for article pages
+    if (document.querySelector('.article-content')) {
+        handleArticleSidebarScroll();
+    }
+
     // Add click animation to project cards
     projectCards.forEach(card => {
         card.addEventListener('click', function() {
@@ -226,8 +231,41 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Handle scroll-based sidebar collapse on article pages
+function handleArticleSidebarScroll() {
+    const articleContent = document.querySelector('.article-content');
+    if (!articleContent) return;
+
+    const SCROLL_THRESHOLD = 200; // Pixels scrolled before collapsing
+
+    function updateSidebarState() {
+        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrolled > SCROLL_THRESHOLD) {
+            articleContent.classList.add('sidebar-collapsed');
+        } else {
+            articleContent.classList.remove('sidebar-collapsed');
+        }
+    }
+
+    // Initial check
+    updateSidebarState();
+
+    // Listen to scroll events with throttling for performance
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateSidebarState();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+}
+
 // Console easter egg
-console.log('%c📚 Welcome to Rob Righter\'s Apps & Curiosities 📚', 
+console.log('%c📚 Welcome to Rob Righter\'s Apps & Curiosities 📚',
     'font-family: "Courier Prime", monospace; font-size: 20px; color: #8B7355; font-weight: bold;');
-console.log('%cEst. 1978 - Exploring the intersection of vintage computing and modern curiosity', 
+console.log('%cEst. 1978 - Exploring the intersection of vintage computing and modern curiosity',
     'font-family: "Courier Prime", monospace; font-size: 12px; color: #2C2416;');

@@ -358,6 +358,13 @@ body {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 3rem;
+    transition: grid-template-columns 0.4s ease;
+}
+
+/* Collapsed sidebar state - triggered by scrolling */
+.article-content.sidebar-collapsed {
+    grid-template-columns: 3.5fr 0.8fr;
+    gap: 2rem;
 }
 
 .article-text {
@@ -384,6 +391,13 @@ body {
     position: sticky;
     top: 2rem;
     height: fit-content;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Scale down sidebar content when collapsed */
+.article-content.sidebar-collapsed .article-illustration {
+    transform: scale(0.85);
+    opacity: 0.9;
 }
 
 .illustration-container {
@@ -391,6 +405,12 @@ body {
     border: 2px solid var(--border-color);
     padding: 1.5rem;
     margin-bottom: 1rem;
+    transition: padding 0.4s ease;
+}
+
+/* Reduce padding in collapsed state */
+.article-content.sidebar-collapsed .illustration-container {
+    padding: 1rem;
 }
 
 .illustration-caption {
