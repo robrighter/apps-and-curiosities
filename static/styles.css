@@ -19,7 +19,7 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     min-height: 100vh;
-    background-image: 
+    background-image:
         repeating-linear-gradient(
             0deg,
             transparent,
@@ -27,6 +27,19 @@ body {
             rgba(44, 36, 22, 0.03) 2px,
             rgba(44, 36, 22, 0.03) 4px
         );
+    overflow-x: hidden;
+}
+
+/* Ensure all SVGs are responsive */
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Prevent any element from causing horizontal overflow */
+img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
 }
 
 /* Header Styles */
@@ -411,6 +424,12 @@ body {
     transition: padding 0.4s ease;
 }
 
+.illustration-container svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* Reduce padding in collapsed state */
 .article-content.sidebar-collapsed .illustration-container {
     padding: 1rem;
@@ -527,13 +546,27 @@ body {
     .site-title {
         font-size: 1.5rem;
     }
-    
+
     .experiment-header h3 {
         font-size: 1.5rem;
     }
-    
+
     .project-card {
         padding: 1rem;
+    }
+
+    .article-header {
+        padding: 0 0.75rem;
+        margin: 1rem auto;
+    }
+
+    .article-content {
+        padding: 0 0.75rem;
+        margin: 2rem auto;
+    }
+
+    .illustration-container {
+        padding: 1rem !important;
     }
 }
 
