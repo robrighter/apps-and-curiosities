@@ -480,13 +480,21 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .article-content {
-        grid-template-columns: 1fr;
+    .article-content,
+    .article-content.sidebar-collapsed {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
     }
 
     .article-illustration {
-        position: static;
+        position: static !important;
         order: -1;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .illustration-container {
+        padding: 1.5rem !important;
     }
 
     .article-list-item {
@@ -507,6 +515,11 @@ body {
     .main-nav a {
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
+    }
+
+    .article-meta {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
 

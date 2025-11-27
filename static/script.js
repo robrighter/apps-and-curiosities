@@ -235,8 +235,15 @@ function handleArticleSidebarScroll() {
     if (!articleContent) return;
 
     const SCROLL_THRESHOLD = 200; // Pixels scrolled before collapsing
+    const MOBILE_BREAKPOINT = 768; // Match CSS media query
 
     function updateSidebarState() {
+        // Don't apply sidebar collapse on mobile devices
+        if (window.innerWidth <= MOBILE_BREAKPOINT) {
+            articleContent.classList.remove('sidebar-collapsed');
+            return;
+        }
+
         const scrolled = window.pageYOffset || document.documentElement.scrollTop;
 
         if (scrolled > SCROLL_THRESHOLD) {
@@ -252,6 +259,17 @@ function handleArticleSidebarScroll() {
     // Listen to scroll events with throttling for performance
     let ticking = false;
     window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateSidebarState();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Handle window resize to ensure proper behavior when switching between mobile/desktop
+    window.addEventListener('resize', () => {
         if (!ticking) {
             window.requestAnimationFrame(() => {
                 updateSidebarState();
