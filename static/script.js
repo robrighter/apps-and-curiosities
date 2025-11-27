@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Select and display random featured experiment
     const articles = [
         {
+            title: "THE SHAPES OF RANDOMNESS",
+            url: "mathematics/statistical-distributions/index.html",
+            image: "mathematics/statistical-distributions/sd.png",
+            description: "There's a certain magic in watching randomness organize itself. Generate a thousand random numbers from any well-defined process, plot them on a histogram, and a shape emerges—not chaos, but structure. This interactive simulator visualizes eight fundamental statistical distributions, from the ubiquitous bell curve to the memoryless exponential. Watch the Central Limit Theorem unfold in real-time as random samples converge to their theoretical shapes. These distributions form the mathematical backbone of everything from quality control to quantum mechanics, capturing patterns that puzzled Gauss and Poisson two centuries ago and continue to emerge, reliable as ever, in modern data science.",
+            category: "Category: Mathematics"
+        },
+        {
             title: "NEURAL NETWORK VISUALIZER",
             url: "mathematics/neural-network-simulator/index.html",
             image: "mathematics/neural-network-simulator/nn.png",
