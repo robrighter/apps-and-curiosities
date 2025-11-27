@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The TRS-80: A Journey Back to 1977 - Rob Righter's Apps & Curiosities</title>
+    <title>The Shapes of Randomness: A Tour Through Statistical Distributions - Rob Righter's Apps & Curiosities</title>
     <link rel="stylesheet" href="../../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Courier+Prime&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
 </head>
 <body>
     <header class="site-header">
@@ -25,209 +34,224 @@
 
     <article>
         <header class="article-header">
-            <h1 class="article-title">The TRS-80: A Journey Back to 1977</h1>
+            <h1 class="article-title">The Shapes of Randomness: A Tour Through Statistical Distributions</h1>
             <div class="article-meta">
                 <span>By Rob Righter</span>
-                <span>Published: November 26, 2025</span>
-                <span>Category: Retro-Computing</span>
+                <span>Published: November 27, 2025</span>
+                <span>Category: Mathematics</span>
             </div>
         </header>
 
         <div class="article-content">
             <div class="article-text">
 
-            <p>I was twelve years old when my grandmother handed me a heavy beige box she'd picked up at a garage sale. "I thought you might like this computer thing," she said with a knowing smile. That "computer thing" was a Radio Shack TRS-80 Model I, and it would change the trajectory of my entire life.</p>
+            <p><em>How mathematicians learned to tame uncertainty—and why these eight distributions appear everywhere</em></p>
 
-            <p>She had no idea what it was, really—just that her grandson was curious about technology, and this contraption with its chunky keyboard and mysterious cables seemed like it might spark something. She paid maybe twenty dollars for it. What she actually gave me was a portal into a world of infinite possibility.</p>
+            <hr>
 
-            <p>I spent countless hours in my bedroom, the green phosphor glow of the monitor illuminating my face late into the night, typing in BASIC programs from magazines, debugging line by line, learning that a missing semicolon could bring everything crashing down. That TRS-80 taught me patience, logic, and the pure joy of making a machine do exactly what you tell it to do.</p>
+            <p>There's a certain magic in watching randomness organize itself. Generate a thousand random numbers from any well-defined process, plot them on a histogram, and a shape emerges—not chaos, but structure. These shapes are probability distributions, and they form the mathematical backbone of everything from quality control to quantum mechanics.</p>
 
-            <p>Now, decades later, I've built a browser-based emulator to recapture that magic—and to share it with anyone who wants to experience what personal computing felt like at the very beginning.</p>
+            <p>I recently built an interactive simulator to visualize eight of the most important statistical distributions. But beyond the code and the pretty charts lies a rich history of mathematicians grappling with uncertainty, gambling problems, astronomical errors, and the fundamental question: what does it mean for something to be random?</p>
 
-            <h2>The Birth of a Revolution: A History of the TRS-80</h2>
+            <p>Let's take a tour.</p>
 
-            <h3>The Trinity of 1977</h3>
+            <hr>
 
-            <p>The year 1977 was a watershed moment in computing history. Three machines arrived almost simultaneously, forever changing the relationship between humans and computers: the Apple II, the Commodore PET, and the TRS-80. These were the "1977 Trinity," and they brought computing out of hobbyist garages and into living rooms across America.</p>
+            <h2>The Normal Distribution: The Bell Curve That Conquered Statistics</h2>
 
-            <p>The TRS-80—officially the TRS-80 Micro Computer System, with "TRS" standing for Tandy Radio Shack—was announced on August 3, 1977. It was the brainchild of Don French, a buyer for Radio Shack who saw the potential for a pre-assembled personal computer, and Steve Leininger, the engineer who designed it.</p>
+            <p><strong>The shape:</strong> A symmetric bell curve, peaking at the mean and tapering infinitely in both directions.</p>
 
-            <h3>An Unexpected Phenomenon</h3>
+            <p><strong>The formula:</strong></p>
 
-            <p>Radio Shack's parent company, Tandy Corporation, was conservative in its expectations. They manufactured only 3,000 units initially, figuring they might sell them over the course of a year to electronics hobbyists. They were spectacularly wrong.</p>
+            <p>$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$</p>
 
-            <p>The TRS-80 sold out in less than a month. Orders flooded in—over 10,000 in the first month alone. By the end of 1977, Radio Shack had a backlog of over 100,000 orders. The demand was so overwhelming that the company had to scramble to ramp up production.</p>
+            <p>If you learn only one distribution, make it this one. The normal distribution—also called Gaussian after Carl Friedrich Gauss—is arguably the most important probability distribution in existence. Its influence is so pervasive that statisticians sometimes forget it's not the <em>only</em> distribution.</p>
 
-            <h3>Why the TRS-80 Won (At First)</h3>
+            <p>The story begins with errors. In the early 1800s, astronomers faced a problem: repeated measurements of the same celestial position gave slightly different results. How should one combine these observations? Gauss, working on orbital calculations for the asteroid Ceres, developed the method of least squares and showed that measurement errors naturally follow what we now call the normal distribution.</p>
 
-            <p>Several factors contributed to the TRS-80's explosive success:</p>
+            <p>But the deeper reason for the normal distribution's ubiquity came later, with the <strong>Central Limit Theorem</strong>. This remarkable result states that when you add up many independent random variables—regardless of their individual distributions—the sum tends toward a normal distribution. Heights result from thousands of genetic and environmental factors. Test scores aggregate many skills. Stock returns compound countless decisions. The bell curve emerges not because nature prefers it, but because addition is everywhere.</p>
 
-            <p><strong>Price Point</strong>: At $599.95 for a complete system (including monitor, keyboard, and 4KB of RAM), the TRS-80 undercut the Apple II ($1,298 without a monitor) and was comparable to the Commodore PET ($795).</p>
+            <p>The distribution is fully characterized by just two parameters: the mean μ (where the peak sits) and the standard deviation σ (how spread out it is). The famous 68-95-99.7 rule tells us that roughly 68% of values fall within one standard deviation of the mean, 95% within two, and 99.7% within three.</p>
 
-            <p><strong>Retail Distribution</strong>: Radio Shack had over 3,000 stores across America. You could walk into your local mall, see a working computer, and buy one on the spot. Apple and Commodore had nothing close to this retail presence.</p>
+            <hr>
 
-            <p><strong>Complete Package</strong>: Unlike many competitors, the TRS-80 came as a complete, ready-to-use system. No soldering, no hunting for compatible monitors, no assembly required.</p>
+            <h2>The Uniform Distribution: Perfect Equality</h2>
 
-            <p><strong>Level II BASIC</strong>: The included BASIC interpreter, developed by Microsoft (one of their earliest major contracts), was powerful and relatively easy to learn.</p>
+            <p><strong>The shape:</strong> A flat rectangle—every value equally likely.</p>
 
-            <h3>The Hardware</h3>
+            <p><strong>The formula:</strong></p>
 
-            <p>The original TRS-80 Model I was built around the Zilog Z80 processor running at 1.77 MHz. It came with 4KB of RAM (expandable to 16KB, later 48KB with the Expansion Interface), and could display 64 characters across 16 lines in glowing green phosphor.</p>
+            <p>$$f(x) = \frac{1}{b-a} \quad \text{for } a \leq x \leq b$$</p>
 
-            <p>Storage was initially via cassette tape—programs could take several minutes to load, accompanied by the distinctive warbling and screeching sounds that anyone who lived through the era remembers viscerally. Later, the Expansion Interface added floppy disk support, transforming the machine into a more serious computing platform.</p>
+            <p>The uniform distribution is randomness in its purest form: no value in the interval [a, b] is preferred over any other. It's what you get from an ideal random number generator, a perfectly balanced spinner, or—in theory—the position of a point dropped randomly on a line segment.</p>
 
-            <p>The keyboard was integrated into the main unit, a silver-gray housing that would become iconic. The separate monitor sat atop it, creating the distinctive silhouette that graced countless dens and bedrooms throughout the late 1970s and early 1980s.</p>
+            <p>While it might seem too simple to be useful, the uniform distribution is actually the foundation for generating all other distributions. Through clever transformations (the inverse transform method), a uniform random variable can be converted into samples from virtually any distribution. When your computer generates "random" numbers from a normal or exponential distribution, it typically starts with uniform values and transforms them.</p>
 
-            <h3>The "Trash-80" and Its Legacy</h3>
+            <p>The uniform distribution also appears in round-off errors, hash function outputs, and as a "maximum entropy" distribution when all you know is that a value lies in some range. In Bayesian statistics, a uniform prior represents complete ignorance about a parameter's value.</p>
 
-            <p>Critics and competitors mockingly called it the "Trash-80," but owners wore the nickname as a badge of honor. Yes, the keyboard had issues (early models suffered from "keyboard bounce," registering multiple keystrokes). Yes, the cassette storage was unreliable. Yes, the graphics were primitive even by the standards of the day.</p>
+            <hr>
 
-            <p>But none of that mattered. The TRS-80 was <em>accessible</em>. It invited experimentation. It came with a manual that assumed you knew nothing and taught you everything. It spawned magazines (80 Micro, 80-US), user groups, and a thriving software ecosystem.</p>
+            <h2>The Exponential Distribution: The Memoryless Wait</h2>
 
-            <p>The TRS-80 line continued with the Model II (aimed at business), Model III (an integrated design), Model 4, and the portable Model 100. Radio Shack also released the TRS-80 Color Computer ("CoCo"), which developed its own devoted following.</p>
+            <p><strong>The shape:</strong> A steep decay from the origin, with a long right tail.</p>
 
-            <h3>The End of an Era</h3>
+            <p><strong>The formula:</strong></p>
 
-            <p>By the mid-1980s, the IBM PC and its clones had come to dominate business computing, while the Commodore 64 ruled the home market. Radio Shack struggled to keep pace, and the TRS-80 line gradually faded away. The last models were discontinued in the early 1990s.</p>
+            <p>$$f(x) = \lambda e^{-\lambda x} \quad \text{for } x \geq 0$$</p>
 
-            <p>But the TRS-80's influence endures. It was many people's first computer. It launched careers. It demonstrated that computers weren't just for corporations and universities—they were for everyone.</p>
+            <p>The exponential distribution models waiting times between random events—the time until the next customer arrives, the next radioactive decay, the next earthquake. It's characterized by a single parameter λ (lambda), the rate at which events occur on average.</p>
 
-            <h2>The Emulator: Bringing the TRS-80 to Your Browser</h2>
+            <p>What makes the exponential distribution special is its <strong>memoryless property</strong>: the probability of waiting another t minutes is the same whether you've been waiting 5 minutes or 5 hours. Mathematically, P(X > s + t | X > s) = P(X > t). This seems counterintuitive—shouldn't a machine that's been running for a year be more likely to fail soon? But for truly random events with constant hazard rates, the past provides no information about the future.</p>
 
-            <p>I built this emulator as an act of preservation and nostalgia. It recreates the experience of using a TRS-80 Model I, complete with the iconic green phosphor display, the warm wood-grain aesthetic of 1970s electronics, and a library of software on virtual floppy diskettes.</p>
+            <p>The exponential distribution connects deeply to the Poisson distribution: if events occur according to a Poisson process with rate λ, the waiting times between events are exponentially distributed with the same rate. This relationship makes both distributions essential tools in queuing theory, reliability engineering, and survival analysis.</p>
 
-            <h3>Features</h3>
+            <p>French mathematician Siméon Denis Poisson studied these processes in the early 1800s, though the exponential distribution as a formal object emerged gradually through the work of many mathematicians studying random phenomena.</p>
 
-            <p><strong>Authentic Presentation</strong>: The emulator is housed in a virtual wood-grain cabinet, true to the furniture-style electronics of the era. The CRT monitor features subtle scanlines and the characteristic green glow of phosphor displays.</p>
+            <hr>
 
-            <p><strong>Working BASIC Interpreter</strong>: The heart of the TRS-80 experience was Level II BASIC, and this emulator includes a functional BASIC interpreter. You can write programs, save them in memory, and run them just like you would have in 1978.</p>
+            <h2>The Poisson Distribution: Counting the Rare</h2>
 
-            <p><strong>Software Library</strong>: Eight virtual diskettes contain ready-to-run programs:</p>
+            <p><strong>The shape:</strong> A discrete distribution over non-negative integers, often right-skewed.</p>
+
+            <p><strong>The formula:</strong></p>
+
+            <p>$$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$$</p>
+
+            <p>How many calls will a call center receive in the next hour? How many typos appear on a page? How many goals will be scored in a soccer match? These are Poisson questions—counting occurrences of rare, independent events in a fixed interval.</p>
+
+            <p>Siméon Denis Poisson introduced this distribution in 1837, but it gained fame through a morbid application. In 1898, Ladislaus Bortkiewicz analyzed deaths by horse kicks in the Prussian army, finding that the data fit the Poisson distribution remarkably well. The "law of rare events" was born.</p>
+
+            <p>The Poisson distribution has a beautiful property: its mean and variance are both equal to λ. This makes it easy to identify in practice—if your count data shows roughly equal mean and variance, Poisson is a strong candidate. For large λ, the Poisson approximates a normal distribution, another instance of the Central Limit Theorem at work.</p>
+
+            <p>The Poisson also serves as an approximation to the binomial when n is large and p is small (so np remains moderate). This "law of small numbers" is why the Poisson appears in insurance claims, website traffic, and manufacturing defects—anywhere rare events accumulate.</p>
+
+            <hr>
+
+            <h2>The Binomial Distribution: Successes in Trials</h2>
+
+            <p><strong>The shape:</strong> A discrete distribution from 0 to n, symmetric when p = 0.5, skewed otherwise.</p>
+
+            <p><strong>The formula:</strong></p>
+
+            <p>$$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}$$</p>
+
+            <p>Flip a coin n times. How many heads? This is the binomial distribution's domain: counting successes in a fixed number of independent yes/no trials, each with the same probability p of success.</p>
+
+            <p>The binomial distribution predates formal probability theory. Jacob Bernoulli studied it extensively in the late 1600s (the individual trials are called "Bernoulli trials" in his honor), and the binomial coefficients $\binom{n}{k}$ were known to Pascal and earlier mathematicians through the arithmetic triangle.</p>
+
+            <p>The distribution's shape depends on p. When p = 0.5, it's symmetric. When p is small, it's right-skewed (most trials fail, occasional successes). When p is large, it's left-skewed. As n grows, the binomial approaches a normal distribution—yet another manifestation of the Central Limit Theorem, since a binomial random variable is just the sum of n Bernoulli random variables.</p>
+
+            <p>Applications abound: quality control (defective items in a batch), clinical trials (patients responding to treatment), polling (voters supporting a candidate), and A/B testing (users clicking a button). Anywhere you have repeated binary outcomes, the binomial distribution applies.</p>
+
+            <hr>
+
+            <h2>The Gamma Distribution: Flexible Waiting</h2>
+
+            <p><strong>The shape:</strong> Right-skewed, ranging from exponential-like to nearly symmetric.</p>
+
+            <p><strong>The formula:</strong></p>
+
+            <p>$$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x} \quad \text{for } x > 0$$</p>
+
+            <p>The gamma distribution generalizes the exponential. While exponential models the wait for <em>one</em> event, gamma models the wait for α events. This makes it extraordinarily flexible: by adjusting the shape parameter α and rate parameter β, you can produce distributions ranging from highly skewed to nearly normal.</p>
+
+            <p>The Γ(α) in the formula is the gamma function, a generalization of the factorial to non-integer values. Euler studied this function in the 1720s, finding that Γ(n) = (n-1)! for positive integers. The gamma distribution inherits its name from this function.</p>
+
+            <p>Special cases abound. When α = 1, gamma reduces to exponential. When α = n/2 and β = 1/2, it becomes the chi-squared distribution with n degrees of freedom—essential for statistical hypothesis testing. When α is a positive integer, gamma is called the Erlang distribution, named after the Danish mathematician who applied it to telephone traffic in the early 1900s.</p>
+
+            <p>The gamma distribution appears naturally in Bayesian statistics as the conjugate prior for the Poisson rate parameter, making posterior calculations elegant. It's also used to model insurance claim sizes, rainfall amounts, and service times—anywhere you need a flexible, positive-valued distribution.</p>
+
+            <hr>
+
+            <h2>The Beta Distribution: Probabilities About Probabilities</h2>
+
+            <p><strong>The shape:</strong> Bounded between 0 and 1, can be U-shaped, J-shaped, uniform, or bell-shaped.</p>
+
+            <p><strong>The formula:</strong></p>
+
+            <p>$$f(x) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha, \beta)} \quad \text{for } 0 < x < 1$$</p>
+
+            <p>The beta distribution is unique: it lives on the interval [0, 1], making it perfect for modeling probabilities, proportions, and percentages. Its two shape parameters α and β give it remarkable flexibility—it can take almost any shape that fits within the unit interval.</p>
+
+            <p>When α = β = 1, beta reduces to uniform. When α = β > 1, it's bell-shaped and symmetric. When α < 1 and β < 1, it's U-shaped (values near 0 and 1 are most likely). When one parameter exceeds the other, the distribution skews toward 0 or 1. This flexibility makes it invaluable for modeling batting averages, conversion rates, and any proportion with uncertainty.</p>
+
+            <p>In Bayesian statistics, the beta distribution is the conjugate prior for the binomial likelihood. If your prior belief about a probability p is Beta(α, β), and you observe k successes in n trials, your posterior belief is Beta(α + k, β + n - k). This elegant updating rule is why beta distributions pervade Bayesian A/B testing.</p>
+
+            <p>The B(α, β) in the denominator is the beta function, related to the gamma function by B(α, β) = Γ(α)Γ(β)/Γ(α + β). Thomas Bayes himself worked with what we now call the beta distribution in his famous 1763 essay on probability.</p>
+
+            <hr>
+
+            <h2>The Log-Normal Distribution: Multiplicative Growth</h2>
+
+            <p><strong>The shape:</strong> Strictly positive, right-skewed, with a long tail.</p>
+
+            <p><strong>The formula:</strong></p>
+
+            <p>$$f(x) = \frac{1}{x\sigma\sqrt{2\pi}} e^{-\frac{(\ln x - \mu)^2}{2\sigma^2}} \quad \text{for } x > 0$$</p>
+
+            <p>If the normal distribution emerges from addition, the log-normal emerges from multiplication. When many independent factors multiply together—rather than add—the result tends toward log-normal. Taking the logarithm converts products into sums, and sums converge to normal, so the original product is log-normal.</p>
+
+            <p>This multiplicative structure appears throughout nature and economics. Stock prices result from compounded returns. City populations grow through proportional changes. Particle sizes after grinding involve multiplicative fragmentation. Income distributions, file sizes, species abundances—all tend toward log-normal.</p>
+
+            <p>The parameters μ and σ are the mean and standard deviation of the underlying normal distribution (i.e., of log X), not of X itself. The actual mean of X is exp(μ + σ²/2), and the variance involves more complex expressions. This distinction trips up many practitioners.</p>
+
+            <p>Francis Galton, the Victorian polymath, studied log-normal distributions in the context of heredity and biological measurements. The distribution gained prominence in the early 20th century through work on particle sizes and economic phenomena.</p>
+
+            <hr>
+
+            <h2>Running the Experiment</h2>
+
+            <p>The simulator I built generates random samples from each distribution and compares them to the theoretical probability density function. This comparison illuminates several key ideas.</p>
+
+            <p><strong>The law of large numbers</strong> is visible in real-time: with 100 samples, the histogram is jagged and irregular; with 10,000, it smooths out to match the theoretical curve almost perfectly. The sample mean converges to the true mean, the sample variance to the true variance.</p>
+
+            <p><strong>Sample statistics</strong> tell you about the shape: skewness measures asymmetry (positive for right-tailed distributions like exponential and log-normal, zero for symmetric ones like normal), while kurtosis measures tail heaviness (higher values mean more extreme outliers).</p>
+
+            <p><strong>The relationship between distributions</strong> becomes visible. Increase the Poisson rate and watch it become approximately normal. Make the beta parameters equal and see symmetry emerge. Set gamma's shape to 1 and recover the exponential.</p>
+
+            <hr>
+
+            <h2>Why These Eight?</h2>
+
+            <p>These eight distributions form a canonical set that every statistician learns, but they're not arbitrary. Each captures a fundamental pattern:</p>
+
             <ul>
-                <li><strong>Level II BASIC</strong> — Boot directly to the BASIC prompt</li>
-                <li><strong>Space Invaders</strong> — Defend Earth from alien invasion</li>
-                <li><strong>Snake</strong> — The classic snake game</li>
-                <li><strong>Lunar Lander</strong> — Land your spacecraft safely on the moon</li>
-                <li><strong>Cave Adventure</strong> — A text adventure game with treasures and dragons</li>
-                <li><strong>Scientific Calculator</strong> — A full-featured calculator with trig functions</li>
-                <li><strong>Blackjack</strong> — Try your luck at the card table</li>
-                <li><strong>Memory Match</strong> — Test your memory with this card-matching game</li>
+                <li><strong>Normal</strong>: sums of many small effects</li>
+                <li><strong>Uniform</strong>: maximum entropy with bounded support</li>
+                <li><strong>Exponential</strong>: waiting times with constant hazard</li>
+                <li><strong>Poisson</strong>: counts of rare independent events</li>
+                <li><strong>Binomial</strong>: successes in fixed trials</li>
+                <li><strong>Gamma</strong>: flexible positive-valued modeling</li>
+                <li><strong>Beta</strong>: probabilities and proportions</li>
+                <li><strong>Log-normal</strong>: products of many effects</li>
             </ul>
 
-            <p><strong>View the Source Code</strong>: After playing any game, you can type <code>LIST</code> at the BASIC prompt to see its complete source code—just like curious kids did in the 1970s and 80s, learning to program by studying and modifying existing programs.</p>
+            <p>Together, they cover most situations encountered in practice. Other important distributions exist—chi-squared, t, F, Weibull, Pareto, negative binomial—but many are special cases or relatives of these eight.</p>
 
-            <h3>How to Use the Emulator</h3>
+            <hr>
 
-            <h4>Getting Started</h4>
+            <h2>The Unreasonable Effectiveness of Distributions</h2>
 
-            <ol>
-                <li><strong>Click the screen</strong> to give it focus (this allows keyboard input to be captured).</li>
-                <li><strong>Insert a diskette</strong> by clicking on any of the floppy disks in the Software Library at the bottom. The disk drive LED will flash red as the program loads.</li>
-                <li><strong>Wait for the prompt</strong> — after loading, you'll either see a game start or the <code>READY</code> prompt, depending on the software.</li>
-            </ol>
+            <p>Eugene Wigner famously wrote about "the unreasonable effectiveness of mathematics in the natural sciences." Probability distributions exemplify this mystery. Why should the same bell curve describe measurement errors, human heights, and thermal fluctuations? Why should the same Poisson distribution count both Prussian horse-kick deaths and website visitors?</p>
 
-            <h4>Playing the Games</h4>
+            <p>Part of the answer lies in the Central Limit Theorem and its relatives—mathematical inevitabilities that push diverse phenomena toward common patterns. Part lies in the modeling choices we make, seeing normality where we expect it. But part remains genuinely mysterious: the universe seems to have mathematical regularities that probability distributions capture with surprising fidelity.</p>
 
-            <p>Each game displays its controls when it starts. Common controls include:</p>
+            <p>When you run the simulator and watch random samples organize themselves into predictable shapes, you're witnessing something profound: chaos becoming order through the logic of probability. The same patterns that puzzled Gauss and Poisson two centuries ago continue to emerge, reliable as ever, every time you click "Run Simulation."</p>
 
-            <table>
-                <tr>
-                    <th>Game</th>
-                    <th>Controls</th>
-                </tr>
-                <tr>
-                    <td>Space Invaders</td>
-                    <td><code>A</code>/<code>D</code> or Arrow Keys to move, <code>SPACE</code> to fire, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Snake</td>
-                    <td><code>W</code>/<code>A</code>/<code>S</code>/<code>D</code> or Arrow Keys to change direction, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Lunar Lander</td>
-                    <td><code>A</code>/<code>D</code> to rotate, <code>SPACE</code> for thrust, <code>Q</code> to abort</td>
-                </tr>
-                <tr>
-                    <td>Adventure</td>
-                    <td><code>N</code>/<code>S</code>/<code>E</code>/<code>W</code> to move, <code>GET</code>/<code>DROP</code>/<code>INV</code>/<code>LOOK</code>/<code>ATTACK</code> commands</td>
-                </tr>
-                <tr>
-                    <td>Blackjack</td>
-                    <td><code>H</code> to hit, <code>S</code> to stand, enter bet amounts when prompted</td>
-                </tr>
-                <tr>
-                    <td>Memory Match</td>
-                    <td>Enter coordinates like <code>A1</code>, <code>B3</code>, etc.</td>
-                </tr>
-            </table>
+            <hr>
 
-            <h4>Using BASIC</h4>
+            <p><em>The Statistical Distribution Laboratory is available as an interactive HTML application. Adjust parameters, generate samples, and watch probability come alive.</em></p>
 
-            <p>When you're at the <code>READY</code> prompt, you can type BASIC commands:</p>
-
-            <p><strong>Immediate Commands:</strong></p>
-            <ul>
-                <li><code>PRINT 2+2</code> — Calculate and display results</li>
-                <li><code>CLS</code> — Clear the screen</li>
-                <li><code>LIST</code> — Show the current program in memory</li>
-                <li><code>RUN</code> — Execute the current program</li>
-                <li><code>NEW</code> — Clear the program from memory</li>
-            </ul>
-
-            <p><strong>Writing Programs:</strong></p>
-
-            <p>Type line numbers followed by BASIC statements:</p>
-
-            <pre><code>10 PRINT "HELLO, WORLD!"
-20 FOR I = 1 TO 10
-30 PRINT I
-40 NEXT I
-50 END
-RUN</code></pre>
-
-            <p><strong>Breaking Out of Programs:</strong></p>
-
-            <p>Press <code>ESC</code> at any time to break out of a running program. You'll see <code>?BREAK AT LINE XXX</code> and return to the <code>READY</code> prompt.</p>
-
-            <p><strong>Returning to BASIC:</strong></p>
-
-            <p>Type <code>SYSTEM</code> from anywhere to reset and return to the BASIC prompt.</p>
-
-            <h4>Viewing Game Source Code</h4>
-
-            <p>One of the joys of early computing was learning by reading code. After loading any game:</p>
-
-            <ol>
-                <li>Quit the game (press <code>Q</code> or let it end naturally)</li>
-                <li>At the <code>READY</code> prompt, type <code>LIST</code></li>
-                <li>Scroll through to see the complete BASIC source code</li>
-            </ol>
-
-            <p>The code is written in authentic TRS-80 BASIC style, with line numbers, <code>GOSUB</code> subroutines, <code>FOR</code>/<code>NEXT</code> loops, and all the idioms of the era.</p>
-
-            <h2>Why This Matters</h2>
-
-            <p>There's a reason so many technologists of a certain age get misty-eyed talking about their first computers. These machines weren't just tools—they were teachers, playgrounds, and windows into a new way of thinking.</p>
-
-            <p>The TRS-80 arrived at the perfect moment: powerful enough to be useful, simple enough to be understood, and cheap enough to be accessible. It invited you to look under the hood, to type <code>LIST</code> and see how things worked, to modify and experiment and break things and fix them again.</p>
-
-            <p>That spirit of accessible, explorable computing is something we've lost in the age of sealed devices and app stores. Modern computers are vastly more powerful, but they're also more opaque. The journey from curiosity to creation is longer and more obscured.</p>
-
-            <p>This emulator is my small attempt to preserve a piece of that original magic. Whether you're a veteran of the 8-bit era revisiting old memories, or a curious newcomer wondering what all the fuss was about, I hope you'll spend a few minutes with this virtual TRS-80.</p>
-
-            <p>Load up Space Invaders. Type <code>10 PRINT "HELLO"</code> and press <code>RUN</code>. Feel the satisfying clunk of those virtual keys and watch the green phosphor glow.</p>
-
-            <p>And maybe, just maybe, you'll understand why a twelve-year-old kid stayed up way past his bedtime, bathed in that eerie green light, absolutely certain that the future had arrived in his bedroom—courtesy of a grandmother who found a treasure at a garage sale.</p>
         </div>
 
             <aside class="article-illustration">
                 <div class="illustration-container">
-                    <img src="./t80.png" alt="TRS-80 Model I Emulator">
-                    <p class="illustration-caption">TRS-80 Model I emulator with authentic green phosphor display</p>
+                    <img src="./sd.png" alt="Statistical Distributions Simulator">
+                    <p class="illustration-caption">Interactive statistical distributions simulator</p>
                 </div>
 
                 <div class="illustration-container">
-                    <p><a href="./app.html">Try the Emulator</a></p>
+                    <p><a href="./app.html">Open the Simulator</a></p>
                 </div>
             </aside>
         </div>
