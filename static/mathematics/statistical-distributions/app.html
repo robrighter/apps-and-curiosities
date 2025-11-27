@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Distribution Laboratory</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-panel: #111827;
+            --bg-card: #1a2234;
+            --accent-cyan: #22d3ee;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-emerald: #10b981;
+            --accent-violet: #8b5cf6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: #1e293b;
+            --glow-cyan: rgba(34, 211, 238, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+        }
+
+        .distribution-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dist-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dist-btn:hover {
+            background: var(--bg-panel);
+            border-color: var(--accent-cyan);
+            color: var(--text-primary);
+        }
+
+        .dist-btn.active {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(139, 92, 246, 0.1));
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--glow-cyan);
+        }
+
+        .dist-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* Parameters Section */
+        .params-section {
+            margin-bottom: 2rem;
+        }
+
+        .param-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .param-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .param-value {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--bg-card);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-dark);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.75rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-rose);
+            color: var(--accent-rose);
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .dist-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dist-symbol {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(139, 92, 246, 0.15));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .dist-title-block h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .dist-formula {
+            font-size: 0.9rem;
+            color: var(--accent-amber);
+            font-style: italic;
+        }
+
+        .dist-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .dist-description strong {
+            color: var(--accent-cyan);
+        }
+
+        .use-cases {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .use-cases h4 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .use-tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Visualization Card */
+        .viz-card {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .viz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .viz-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .sample-counter {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .sample-counter span {
+            color: var(--accent-emerald);
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #histogram {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .stat-box:nth-child(2) .stat-value { color: var(--accent-amber); }
+        .stat-box:nth-child(3) .stat-value { color: var(--accent-emerald); }
+        .stat-box:nth-child(4) .stat-value { color: var(--accent-violet); }
+
+        /* Theoretical curve toggle */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .toggle-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .toggle.active {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            top: 2px;
+            left: 3px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Animation for bars */
+        @keyframes barGrow {
+            from {
+                transform: scaleY(0);
+            }
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        .bar {
+            transform-origin: bottom;
+            animation: barGrow 0.3s ease-out forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+            
+            .distribution-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .distribution-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Distribution Lab</h1>
+            <p class="subtitle">Interactive Statistical Simulation</p>
+        </header>
+
+        <div class="main-grid">
+            <aside class="sidebar">
+                <div class="section-title">Select Distribution</div>
+                <div class="distribution-list">
+                    <button class="dist-btn active" data-dist="normal">
+                        <span class="dist-icon">𝒩</span>
+                        Normal (Gaussian)
+                    </button>
+                    <button class="dist-btn" data-dist="uniform">
+                        <span class="dist-icon">▭</span>
+                        Uniform
+                    </button>
+                    <button class="dist-btn" data-dist="exponential">
+                        <span class="dist-icon">ℯ</span>
+                        Exponential
+                    </button>
+                    <button class="dist-btn" data-dist="poisson">
+                        <span class="dist-icon">λ</span>
+                        Poisson
+                    </button>
+                    <button class="dist-btn" data-dist="binomial">
+                        <span class="dist-icon">𝐵</span>
+                        Binomial
+                    </button>
+                    <button class="dist-btn" data-dist="gamma">
+                        <span class="dist-icon">Γ</span>
+                        Gamma
+                    </button>
+                    <button class="dist-btn" data-dist="beta">
+                        <span class="dist-icon">β</span>
+                        Beta
+                    </button>
+                    <button class="dist-btn" data-dist="lognormal">
+                        <span class="dist-icon">ln</span>
+                        Log-Normal
+                    </button>
+                </div>
+
+                <div class="section-title">Parameters</div>
+                <div class="params-section" id="params-container">
+                    <!-- Parameters will be dynamically inserted -->
+                </div>
+
+                <div class="section-title">Experiment</div>
+                <div class="param-group">
+                    <div class="param-label">
+                        <span class="param-name">Sample Size</span>
+                        <span class="param-value" id="sample-size-display">1000</span>
+                    </div>
+                    <input type="range" id="sample-size" min="100" max="10000" value="1000" step="100">
+                </div>
+
+                <button class="btn-primary" id="run-btn">▶ Run Simulation</button>
+                <button class="btn-secondary" id="reset-btn">↺ Reset</button>
+            </aside>
+
+            <main class="main-content">
+                <div class="info-card">
+                    <div class="dist-header">
+                        <div class="dist-symbol" id="dist-symbol">𝒩</div>
+                        <div class="dist-title-block">
+                            <h2 id="dist-name">Normal Distribution</h2>
+                            <p class="dist-formula" id="dist-formula">f(x) = (1/σ√2π) e^(-(x-μ)²/2σ²)</p>
+                        </div>
+                    </div>
+                    <p class="dist-description" id="dist-description">
+                        The <strong>Normal distribution</strong>, also known as the Gaussian distribution, is the most important probability distribution in statistics. It describes how data naturally clusters around a central mean value, forming the iconic "bell curve" shape. The distribution is fully characterized by its mean (μ) and standard deviation (σ).
+                    </p>
+                    <div class="use-cases">
+                        <h4>Common Applications</h4>
+                        <div class="use-case-tags" id="use-cases">
+                            <span class="use-tag">Human heights & weights</span>
+                            <span class="use-tag">Measurement errors</span>
+                            <span class="use-tag">IQ scores</span>
+                            <span class="use-tag">Financial returns</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-card">
+                    <div class="viz-header">
+                        <span class="viz-title">Simulation Results</span>
+                        <span class="sample-counter">Samples: <span id="sample-count">0</span></span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="histogram"></canvas>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle active" id="theory-toggle"></div>
+                        <span class="toggle-label">Show theoretical PDF</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Sample Mean</div>
+                            <div class="stat-value" id="stat-mean">—</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Sample Std Dev</div>
+                            <div class="stat-value" id="stat-std">—</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Skewness</div>
+                            <div class="stat-value" id="stat-skew">—</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Kurtosis</div>
+                            <div class="stat-value" id="stat-kurt">—</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Distribution definitions
+        const distributions = {
+            normal: {
+                name: "Normal Distribution",
+                symbol: "𝒩",
+                formula: "f(x) = (1/σ√2π) e^(-(x-μ)²/2σ²)",
+                description: `The <strong>Normal distribution</strong>, also known as the Gaussian distribution, is arguably the most important probability distribution in statistics. It emerges from the Central Limit Theorem: the sum of many independent random variables tends toward a normal distribution regardless of the original distributions. The distribution is symmetric around its mean (μ), with about 68% of values within one standard deviation (σ), 95% within two, and 99.7% within three.`,
+                useCases: ["Human heights & weights", "Measurement errors", "IQ scores", "Financial returns", "Quality control"],
+                params: [
+                    { name: "μ (mean)", id: "mu", min: -10, max: 10, value: 0, step: 0.5 },
+                    { name: "σ (std dev)", id: "sigma", min: 0.5, max: 5, value: 1, step: 0.25 }
+                ],
+                generate: (params) => {
+                    // Box-Muller transform
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    return params.mu + params.sigma * z;
+                },
+                pdf: (x, params) => {
+                    const coef = 1 / (params.sigma * Math.sqrt(2 * Math.PI));
+                    const exp = -Math.pow(x - params.mu, 2) / (2 * Math.pow(params.sigma, 2));
+                    return coef * Math.exp(exp);
+                },
+                theoreticalMean: (params) => params.mu,
+                theoreticalStd: (params) => params.sigma
+            },
+            uniform: {
+                name: "Uniform Distribution",
+                symbol: "▭",
+                formula: "f(x) = 1/(b-a) for a ≤ x ≤ b",
+                description: `The <strong>Uniform distribution</strong> represents perfect randomness where every outcome in a given interval [a, b] is equally likely. It's the distribution you get from an ideal random number generator. The probability density is constant (flat) across the entire range, making it useful as a baseline for comparison and as a building block for generating other distributions through transformation methods.`,
+                useCases: ["Random number generation", "Round-off errors", "Lottery & games", "Monte Carlo methods", "Hash functions"],
+                params: [
+                    { name: "a (min)", id: "a", min: -10, max: 5, value: 0, step: 0.5 },
+                    { name: "b (max)", id: "b", min: -5, max: 10, value: 1, step: 0.5 }
+                ],
+                generate: (params) => params.a + Math.random() * (params.b - params.a),
+                pdf: (x, params) => {
+                    if (x >= params.a && x <= params.b) {
+                        return 1 / (params.b - params.a);
+                    }
+                    return 0;
+                },
+                theoreticalMean: (params) => (params.a + params.b) / 2,
+                theoreticalStd: (params) => Math.sqrt(Math.pow(params.b - params.a, 2) / 12)
+            },
+            exponential: {
+                name: "Exponential Distribution",
+                symbol: "ℯ",
+                formula: "f(x) = λe^(-λx) for x ≥ 0",
+                description: `The <strong>Exponential distribution</strong> models the time between events in a Poisson process—random events that occur continuously and independently at a constant average rate λ. It has the unique "memoryless" property: the probability of waiting time doesn't depend on how long you've already waited. This makes it ideal for modeling reliability and survival analysis where the hazard rate is constant.`,
+                useCases: ["Time between arrivals", "Equipment lifetimes", "Radioactive decay", "Phone call durations", "Service times"],
+                params: [
+                    { name: "λ (rate)", id: "lambda", min: 0.1, max: 5, value: 1, step: 0.1 }
+                ],
+                generate: (params) => -Math.log(1 - Math.random()) / params.lambda,
+                pdf: (x, params) => {
+                    if (x < 0) return 0;
+                    return params.lambda * Math.exp(-params.lambda * x);
+                },
+                theoreticalMean: (params) => 1 / params.lambda,
+                theoreticalStd: (params) => 1 / params.lambda
+            },
+            poisson: {
+                name: "Poisson Distribution",
+                symbol: "λ",
+                formula: "P(X=k) = (λ^k e^(-λ)) / k!",
+                description: `The <strong>Poisson distribution</strong> models the number of events occurring in a fixed interval of time or space, given a known constant mean rate (λ). It's the cornerstone of queuing theory and count data analysis. Unlike the binomial, it doesn't require a fixed number of trials—just an average rate. For large λ, the Poisson approximates a normal distribution.`,
+                useCases: ["Website visitors/hour", "Defects per product", "Goals in a match", "Insurance claims", "Arrivals at a queue"],
+                params: [
+                    { name: "λ (rate)", id: "lambda", min: 0.5, max: 20, value: 5, step: 0.5 }
+                ],
+                generate: (params) => {
+                    // Knuth algorithm
+                    const L = Math.exp(-params.lambda);
+                    let k = 0;
+                    let p = 1;
+                    do {
+                        k++;
+                        p *= Math.random();
+                    } while (p > L);
+                    return k - 1;
+                },
+                pdf: (x, params) => {
+                    if (x < 0 || !Number.isInteger(x)) return 0;
+                    let result = Math.exp(-params.lambda);
+                    for (let i = 1; i <= x; i++) {
+                        result *= params.lambda / i;
+                    }
+                    return result;
+                },
+                theoreticalMean: (params) => params.lambda,
+                theoreticalStd: (params) => Math.sqrt(params.lambda),
+                discrete: true
+            },
+            binomial: {
+                name: "Binomial Distribution",
+                symbol: "𝐵",
+                formula: "P(X=k) = C(n,k) p^k (1-p)^(n-k)",
+                description: `The <strong>Binomial distribution</strong> counts the number of successes in n independent trials, each with probability p of success. It's the fundamental distribution for "yes/no" experiments repeated multiple times. The shape varies from highly skewed (low/high p) to approximately normal (p near 0.5 with large n). It underlies statistical testing and confidence intervals.`,
+                useCases: ["Quality inspection", "Clinical trials", "Election polling", "A/B testing", "Coin flipping"],
+                params: [
+                    { name: "n (trials)", id: "n", min: 1, max: 100, value: 20, step: 1 },
+                    { name: "p (probability)", id: "p", min: 0.01, max: 0.99, value: 0.5, step: 0.01 }
+                ],
+                generate: (params) => {
+                    let successes = 0;
+                    for (let i = 0; i < params.n; i++) {
+                        if (Math.random() < params.p) successes++;
+                    }
+                    return successes;
+                },
+                pdf: (x, params) => {
+                    if (x < 0 || x > params.n || !Number.isInteger(x)) return 0;
+                    // Binomial coefficient
+                    let coef = 1;
+                    for (let i = 0; i < x; i++) {
+                        coef *= (params.n - i) / (i + 1);
+                    }
+                    return coef * Math.pow(params.p, x) * Math.pow(1 - params.p, params.n - x);
+                },
+                theoreticalMean: (params) => params.n * params.p,
+                theoreticalStd: (params) => Math.sqrt(params.n * params.p * (1 - params.p)),
+                discrete: true
+            },
+            gamma: {
+                name: "Gamma Distribution",
+                symbol: "Γ",
+                formula: "f(x) = (β^α / Γ(α)) x^(α-1) e^(-βx)",
+                description: `The <strong>Gamma distribution</strong> generalizes the exponential distribution to model waiting times for α events, not just one. It's incredibly versatile: when α is an integer, it's called the Erlang distribution; when α = 1, it reduces to exponential; when α = n/2 and β = 1/2, it becomes the chi-squared distribution. Its flexibility makes it essential for Bayesian inference and reliability engineering.`,
+                useCases: ["Insurance claim sizes", "Rainfall modeling", "Queuing wait times", "Bayesian priors", "Survival analysis"],
+                params: [
+                    { name: "α (shape)", id: "alpha", min: 0.5, max: 10, value: 2, step: 0.5 },
+                    { name: "β (rate)", id: "beta", min: 0.5, max: 5, value: 1, step: 0.25 }
+                ],
+                generate: (params) => {
+                    // Marsaglia and Tsang's method for alpha >= 1
+                    if (params.alpha >= 1) {
+                        const d = params.alpha - 1/3;
+                        const c = 1 / Math.sqrt(9 * d);
+                        while (true) {
+                            let x, v;
+                            do {
+                                const u1 = Math.random();
+                                const u2 = Math.random();
+                                x = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                                v = 1 + c * x;
+                            } while (v <= 0);
+                            v = v * v * v;
+                            const u = Math.random();
+                            if (u < 1 - 0.0331 * (x * x) * (x * x)) {
+                                return d * v / params.beta;
+                            }
+                            if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) {
+                                return d * v / params.beta;
+                            }
+                        }
+                    } else {
+                        // For alpha < 1, use transformation
+                        const gamma1 = distributions.gamma.generate({ alpha: params.alpha + 1, beta: 1 });
+                        return gamma1 * Math.pow(Math.random(), 1 / params.alpha) / params.beta;
+                    }
+                },
+                pdf: (x, params) => {
+                    if (x <= 0) return 0;
+                    const gammaFunc = (z) => {
+                        // Stirling's approximation for simplicity
+                        if (z < 0.5) {
+                            return Math.PI / (Math.sin(Math.PI * z) * gammaFunc(1 - z));
+                        }
+                        z -= 1;
+                        const g = 7;
+                        const coef = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                            771.32342877765313, -176.61502916214059, 12.507343278686905,
+                            -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+                        let x = coef[0];
+                        for (let i = 1; i < g + 2; i++) {
+                            x += coef[i] / (z + i);
+                        }
+                        const t = z + g + 0.5;
+                        return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+                    };
+                    return (Math.pow(params.beta, params.alpha) / gammaFunc(params.alpha)) * 
+                           Math.pow(x, params.alpha - 1) * Math.exp(-params.beta * x);
+                },
+                theoreticalMean: (params) => params.alpha / params.beta,
+                theoreticalStd: (params) => Math.sqrt(params.alpha) / params.beta
+            },
+            beta: {
+                name: "Beta Distribution",
+                symbol: "β",
+                formula: "f(x) = (x^(α-1)(1-x)^(β-1)) / B(α,β)",
+                description: `The <strong>Beta distribution</strong> is defined on the interval [0, 1], making it perfect for modeling probabilities, proportions, and percentages. Its two shape parameters (α, β) allow extraordinary flexibility: uniform (α=β=1), U-shaped, J-shaped, or bell-shaped curves. It's the conjugate prior for binomial likelihood in Bayesian statistics, making posterior calculations elegant.`,
+                useCases: ["Conversion rates", "Defect proportions", "Bayesian inference", "Project completion %", "Species abundance"],
+                params: [
+                    { name: "α (shape 1)", id: "alpha", min: 0.5, max: 10, value: 2, step: 0.5 },
+                    { name: "β (shape 2)", id: "beta", min: 0.5, max: 10, value: 5, step: 0.5 }
+                ],
+                generate: (params) => {
+                    // Generate using gamma variates
+                    const gammaA = distributions.gamma.generate({ alpha: params.alpha, beta: 1 });
+                    const gammaB = distributions.gamma.generate({ alpha: params.beta, beta: 1 });
+                    return gammaA / (gammaA + gammaB);
+                },
+                pdf: (x, params) => {
+                    if (x <= 0 || x >= 1) return 0;
+                    const betaFunc = (a, b) => {
+                        const gammaFunc = (z) => {
+                            if (z < 0.5) {
+                                return Math.PI / (Math.sin(Math.PI * z) * gammaFunc(1 - z));
+                            }
+                            z -= 1;
+                            const g = 7;
+                            const coef = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                                771.32342877765313, -176.61502916214059, 12.507343278686905,
+                                -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+                            let x = coef[0];
+                            for (let i = 1; i < g + 2; i++) {
+                                x += coef[i] / (z + i);
+                            }
+                            const t = z + g + 0.5;
+                            return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+                        };
+                        return gammaFunc(a) * gammaFunc(b) / gammaFunc(a + b);
+                    };
+                    return Math.pow(x, params.alpha - 1) * Math.pow(1 - x, params.beta - 1) / betaFunc(params.alpha, params.beta);
+                },
+                theoreticalMean: (params) => params.alpha / (params.alpha + params.beta),
+                theoreticalStd: (params) => Math.sqrt((params.alpha * params.beta) / 
+                    (Math.pow(params.alpha + params.beta, 2) * (params.alpha + params.beta + 1)))
+            },
+            lognormal: {
+                name: "Log-Normal Distribution",
+                symbol: "ln",
+                formula: "f(x) = (1/xσ√2π) e^(-(ln x - μ)²/2σ²)",
+                description: `The <strong>Log-Normal distribution</strong> applies when the logarithm of a variable is normally distributed. It's strictly positive and right-skewed, making it ideal for quantities that result from multiplicative processes. Unlike the normal distribution, it never produces negative values. The parameters μ and σ are the mean and standard deviation of the underlying normal distribution, not the log-normal itself.`,
+                useCases: ["Stock prices", "Income distribution", "City populations", "File sizes", "Particle sizes"],
+                params: [
+                    { name: "μ (log-mean)", id: "mu", min: -2, max: 2, value: 0, step: 0.1 },
+                    { name: "σ (log-std)", id: "sigma", min: 0.1, max: 2, value: 0.5, step: 0.1 }
+                ],
+                generate: (params) => {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    return Math.exp(params.mu + params.sigma * z);
+                },
+                pdf: (x, params) => {
+                    if (x <= 0) return 0;
+                    const coef = 1 / (x * params.sigma * Math.sqrt(2 * Math.PI));
+                    const exp = -Math.pow(Math.log(x) - params.mu, 2) / (2 * Math.pow(params.sigma, 2));
+                    return coef * Math.exp(exp);
+                },
+                theoreticalMean: (params) => Math.exp(params.mu + Math.pow(params.sigma, 2) / 2),
+                theoreticalStd: (params) => Math.sqrt((Math.exp(Math.pow(params.sigma, 2)) - 1) * 
+                    Math.exp(2 * params.mu + Math.pow(params.sigma, 2)))
+            }
+        };
+
+        // State
+        let currentDist = 'normal';
+        let samples = [];
+        let showTheory = true;
+        let canvas, ctx;
+
+        // DOM Elements
+        const distButtons = document.querySelectorAll('.dist-btn');
+        const paramsContainer = document.getElementById('params-container');
+        const sampleSizeSlider = document.getElementById('sample-size');
+        const sampleSizeDisplay = document.getElementById('sample-size-display');
+        const runBtn = document.getElementById('run-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const theoryToggle = document.getElementById('theory-toggle');
+
+        // Initialize
+        function init() {
+            canvas = document.getElementById('histogram');
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Event listeners
+            distButtons.forEach(btn => {
+                btn.addEventListener('click', () => selectDistribution(btn.dataset.dist));
+            });
+            
+            sampleSizeSlider.addEventListener('input', (e) => {
+                sampleSizeDisplay.textContent = e.target.value;
+            });
+            
+            runBtn.addEventListener('click', runSimulation);
+            resetBtn.addEventListener('click', reset);
+            theoryToggle.addEventListener('click', () => {
+                showTheory = !showTheory;
+                theoryToggle.classList.toggle('active', showTheory);
+                if (samples.length > 0) drawHistogram();
+            });
+            
+            // Initial setup
+            updateUI();
+            drawEmptyChart();
+        }
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            if (samples.length > 0) {
+                drawHistogram();
+            } else {
+                drawEmptyChart();
+            }
+        }
+
+        function selectDistribution(dist) {
+            currentDist = dist;
+            distButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.dist === dist);
+            });
+            samples = [];
+            updateUI();
+            drawEmptyChart();
+            updateStats();
+        }
+
+        function updateUI() {
+            const dist = distributions[currentDist];
+            
+            // Update info card
+            document.getElementById('dist-symbol').textContent = dist.symbol;
+            document.getElementById('dist-name').textContent = dist.name;
+            document.getElementById('dist-formula').textContent = dist.formula;
+            document.getElementById('dist-description').innerHTML = dist.description;
+            
+            // Update use cases
+            const useCasesContainer = document.getElementById('use-cases');
+            useCasesContainer.innerHTML = dist.useCases.map(uc => 
+                `<span class="use-tag">${uc}</span>`
+            ).join('');
+            
+            // Update parameters
+            paramsContainer.innerHTML = dist.params.map(param => `
+                <div class="param-group">
+                    <div class="param-label">
+                        <span class="param-name">${param.name}</span>
+                        <span class="param-value" id="${param.id}-display">${param.value}</span>
+                    </div>
+                    <input type="range" id="${param.id}" 
+                           min="${param.min}" max="${param.max}" 
+                           value="${param.value}" step="${param.step}">
+                </div>
+            `).join('');
+            
+            // Add event listeners to new sliders
+            dist.params.forEach(param => {
+                const slider = document.getElementById(param.id);
+                const display = document.getElementById(`${param.id}-display`);
+                slider.addEventListener('input', (e) => {
+                    display.textContent = e.target.value;
+                });
+            });
+        }
+
+        function getParams() {
+            const dist = distributions[currentDist];
+            const params = {};
+            dist.params.forEach(param => {
+                params[param.id] = parseFloat(document.getElementById(param.id).value);
+            });
+            return params;
+        }
+
+        function runSimulation() {
+            const dist = distributions[currentDist];
+            const params = getParams();
+            const n = parseInt(sampleSizeSlider.value);
+            
+            samples = [];
+            for (let i = 0; i < n; i++) {
+                samples.push(dist.generate(params));
+            }
+            
+            document.getElementById('sample-count').textContent = samples.length.toLocaleString();
+            drawHistogram();
+            updateStats();
+        }
+
+        function reset() {
+            samples = [];
+            document.getElementById('sample-count').textContent = '0';
+            drawEmptyChart();
+            updateStats();
+        }
+
+        function drawEmptyChart() {
+            ctx.fillStyle = '#1a2234';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#64748b';
+            ctx.font = '14px "IBM Plex Mono"';
+            ctx.textAlign = 'center';
+            ctx.fillText('Click "Run Simulation" to generate samples', canvas.width / 2, canvas.height / 2);
+        }
+
+        function drawHistogram() {
+            const dist = distributions[currentDist];
+            const params = getParams();
+            const isDiscrete = dist.discrete;
+            
+            // Clear canvas
+            ctx.fillStyle = '#1a2234';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate bins
+            const min = Math.min(...samples);
+            const max = Math.max(...samples);
+            const range = max - min || 1;
+            
+            let numBins, binWidth, bins;
+            
+            if (isDiscrete) {
+                // For discrete distributions, each integer gets its own bin
+                const minInt = Math.floor(min);
+                const maxInt = Math.ceil(max);
+                numBins = maxInt - minInt + 1;
+                binWidth = 1;
+                bins = new Array(numBins).fill(0);
+                
+                samples.forEach(s => {
+                    const binIndex = Math.round(s) - minInt;
+                    if (binIndex >= 0 && binIndex < numBins) {
+                        bins[binIndex]++;
+                    }
+                });
+            } else {
+                // Sturges' rule for continuous
+                numBins = Math.ceil(1 + 3.322 * Math.log10(samples.length));
+                numBins = Math.min(numBins, 50);
+                binWidth = range / numBins;
+                bins = new Array(numBins).fill(0);
+                
+                samples.forEach(s => {
+                    const binIndex = Math.min(Math.floor((s - min) / binWidth), numBins - 1);
+                    bins[binIndex]++;
+                });
+            }
+            
+            // Convert to density for comparison with PDF
+            const density = bins.map(count => count / (samples.length * binWidth));
+            const maxDensity = Math.max(...density);
+            
+            // Drawing parameters
+            const padding = { top: 40, right: 40, bottom: 60, left: 60 };
+            const chartWidth = canvas.width - padding.left - padding.right;
+            const chartHeight = canvas.height - padding.top - padding.bottom;
+            
+            // Calculate theoretical PDF max for scaling
+            let pdfMax = maxDensity;
+            if (showTheory) {
+                for (let i = 0; i <= 100; i++) {
+                    const x = min + (range * i / 100);
+                    const pdfVal = dist.pdf(isDiscrete ? Math.round(x) : x, params);
+                    if (isFinite(pdfVal)) {
+                        pdfMax = Math.max(pdfMax, pdfVal);
+                    }
+                }
+            }
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(100, 116, 139, 0.2)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding.top + (chartHeight * i / 5);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(canvas.width - padding.right, y);
+                ctx.stroke();
+            }
+            
+            // Draw bars
+            const barGap = 2;
+            const barRealWidth = (chartWidth / numBins) - barGap;
+            
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
+            density.forEach((d, i) => {
+                const barHeight = (d / pdfMax) * chartHeight;
+                const x = padding.left + (i * (barRealWidth + barGap)) + barGap / 2;
+                const y = padding.top + chartHeight - barHeight;
+                
+                // Gradient fill
+                const gradient = ctx.createLinearGradient(x, y + barHeight, x, y);
+                gradient.addColorStop(0, 'rgba(34, 211, 238, 0.3)');
+                gradient.addColorStop(1, 'rgba(139, 92, 246, 0.6)');
+                ctx.fillStyle = gradient;
+                
+                ctx.fillRect(x, y, barRealWidth, barHeight);
+            });
+            
+            // Draw theoretical PDF
+            if (showTheory) {
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                const startX = isDiscrete ? Math.floor(min) : min;
+                const endX = isDiscrete ? Math.ceil(max) : max;
+                const pdfRange = endX - startX;
+                
+                let started = false;
+                for (let i = 0; i <= 200; i++) {
+                    const x = startX + (pdfRange * i / 200);
+                    const pdfVal = dist.pdf(isDiscrete ? Math.round(x) : x, params);
+                    
+                    if (!isFinite(pdfVal)) continue;
+                    
+                    const canvasX = padding.left + ((x - min) / range) * chartWidth;
+                    const canvasY = padding.top + chartHeight - (pdfVal / pdfMax) * chartHeight;
+                    
+                    if (!started) {
+                        ctx.moveTo(canvasX, canvasY);
+                        started = true;
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                ctx.stroke();
+                
+                // PDF glow effect
+                ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+                ctx.lineWidth = 8;
+                ctx.stroke();
+            }
+            
+            // Draw axes
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, padding.top);
+            ctx.lineTo(padding.left, canvas.height - padding.bottom);
+            ctx.lineTo(canvas.width - padding.right, canvas.height - padding.bottom);
+            ctx.stroke();
+            
+            // Axis labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px "IBM Plex Mono"';
+            ctx.textAlign = 'center';
+            
+            // X-axis labels
+            const xLabels = 5;
+            for (let i = 0; i <= xLabels; i++) {
+                const val = min + (range * i / xLabels);
+                const x = padding.left + (chartWidth * i / xLabels);
+                ctx.fillText(val.toFixed(isDiscrete ? 0 : 1), x, canvas.height - padding.bottom + 25);
+            }
+            
+            // Y-axis labels
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const val = pdfMax * (5 - i) / 5;
+                const y = padding.top + (chartHeight * i / 5);
+                ctx.fillText(val.toFixed(2), padding.left - 10, y + 4);
+            }
+            
+            // Axis titles
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px "IBM Plex Mono"';
+            ctx.textAlign = 'center';
+            ctx.fillText('Value', canvas.width / 2, canvas.height - 10);
+            
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Density', 0, 0);
+            ctx.restore();
+            
+            // Legend
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
+            ctx.fillRect(canvas.width - 160, 15, 15, 15);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '11px "IBM Plex Mono"';
+            ctx.textAlign = 'left';
+            ctx.fillText('Sample histogram', canvas.width - 140, 26);
+            
+            if (showTheory) {
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 160, 45);
+                ctx.lineTo(canvas.width - 145, 45);
+                ctx.stroke();
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText('Theoretical PDF', canvas.width - 140, 49);
+            }
+        }
+
+        function updateStats() {
+            if (samples.length === 0) {
+                document.getElementById('stat-mean').textContent = '—';
+                document.getElementById('stat-std').textContent = '—';
+                document.getElementById('stat-skew').textContent = '—';
+                document.getElementById('stat-kurt').textContent = '—';
+                return;
+            }
+            
+            const n = samples.length;
+            
+            // Mean
+            const mean = samples.reduce((a, b) => a + b, 0) / n;
+            
+            // Variance and Std Dev
+            const variance = samples.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
+            const std = Math.sqrt(variance);
+            
+            // Skewness
+            const m3 = samples.reduce((acc, val) => acc + Math.pow(val - mean, 3), 0) / n;
+            const skewness = m3 / Math.pow(std, 3);
+            
+            // Kurtosis (excess)
+            const m4 = samples.reduce((acc, val) => acc + Math.pow(val - mean, 4), 0) / n;
+            const kurtosis = (m4 / Math.pow(std, 4)) - 3;
+            
+            document.getElementById('stat-mean').textContent = mean.toFixed(3);
+            document.getElementById('stat-std').textContent = std.toFixed(3);
+            document.getElementById('stat-skew').textContent = skewness.toFixed(3);
+            document.getElementById('stat-kurt').textContent = kurtosis.toFixed(3);
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
