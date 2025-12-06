@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #2d5a27;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            z-index: 100;
+            min-width: 200px;
+        }
+
+        #controls h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        button {
+            background: #4a90d9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        button.danger {
+            background: #d9534f;
+        }
+
+        button.danger:hover {
+            background: #c9302c;
+        }
+
+        #stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #555;
+            font-size: 13px;
+        }
+
+        #stats div {
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #4a90d9;
+            font-weight: bold;
+        }
+
+        #instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #aaa;
+            font-size: 12px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div id="controls">
+        <h2>🚗 Traffic Simulator</h2>
+        <div class="control-group">
+            <button onclick="addCars(1)">Add 1 Car</button>
+            <button onclick="addCars(5)">Add 5 Cars</button>
+            <button onclick="addCars(10)">Add 10 Cars</button>
+        </div>
+        <div class="control-group">
+            <button class="danger" onclick="removeCar()">Remove 1 Car</button>
+            <button class="danger" onclick="clearAllCars()">Clear All Cars</button>
+        </div>
+        <div id="stats">
+            <div>Cars: <span class="stat-value" id="carCount">0</span></div>
+            <div>Intersections: <span class="stat-value" id="intersectionCount">0</span></div>
+        </div>
+    </div>
+    
+    <div id="instructions">
+        Click anywhere on a road to add a car at that location
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Configuration
+        const BLOCK_SIZE = 120;
+        const ROAD_WIDTH = 32;
+        const LANE_WIDTH = ROAD_WIDTH / 2;
+        const CAR_SIZE = 10;
+        const CAR_SPEED = 1.5;
+        const STOP_DISTANCE = 20;
+        const INTERSECTION_WAIT_TIME = 40;
+
+        // Colors
+        const COLORS = {
+            grass: '#2d5a27',
+            road: '#3a3a3a',
+            roadLine: '#5a5a5a',
+            centerLine: '#f1c40f',
+            stopLine: '#ffffff',
+            cars: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#ecf0f1']
+        };
+
+        let cars = [];
+        let gridCols, gridRows;
+        let intersections = [];
+
+        // Lane offsets based on direction (right-hand traffic)
+        // Offset is from road center to lane center
+        function getLaneOffset(direction) {
+            const offset = LANE_WIDTH / 2;
+            switch (direction) {
+                case 'right': return { x: 0, y: offset };      // Bottom lane going right
+                case 'left': return { x: 0, y: -offset };      // Top lane going left
+                case 'down': return { x: -offset, y: 0 };      // Left lane going down
+                case 'up': return { x: offset, y: 0 };         // Right lane going up
+            }
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            gridCols = Math.ceil(canvas.width / BLOCK_SIZE) + 1;
+            gridRows = Math.ceil(canvas.height / BLOCK_SIZE) + 1;
+            calculateIntersections();
+            generateBuildings();
+        }
+
+        function calculateIntersections() {
+            intersections = [];
+            for (let col = 0; col < gridCols; col++) {
+                for (let row = 0; row < gridRows; row++) {
+                    intersections.push({
+                        x: col * BLOCK_SIZE,
+                        y: row * BLOCK_SIZE,
+                        queue: [],
+                        currentCar: null,
+                        type: 'stop',  // 'stop' or 'light'
+                        lightState: 'ns',  // 'ns' = north-south green, 'ew' = east-west green
+                        lightTimer: 0,
+                        yellowTimer: 0,
+                        isYellow: false
+                    });
+                }
+            }
+            
+            // Convert 7 random intersections to stoplights (avoiding edge intersections)
+            const innerIntersections = intersections.filter(i => 
+                i.x > 0 && i.x < (gridCols - 1) * BLOCK_SIZE &&
+                i.y > 0 && i.y < (gridRows - 1) * BLOCK_SIZE
+            );
+            
+            // Shuffle and pick 7 (or fewer if not enough inner intersections)
+            const shuffled = innerIntersections.sort(() => Math.random() - 0.5);
+            const numLights = Math.min(7, shuffled.length);
+            
+            for (let i = 0; i < numLights; i++) {
+                shuffled[i].type = 'light';
+                shuffled[i].lightState = Math.random() > 0.5 ? 'ns' : 'ew';
+                shuffled[i].lightTimer = Math.floor(Math.random() * 180);  // Stagger the lights
+            }
+            
+            document.getElementById('intersectionCount').textContent = intersections.length;
+        }
+        
+        const LIGHT_DURATION = 180;  // Frames for each light phase (~3 seconds at 60fps)
+        const YELLOW_DURATION = 45;   // Yellow light duration
+        
+        function updateStoplights() {
+            for (let intersection of intersections) {
+                if (intersection.type !== 'light') continue;
+                
+                intersection.lightTimer++;
+                
+                if (intersection.isYellow) {
+                    intersection.yellowTimer++;
+                    if (intersection.yellowTimer >= YELLOW_DURATION) {
+                        // Switch to other direction
+                        intersection.lightState = intersection.lightState === 'ns' ? 'ew' : 'ns';
+                        intersection.isYellow = false;
+                        intersection.yellowTimer = 0;
+                        intersection.lightTimer = 0;
+                    }
+                } else if (intersection.lightTimer >= LIGHT_DURATION) {
+                    // Start yellow phase
+                    intersection.isYellow = true;
+                    intersection.yellowTimer = 0;
+                }
+            }
+        }
+        
+        function canProceedAtLight(car, intersection) {
+            // Check if car's direction has green light
+            const goingNS = car.direction === 'up' || car.direction === 'down';
+            const goingEW = car.direction === 'left' || car.direction === 'right';
+            
+            if (intersection.isYellow) {
+                // During yellow, only let cars through if they're already very close
+                return false;
+            }
+            
+            if (goingNS && intersection.lightState === 'ns') return true;
+            if (goingEW && intersection.lightState === 'ew') return true;
+            
+            return false;
+        }
+
+        function getNearestIntersectionAhead(car) {
+            let nearest = null;
+            let nearestDist = Infinity;
+
+            for (let intersection of intersections) {
+                let dist, ahead;
+
+                switch (car.direction) {
+                    case 'right':
+                        dist = intersection.x - car.roadX;
+                        ahead = dist > CAR_SIZE && Math.abs(intersection.y - car.roadY) < 1;
+                        break;
+                    case 'left':
+                        dist = car.roadX - intersection.x;
+                        ahead = dist > CAR_SIZE && Math.abs(intersection.y - car.roadY) < 1;
+                        break;
+                    case 'down':
+                        dist = intersection.y - car.roadY;
+                        ahead = dist > CAR_SIZE && Math.abs(intersection.x - car.roadX) < 1;
+                        break;
+                    case 'up':
+                        dist = car.roadY - intersection.y;
+                        ahead = dist > CAR_SIZE && Math.abs(intersection.x - car.roadX) < 1;
+                        break;
+                }
+
+                if (ahead && dist < nearestDist) {
+                    nearestDist = dist;
+                    nearest = { intersection, dist };
+                }
+            }
+
+            return nearest;
+        }
+
+        // Global arrival counter for ordering
+        let arrivalCounter = 0;
+
+        function getCarAhead(car) {
+            let nearest = null;
+            let nearestDist = Infinity;
+
+            for (let other of cars) {
+                if (other === car) continue;
+
+                // Only check cars going the same direction (same lane)
+                if (car.direction !== other.direction) continue;
+
+                // Must be on the same road
+                const sameRoad = (car.direction === 'left' || car.direction === 'right') 
+                    ? Math.abs(car.roadY - other.roadY) < 1 
+                    : Math.abs(car.roadX - other.roadX) < 1;
+                
+                if (!sameRoad) continue;
+
+                let dist, ahead;
+
+                switch (car.direction) {
+                    case 'right':
+                        dist = other.x - car.x;
+                        ahead = dist > 0 && dist < 80;
+                        break;
+                    case 'left':
+                        dist = car.x - other.x;
+                        ahead = dist > 0 && dist < 80;
+                        break;
+                    case 'down':
+                        dist = other.y - car.y;
+                        ahead = dist > 0 && dist < 80;
+                        break;
+                    case 'up':
+                        dist = car.y - other.y;
+                        ahead = dist > 0 && dist < 80;
+                        break;
+                }
+
+                if (ahead && dist < nearestDist) {
+                    nearestDist = dist;
+                    nearest = { car: other, dist };
+                }
+            }
+
+            return nearest;
+        }
+
+        function createCar(roadX, roadY, direction) {
+            const laneOffset = getLaneOffset(direction);
+            return {
+                roadX: roadX,  // Center of the road
+                roadY: roadY,
+                x: roadX + laneOffset.x,  // Actual position in lane
+                y: roadY + laneOffset.y,
+                direction: direction,
+                color: COLORS.cars[Math.floor(Math.random() * COLORS.cars.length)],
+                speed: CAR_SPEED * (0.8 + Math.random() * 0.4),
+                state: 'driving',
+                waitTime: 0,
+                stoppedAtIntersection: false,  // Track if car has come to a stop
+                arrivalOrder: 0,               // Order of arrival at intersection
+                arrivalTiebreaker: 0,          // Random tiebreaker for simultaneous arrivals
+                currentIntersection: null
+            };
+        }
+
+        function addCarAtRandomPosition() {
+            const isHorizontal = Math.random() > 0.5;
+            let roadX, roadY, direction;
+
+            if (isHorizontal) {
+                const row = Math.floor(Math.random() * gridRows);
+                roadY = row * BLOCK_SIZE;
+                roadX = Math.random() * canvas.width;
+                direction = Math.random() > 0.5 ? 'right' : 'left';
+            } else {
+                const col = Math.floor(Math.random() * gridCols);
+                roadX = col * BLOCK_SIZE;
+                roadY = Math.random() * canvas.height;
+                direction = Math.random() > 0.5 ? 'down' : 'up';
+            }
+
+            cars.push(createCar(roadX, roadY, direction));
+            updateCarCount();
+        }
+
+        function addCars(count) {
+            for (let i = 0; i < count; i++) {
+                addCarAtRandomPosition();
+            }
+        }
+
+        function removeCar() {
+            if (cars.length > 0) {
+                const removed = cars.pop();
+                if (removed.currentIntersection) {
+                    const idx = removed.currentIntersection.queue.indexOf(removed);
+                    if (idx > -1) removed.currentIntersection.queue.splice(idx, 1);
+                    if (removed.currentIntersection.currentCar === removed) {
+                        removed.currentIntersection.currentCar = null;
+                    }
+                }
+                updateCarCount();
+            }
+        }
+
+        function clearAllCars() {
+            cars = [];
+            intersections.forEach(i => {
+                i.queue = [];
+                i.currentCar = null;
+            });
+            updateCarCount();
+        }
+
+        function updateCarCount() {
+            document.getElementById('carCount').textContent = cars.length;
+        }
+
+        // Clean up intersection state periodically
+        function cleanupIntersections() {
+            for (let intersection of intersections) {
+                // Remove any cars from queue that are no longer approaching this intersection
+                intersection.queue = intersection.queue.filter(car => car.currentIntersection === intersection);
+                
+                // Clear currentCar if it's no longer valid
+                if (intersection.currentCar && intersection.currentCar.currentIntersection !== intersection) {
+                    intersection.currentCar = null;
+                }
+            }
+        }
+
+        function updateCar(car) {
+            const laneOffset = getLaneOffset(car.direction);
+
+            // Check for car ahead in same lane (but not if they're at an intersection we're also at)
+            const carAhead = getCarAhead(car);
+            if (carAhead && carAhead.dist < CAR_SIZE * 2.5) {
+                // Don't get stuck behind a car that's crossing an intersection
+                if (carAhead.car.state !== 'crossing') {
+                    return; // Don't move if too close to car ahead
+                }
+            }
+
+            // Check for upcoming intersection
+            const upcoming = getNearestIntersectionAhead(car);
+
+            if (upcoming && upcoming.dist < STOP_DISTANCE + 5 && car.state !== 'crossing') {
+                const intersection = upcoming.intersection;
+
+                // Register at intersection if not already
+                if (car.currentIntersection !== intersection) {
+                    // Clean up old intersection if any
+                    if (car.currentIntersection) {
+                        const oldIdx = car.currentIntersection.queue.indexOf(car);
+                        if (oldIdx > -1) car.currentIntersection.queue.splice(oldIdx, 1);
+                        if (car.currentIntersection.currentCar === car) {
+                            car.currentIntersection.currentCar = null;
+                        }
+                    }
+                    
+                    car.currentIntersection = intersection;
+                    car.stoppedAtIntersection = false;
+                    car.arrivalOrder = arrivalCounter++;
+                    car.arrivalTiebreaker = Math.random();
+                    if (!intersection.queue.includes(car)) {
+                        intersection.queue.push(car);
+                    }
+                    car.state = 'approaching';
+                    car.waitTime = 0;
+                }
+
+                // Handle differently based on intersection type
+                if (intersection.type === 'light') {
+                    // STOPLIGHT LOGIC
+                    const hasGreen = canProceedAtLight(car, intersection);
+                    
+                    if (hasGreen) {
+                        // Green light - can proceed if intersection is clear
+                        const intersectionClear = intersection.currentCar === null || intersection.currentCar === car;
+                        if (intersectionClear) {
+                            intersection.currentCar = car;
+                            car.state = 'crossing';
+                            const idx = intersection.queue.indexOf(car);
+                            if (idx > -1) intersection.queue.splice(idx, 1);
+                        } else {
+                            // Wait for car ahead to clear
+                            car.state = 'waiting';
+                            return;
+                        }
+                    } else {
+                        // Red or yellow light - must stop
+                        car.state = 'waiting';
+                        car.stoppedAtIntersection = true;
+                        return;
+                    }
+                } else {
+                    // STOP SIGN LOGIC
+                    // Car must come to a complete stop first
+                    if (!car.stoppedAtIntersection) {
+                        car.state = 'stopping';
+                        car.stoppedAtIntersection = true;
+                        car.waitTime = 0;
+                        return;
+                    }
+
+                    // Sort queue by arrival order, then by tiebreaker
+                    intersection.queue.sort((a, b) => {
+                        if (a.arrivalOrder !== b.arrivalOrder) {
+                            return a.arrivalOrder - b.arrivalOrder;
+                        }
+                        return a.arrivalTiebreaker - b.arrivalTiebreaker;
+                    });
+
+                    // Check if it's our turn
+                    const isFirstInQueue = intersection.queue.length > 0 && intersection.queue[0] === car;
+                    const intersectionClear = intersection.currentCar === null || intersection.currentCar === car;
+
+                    if (isFirstInQueue && intersectionClear) {
+                        car.waitTime++;
+                        // Brief pause before going
+                        if (car.waitTime >= 10) {
+                            intersection.currentCar = car;
+                            car.state = 'crossing';
+                            // Remove from queue when starting to cross
+                            const idx = intersection.queue.indexOf(car);
+                            if (idx > -1) intersection.queue.splice(idx, 1);
+                        } else {
+                            car.state = 'waiting';
+                            return;
+                        }
+                    } else {
+                        car.state = 'waiting';
+                        car.waitTime++;
+                        // Timeout recovery - if waiting too long, something is wrong
+                        if (car.waitTime > 300) {
+                            // Force clear the intersection
+                            intersection.currentCar = null;
+                            intersection.queue = intersection.queue.filter(c => c !== car);
+                            car.currentIntersection = null;
+                            car.state = 'driving';
+                            car.waitTime = 0;
+                            car.stoppedAtIntersection = false;
+                        }
+                        return;
+                    }
+                }
+            }
+
+            // Move car along road center
+            switch (car.direction) {
+                case 'right': car.roadX += car.speed; break;
+                case 'left': car.roadX -= car.speed; break;
+                case 'down': car.roadY += car.speed; break;
+                case 'up': car.roadY -= car.speed; break;
+            }
+
+            // Update actual position with lane offset
+            car.x = car.roadX + laneOffset.x;
+            car.y = car.roadY + laneOffset.y;
+
+            // Check if cleared intersection
+            if (car.currentIntersection && car.state === 'crossing') {
+                const intersection = car.currentIntersection;
+                const clearDist = ROAD_WIDTH / 2 + CAR_SIZE + 5;
+                let cleared = false;
+
+                switch (car.direction) {
+                    case 'right': cleared = car.roadX > intersection.x + clearDist; break;
+                    case 'left': cleared = car.roadX < intersection.x - clearDist; break;
+                    case 'down': cleared = car.roadY > intersection.y + clearDist; break;
+                    case 'up': cleared = car.roadY < intersection.y - clearDist; break;
+                }
+
+                if (cleared) {
+                    // Clear intersection
+                    if (intersection.currentCar === car) {
+                        intersection.currentCar = null;
+                    }
+                    const idx = intersection.queue.indexOf(car);
+                    if (idx > -1) intersection.queue.splice(idx, 1);
+                    
+                    car.currentIntersection = null;
+                    car.state = 'driving';
+                    car.waitTime = 0;
+                    car.stoppedAtIntersection = false;
+
+                    // Random turn at intersection
+                    if (Math.random() < 0.3) {
+                        const oldDirection = car.direction;
+                        const turns = {
+                            'right': ['up', 'down'],
+                            'left': ['up', 'down'],
+                            'up': ['left', 'right'],
+                            'down': ['left', 'right']
+                        };
+                        car.direction = turns[oldDirection][Math.floor(Math.random() * 2)];
+
+                        // Snap to new road
+                        if (car.direction === 'left' || car.direction === 'right') {
+                            car.roadY = Math.round(car.roadY / BLOCK_SIZE) * BLOCK_SIZE;
+                            car.roadX = intersection.x;
+                        } else {
+                            car.roadX = Math.round(car.roadX / BLOCK_SIZE) * BLOCK_SIZE;
+                            car.roadY = intersection.y;
+                        }
+
+                        // Update position with new lane offset
+                        const newLaneOffset = getLaneOffset(car.direction);
+                        car.x = car.roadX + newLaneOffset.x;
+                        car.y = car.roadY + newLaneOffset.y;
+                    }
+                }
+            }
+
+            // Wrap around screen - also clear intersection state
+            const newLaneOffset = getLaneOffset(car.direction);
+            if (car.roadX > canvas.width + CAR_SIZE) {
+                car.roadX = -CAR_SIZE;
+                car.x = car.roadX + newLaneOffset.x;
+                clearCarIntersectionState(car);
+            }
+            if (car.roadX < -CAR_SIZE) {
+                car.roadX = canvas.width + CAR_SIZE;
+                car.x = car.roadX + newLaneOffset.x;
+                clearCarIntersectionState(car);
+            }
+            if (car.roadY > canvas.height + CAR_SIZE) {
+                car.roadY = -CAR_SIZE;
+                car.y = car.roadY + newLaneOffset.y;
+                clearCarIntersectionState(car);
+            }
+            if (car.roadY < -CAR_SIZE) {
+                car.roadY = canvas.height + CAR_SIZE;
+                car.y = car.roadY + newLaneOffset.y;
+                clearCarIntersectionState(car);
+            }
+        }
+
+        function clearCarIntersectionState(car) {
+            if (car.currentIntersection) {
+                const intersection = car.currentIntersection;
+                const idx = intersection.queue.indexOf(car);
+                if (idx > -1) intersection.queue.splice(idx, 1);
+                if (intersection.currentCar === car) {
+                    intersection.currentCar = null;
+                }
+            }
+            car.currentIntersection = null;
+            car.state = 'driving';
+            car.waitTime = 0;
+            car.stoppedAtIntersection = false;
+        }
+
+        // Building data storage
+        let buildings = [];
+        
+        // Building colors
+        const BUILDING_COLORS = [
+            '#8b7355', '#a0522d', '#cd853f', '#d2691e', // Browns
+            '#708090', '#778899', '#696969', '#5f5f5f', // Grays
+            '#b8860b', '#daa520', '#f4a460', '#e6be8a', // Tans
+            '#8fbc8f', '#6b8e23', '#556b2f',            // Greens
+            '#cd5c5c', '#bc8f8f', '#c4aead',            // Reds/pinks
+            '#4682b4', '#5f9ea0', '#6495ed',            // Blues
+        ];
+        
+        const ROOF_COLORS = [
+            '#2f1810', '#3d2314', '#4a2c17', // Dark browns
+            '#1a1a2e', '#16213e', '#0f3460', // Dark blues
+            '#2d3436', '#1e272e', '#485460', // Dark grays
+            '#6b2d2d', '#7b3f3f', '#5c3d3d', // Dark reds
+        ];
+        
+        function generateBuildings() {
+            buildings = [];
+            const padding = ROAD_WIDTH / 2 + 4;
+            
+            // Generate buildings for each block (area between 4 intersections)
+            for (let col = 0; col < gridCols - 1; col++) {
+                for (let row = 0; row < gridRows - 1; row++) {
+                    const blockLeft = col * BLOCK_SIZE + padding;
+                    const blockTop = row * BLOCK_SIZE + padding;
+                    const blockRight = (col + 1) * BLOCK_SIZE - padding;
+                    const blockBottom = (row + 1) * BLOCK_SIZE - padding;
+                    const blockWidth = blockRight - blockLeft;
+                    const blockHeight = blockBottom - blockTop;
+                    
+                    if (blockWidth < 20 || blockHeight < 20) continue;
+                    
+                    // Randomly choose block layout
+                    const layoutType = Math.random();
+                    
+                    if (layoutType < 0.3) {
+                        // Single large building
+                        const margin = 4;
+                        buildings.push(createBuilding(
+                            blockLeft + margin,
+                            blockTop + margin,
+                            blockWidth - margin * 2,
+                            blockHeight - margin * 2
+                        ));
+                    } else if (layoutType < 0.6) {
+                        // 2x2 grid of buildings
+                        const gapX = 6;
+                        const gapY = 6;
+                        const bw = (blockWidth - gapX) / 2 - 2;
+                        const bh = (blockHeight - gapY) / 2 - 2;
+                        
+                        for (let bx = 0; bx < 2; bx++) {
+                            for (let by = 0; by < 2; by++) {
+                                if (Math.random() > 0.15) { // Sometimes skip a building
+                                    buildings.push(createBuilding(
+                                        blockLeft + bx * (bw + gapX) + 2,
+                                        blockTop + by * (bh + gapY) + 2,
+                                        bw,
+                                        bh
+                                    ));
+                                }
+                            }
+                        }
+                    } else if (layoutType < 0.8) {
+                        // Row of buildings
+                        const numBuildings = 2 + Math.floor(Math.random() * 2);
+                        const gap = 5;
+                        const bw = (blockWidth - gap * (numBuildings - 1)) / numBuildings - 2;
+                        
+                        for (let i = 0; i < numBuildings; i++) {
+                            if (Math.random() > 0.1) {
+                                const heightVariation = Math.random() * 10;
+                                buildings.push(createBuilding(
+                                    blockLeft + i * (bw + gap) + 2,
+                                    blockTop + 2 + heightVariation / 2,
+                                    bw,
+                                    blockHeight - 4 - heightVariation
+                                ));
+                            }
+                        }
+                    } else {
+                        // L-shaped or irregular arrangement
+                        const mainWidth = blockWidth * 0.6;
+                        const mainHeight = blockHeight * 0.6;
+                        
+                        // Main building
+                        buildings.push(createBuilding(
+                            blockLeft + 2,
+                            blockTop + 2,
+                            mainWidth,
+                            mainHeight
+                        ));
+                        
+                        // Side building
+                        if (Math.random() > 0.3) {
+                            buildings.push(createBuilding(
+                                blockLeft + mainWidth + 6,
+                                blockTop + 2,
+                                blockWidth - mainWidth - 10,
+                                blockHeight * 0.45
+                            ));
+                        }
+                        
+                        // Bottom building
+                        if (Math.random() > 0.3) {
+                            buildings.push(createBuilding(
+                                blockLeft + 2,
+                                blockTop + mainHeight + 6,
+                                blockWidth * 0.45,
+                                blockHeight - mainHeight - 10
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        
+        function createBuilding(x, y, width, height) {
+            const floors = 1 + Math.floor(Math.random() * 4);
+            const color = BUILDING_COLORS[Math.floor(Math.random() * BUILDING_COLORS.length)];
+            const roofColor = ROOF_COLORS[Math.floor(Math.random() * ROOF_COLORS.length)];
+            const hasRoofDetail = Math.random() > 0.5;
+            const windowStyle = Math.floor(Math.random() * 3);
+            
+            // Pre-generate window states
+            const margin = 4;
+            const gapX = windowStyle === 0 ? 6 : (windowStyle === 1 ? 8 : 5);
+            const gapY = 8;
+            const numWindowsX = Math.floor((width - margin * 2) / gapX);
+            const numWindowsY = Math.floor((height - 10) / gapY);
+            
+            const windows = [];
+            for (let wy = 0; wy < numWindowsY && wy < floors + 1; wy++) {
+                for (let wx = 0; wx < numWindowsX; wx++) {
+                    // 0 = dark, 1 = blue/reflective, 2 = yellow/lit
+                    let state;
+                    if (Math.random() > 0.2) {
+                        state = Math.random() > 0.7 ? 2 : 1;
+                    } else {
+                        state = 0;
+                    }
+                    windows.push(state);
+                }
+            }
+            
+            return { x, y, width, height, floors, color, roofColor, hasRoofDetail, windowStyle, windows, numWindowsX, numWindowsY };
+        }
+        
+        // Slowly update window lights
+        function updateWindowLights() {
+            for (let building of buildings) {
+                if (!building.windows) continue;
+                
+                // Only change 1-2 windows per building occasionally
+                if (Math.random() < 0.02) {  // ~1% chance per frame per building
+                    const idx = Math.floor(Math.random() * building.windows.length);
+                    // Toggle or change window state
+                    if (building.windows[idx] === 0) {
+                        building.windows[idx] = Math.random() > 0.5 ? 1 : 2;
+                    } else if (Math.random() < 0.3) {
+                        building.windows[idx] = 0;
+                    } else {
+                        building.windows[idx] = building.windows[idx] === 1 ? 2 : 1;
+                    }
+                }
+            }
+        }
+        
+        function drawBuildings() {
+            for (let building of buildings) {
+                const { x, y, width, height, floors, color, roofColor, hasRoofDetail, windowStyle, windows, numWindowsX, numWindowsY } = building;
+                
+                // Building shadow
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fillRect(x + 3, y + 3, width, height);
+                
+                // Main building body
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, width, height);
+                
+                // Building outline
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, width, height);
+                
+                // Roof
+                ctx.fillStyle = roofColor;
+                ctx.fillRect(x, y, width, 4);
+                
+                // Roof detail (AC units, etc)
+                if (hasRoofDetail && width > 20) {
+                    ctx.fillStyle = '#555';
+                    const unitSize = 4;
+                    const numUnits = Math.floor(width / 15);
+                    for (let i = 0; i < numUnits; i++) {
+                        ctx.fillRect(x + 6 + i * 12, y + 1, unitSize, unitSize - 1);
+                    }
+                }
+                
+                // Windows
+                if (width > 15 && height > 15 && windows) {
+                    const margin = 4;
+                    const windowWidth = windowStyle === 0 ? 4 : (windowStyle === 1 ? 6 : 3);
+                    const windowHeight = windowStyle === 0 ? 5 : (windowStyle === 1 ? 4 : 6);
+                    const gapX = windowStyle === 0 ? 6 : (windowStyle === 1 ? 8 : 5);
+                    const gapY = 8;
+                    
+                    const startY = y + 6;
+                    const startX = x + margin;
+                    
+                    const windowColors = ['#2a2a3a', '#87ceeb', '#fffacd'];  // dark, blue, yellow
+                    
+                    let windowIdx = 0;
+                    for (let wy = 0; wy < numWindowsY && wy < floors + 1; wy++) {
+                        for (let wx = 0; wx < numWindowsX; wx++) {
+                            if (windowIdx < windows.length) {
+                                ctx.fillStyle = windowColors[windows[windowIdx]];
+                                ctx.fillRect(
+                                    startX + wx * gapX,
+                                    startY + wy * gapY,
+                                    windowWidth,
+                                    windowHeight
+                                );
+                                windowIdx++;
+                            }
+                        }
+                    }
+                }
+                
+                // Door (on larger buildings)
+                if (width > 20 && height > 20) {
+                    ctx.fillStyle = '#4a3728';
+                    const doorWidth = 5;
+                    const doorHeight = 8;
+                    ctx.fillRect(
+                        x + width / 2 - doorWidth / 2,
+                        y + height - doorHeight,
+                        doorWidth,
+                        doorHeight
+                    );
+                }
+            }
+        }
+
+        function drawRoads() {
+            // Draw grass background
+            ctx.fillStyle = COLORS.grass;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw buildings first (under roads)
+            drawBuildings();
+
+            // Draw horizontal roads
+            for (let row = 0; row < gridRows; row++) {
+                const y = row * BLOCK_SIZE;
+                ctx.fillStyle = COLORS.road;
+                ctx.fillRect(0, y - ROAD_WIDTH / 2, canvas.width, ROAD_WIDTH);
+
+                // Yellow center line (dashed)
+                ctx.strokeStyle = COLORS.centerLine;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([15, 10]);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw vertical roads
+            for (let col = 0; col < gridCols; col++) {
+                const x = col * BLOCK_SIZE;
+                ctx.fillStyle = COLORS.road;
+                ctx.fillRect(x - ROAD_WIDTH / 2, 0, ROAD_WIDTH, canvas.height);
+
+                // Yellow center line (dashed)
+                ctx.strokeStyle = COLORS.centerLine;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([15, 10]);
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw intersections and stop lines
+            for (let intersection of intersections) {
+                const x = intersection.x;
+                const y = intersection.y;
+                const halfRoad = ROAD_WIDTH / 2;
+
+                // Intersection surface
+                ctx.fillStyle = COLORS.road;
+                ctx.fillRect(x - halfRoad, y - halfRoad, ROAD_WIDTH, ROAD_WIDTH);
+
+                // Stop lines for each approach
+                ctx.strokeStyle = COLORS.stopLine;
+                ctx.lineWidth = 2;
+
+                // Stop line for cars coming from top (going down) - left lane
+                ctx.beginPath();
+                ctx.moveTo(x - halfRoad, y - halfRoad);
+                ctx.lineTo(x, y - halfRoad);
+                ctx.stroke();
+
+                // Stop line for cars coming from bottom (going up) - right lane
+                ctx.beginPath();
+                ctx.moveTo(x, y + halfRoad);
+                ctx.lineTo(x + halfRoad, y + halfRoad);
+                ctx.stroke();
+
+                // Stop line for cars coming from left (going right) - bottom lane
+                ctx.beginPath();
+                ctx.moveTo(x - halfRoad, y);
+                ctx.lineTo(x - halfRoad, y + halfRoad);
+                ctx.stroke();
+
+                // Stop line for cars coming from right (going left) - top lane
+                ctx.beginPath();
+                ctx.moveTo(x + halfRoad, y - halfRoad);
+                ctx.lineTo(x + halfRoad, y);
+                ctx.stroke();
+
+                ctx.lineWidth = 1;
+                
+                // Draw traffic lights for stoplight intersections
+                if (intersection.type === 'light') {
+                    const lightSize = 8;
+                    const lightOffset = halfRoad + 8;
+                    
+                    // Determine colors for each direction
+                    const nsGreen = intersection.lightState === 'ns' && !intersection.isYellow;
+                    const nsYellow = intersection.lightState === 'ns' && intersection.isYellow;
+                    const ewGreen = intersection.lightState === 'ew' && !intersection.isYellow;
+                    const ewYellow = intersection.lightState === 'ew' && intersection.isYellow;
+                    
+                    // Draw light housings and lights at each corner
+                    const drawLight = (lx, ly, isGreen, isYellow) => {
+                        // Housing
+                        ctx.fillStyle = '#222';
+                        ctx.fillRect(lx - lightSize/2 - 2, ly - lightSize*1.5 - 2, lightSize + 4, lightSize * 3 + 4);
+                        
+                        // Red light
+                        ctx.beginPath();
+                        ctx.arc(lx, ly - lightSize, lightSize/2 - 1, 0, Math.PI * 2);
+                        ctx.fillStyle = (!isGreen && !isYellow) ? '#ff0000' : '#330000';
+                        ctx.fill();
+                        
+                        // Yellow light
+                        ctx.beginPath();
+                        ctx.arc(lx, ly, lightSize/2 - 1, 0, Math.PI * 2);
+                        ctx.fillStyle = isYellow ? '#ffff00' : '#333300';
+                        ctx.fill();
+                        
+                        // Green light
+                        ctx.beginPath();
+                        ctx.arc(lx, ly + lightSize, lightSize/2 - 1, 0, Math.PI * 2);
+                        ctx.fillStyle = isGreen ? '#00ff00' : '#003300';
+                        ctx.fill();
+                    };
+                    
+                    // North-south lights (top and bottom of intersection)
+                    drawLight(x - lightOffset, y - lightOffset + lightSize, nsGreen, nsYellow);  // Top-left for southbound
+                    drawLight(x + lightOffset, y + lightOffset - lightSize, nsGreen, nsYellow);  // Bottom-right for northbound
+                    
+                    // East-west lights (left and right of intersection)
+                    drawLight(x - lightOffset, y + lightOffset - lightSize, ewGreen, ewYellow);  // Bottom-left for eastbound
+                    drawLight(x + lightOffset, y - lightOffset + lightSize, ewGreen, ewYellow);  // Top-right for westbound
+                }
+            }
+        }
+
+        function drawCar(car) {
+            ctx.save();
+            ctx.translate(car.x, car.y);
+
+            // Rotate based on direction
+            const rotations = { 'right': 0, 'down': Math.PI / 2, 'left': Math.PI, 'up': -Math.PI / 2 };
+            ctx.rotate(rotations[car.direction]);
+
+            // Car body
+            ctx.fillStyle = car.color;
+            ctx.fillRect(-CAR_SIZE / 2, -CAR_SIZE / 2, CAR_SIZE, CAR_SIZE);
+
+            // Headlights (front)
+            ctx.fillStyle = '#ffff99';
+            ctx.fillRect(CAR_SIZE / 2 - 2, -CAR_SIZE / 2 + 1, 2, 2);
+            ctx.fillRect(CAR_SIZE / 2 - 2, CAR_SIZE / 2 - 3, 2, 2);
+
+            // Brake lights (back) - show when waiting or stopping
+            if (car.state === 'waiting' || car.state === 'stopping') {
+                ctx.fillStyle = '#ff0000';
+            } else {
+                ctx.fillStyle = '#660000';
+            }
+            ctx.fillRect(-CAR_SIZE / 2, -CAR_SIZE / 2 + 1, 2, 2);
+            ctx.fillRect(-CAR_SIZE / 2, CAR_SIZE / 2 - 3, 2, 2);
+
+            ctx.restore();
+        }
+
+        function draw() {
+            drawRoads();
+
+            for (let car of cars) {
+                drawCar(car);
+            }
+        }
+
+        let frameCount = 0;
+        
+        function update() {
+            frameCount++;
+            
+            // Update stoplights
+            updateStoplights();
+            
+            // Update window lights very slowly (every 30 frames check)
+            if (frameCount % 30 === 0) {
+                updateWindowLights();
+            }
+            
+            // Cleanup every 60 frames
+            if (frameCount % 60 === 0) {
+                cleanupIntersections();
+            }
+            for (let car of cars) {
+                updateCar(car);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Click to add car
+        canvas.addEventListener('click', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Check if click is on a road
+            let onRoad = false;
+            let direction = null;
+            let roadX = x;
+            let roadY = y;
+
+            // Check horizontal roads
+            for (let row = 0; row < gridRows; row++) {
+                const roadCenterY = row * BLOCK_SIZE;
+                if (Math.abs(y - roadCenterY) < ROAD_WIDTH / 2) {
+                    onRoad = true;
+                    roadY = roadCenterY;
+                    // Determine direction based on which lane was clicked
+                    if (y > roadCenterY) {
+                        direction = 'right';  // Bottom lane goes right
+                    } else {
+                        direction = 'left';   // Top lane goes left
+                    }
+                    break;
+                }
+            }
+
+            // Check vertical roads
+            if (!onRoad) {
+                for (let col = 0; col < gridCols; col++) {
+                    const roadCenterX = col * BLOCK_SIZE;
+                    if (Math.abs(x - roadCenterX) < ROAD_WIDTH / 2) {
+                        onRoad = true;
+                        roadX = roadCenterX;
+                        // Determine direction based on which lane was clicked
+                        if (x < roadCenterX) {
+                            direction = 'down';  // Left lane goes down
+                        } else {
+                            direction = 'up';    // Right lane goes up
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (onRoad && direction) {
+                cars.push(createCar(roadX, roadY, direction));
+                updateCarCount();
+            }
+        });
+
+        // Initialize
+        window.addEventListener('resize', resize);
+        resize();
+        addCars(15);
+        gameLoop();
+    </script>
+</body>
+</html>
