@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Traffic Simulation - Rob Righter's Apps & Curiosities</title>
+    <title>Building a Traffic Simulator with AI - Rob Righter's Apps & Curiosities</title>
     <link rel="stylesheet" href="../../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,209 +25,176 @@
 
     <article>
         <header class="article-header">
-            <h1 class="article-title">The TRS-80: A Journey Back to 1977</h1>
+            <h1 class="article-title">Building a Traffic Simulator with AI: From Idea to Interactive City in Minutes</h1>
             <div class="article-meta">
                 <span>By Rob Righter</span>
                 <span>Published: December 6, 2025</span>
-                <span>Category: Retro-Computing</span>
+                <span>Category: Notes & Inquiries</span>
             </div>
         </header>
 
         <div class="article-content">
             <div class="article-text">
 
-            <p>I was twelve years old when my grandmother handed me a heavy beige box she'd picked up at a garage sale. "I thought you might like this computer thing," she said with a knowing smile. That "computer thing" was a Radio Shack TRS-80 Model I, and it would change the trajectory of my entire life.</p>
+            <p>I've always been fascinated by traffic simulations. There's something deeply satisfying about watching little cars navigate a grid of streets, stopping at intersections, waiting their turn, and flowing through a city like blood through veins. Maybe it's the emergent complexity—simple rules creating surprisingly realistic behavior—or maybe I just like watching tiny cars drive around. Either way, I've wanted to build one for years.</p>
 
-            <p>She had no idea what it was, really—just that her grandson was curious about technology, and this contraption with its chunky keyboard and mysterious cables seemed like it might spark something. She paid maybe twenty dollars for it. What she actually gave me was a portal into a world of infinite possibility.</p>
+            <p>The problem? Building a traffic simulator from scratch is <em>a lot</em> of work. You need to handle road networks, vehicle physics, intersection logic, collision detection, rendering... the list goes on. It's the kind of project that sits in your "someday" folder indefinitely.</p>
 
-            <p>I spent countless hours in my bedroom, the green phosphor glow of the monitor illuminating my face late into the night, typing in BASIC programs from magazines, debugging line by line, learning that a missing semicolon could bring everything crashing down. That TRS-80 taught me patience, logic, and the pure joy of making a machine do exactly what you tell it to do.</p>
+            <p>Enter AI-assisted development. What used to be a weekend-long project (at minimum) became an iterative conversation. I described what I wanted, refined it step by step, and ended up with a fully functional city traffic simulation—complete with buildings, stoplights, and cars that actually follow traffic laws.</p>
 
-            <p>Now, decades later, I've built a browser-based emulator to recapture that magic—and to share it with anyone who wants to experience what personal computing felt like at the very beginning.</p>
+            <p>Here's how it works under the hood.</p>
 
-            <h2>The Birth of a Revolution: A History of the TRS-80</h2>
+            <h2>The Road Network</h2>
 
-            <h3>The Trinity of 1977</h3>
+            <p>The simulation uses a simple grid-based street system. Roads are laid out at regular intervals (every 120 pixels), creating a Manhattan-style grid that covers the entire screen. Each road is 32 pixels wide, divided into two lanes—one for each direction of travel.</p>
 
-            <p>The year 1977 was a watershed moment in computing history. Three machines arrived almost simultaneously, forever changing the relationship between humans and computers: the Apple II, the Commodore PET, and the TRS-80. These were the "1977 Trinity," and they brought computing out of hobbyist garages and into living rooms across America.</p>
+            <p>The key insight here is separating the concept of "road position" from "lane position." Each car tracks which road it's on (<code>roadX</code>, <code>roadY</code>) and then applies a lane offset based on its direction of travel:</p>
 
-            <p>The TRS-80—officially the TRS-80 Micro Computer System, with "TRS" standing for Tandy Radio Shack—was announced on August 3, 1977. It was the brainchild of Don French, a buyer for Radio Shack who saw the potential for a pre-assembled personal computer, and Steve Leininger, the engineer who designed it.</p>
-
-            <h3>An Unexpected Phenomenon</h3>
-
-            <p>Radio Shack's parent company, Tandy Corporation, was conservative in its expectations. They manufactured only 3,000 units initially, figuring they might sell them over the course of a year to electronics hobbyists. They were spectacularly wrong.</p>
-
-            <p>The TRS-80 sold out in less than a month. Orders flooded in—over 10,000 in the first month alone. By the end of 1977, Radio Shack had a backlog of over 100,000 orders. The demand was so overwhelming that the company had to scramble to ramp up production.</p>
-
-            <h3>Why the TRS-80 Won (At First)</h3>
-
-            <p>Several factors contributed to the TRS-80's explosive success:</p>
-
-            <p><strong>Price Point</strong>: At $599.95 for a complete system (including monitor, keyboard, and 4KB of RAM), the TRS-80 undercut the Apple II ($1,298 without a monitor) and was comparable to the Commodore PET ($795).</p>
-
-            <p><strong>Retail Distribution</strong>: Radio Shack had over 3,000 stores across America. You could walk into your local mall, see a working computer, and buy one on the spot. Apple and Commodore had nothing close to this retail presence.</p>
-
-            <p><strong>Complete Package</strong>: Unlike many competitors, the TRS-80 came as a complete, ready-to-use system. No soldering, no hunting for compatible monitors, no assembly required.</p>
-
-            <p><strong>Level II BASIC</strong>: The included BASIC interpreter, developed by Microsoft (one of their earliest major contracts), was powerful and relatively easy to learn.</p>
-
-            <h3>The Hardware</h3>
-
-            <p>The original TRS-80 Model I was built around the Zilog Z80 processor running at 1.77 MHz. It came with 4KB of RAM (expandable to 16KB, later 48KB with the Expansion Interface), and could display 64 characters across 16 lines in glowing green phosphor.</p>
-
-            <p>Storage was initially via cassette tape—programs could take several minutes to load, accompanied by the distinctive warbling and screeching sounds that anyone who lived through the era remembers viscerally. Later, the Expansion Interface added floppy disk support, transforming the machine into a more serious computing platform.</p>
-
-            <p>The keyboard was integrated into the main unit, a silver-gray housing that would become iconic. The separate monitor sat atop it, creating the distinctive silhouette that graced countless dens and bedrooms throughout the late 1970s and early 1980s.</p>
-
-            <h3>The "Trash-80" and Its Legacy</h3>
-
-            <p>Critics and competitors mockingly called it the "Trash-80," but owners wore the nickname as a badge of honor. Yes, the keyboard had issues (early models suffered from "keyboard bounce," registering multiple keystrokes). Yes, the cassette storage was unreliable. Yes, the graphics were primitive even by the standards of the day.</p>
-
-            <p>But none of that mattered. The TRS-80 was <em>accessible</em>. It invited experimentation. It came with a manual that assumed you knew nothing and taught you everything. It spawned magazines (80 Micro, 80-US), user groups, and a thriving software ecosystem.</p>
-
-            <p>The TRS-80 line continued with the Model II (aimed at business), Model III (an integrated design), Model 4, and the portable Model 100. Radio Shack also released the TRS-80 Color Computer ("CoCo"), which developed its own devoted following.</p>
-
-            <h3>The End of an Era</h3>
-
-            <p>By the mid-1980s, the IBM PC and its clones had come to dominate business computing, while the Commodore 64 ruled the home market. Radio Shack struggled to keep pace, and the TRS-80 line gradually faded away. The last models were discontinued in the early 1990s.</p>
-
-            <p>But the TRS-80's influence endures. It was many people's first computer. It launched careers. It demonstrated that computers weren't just for corporations and universities—they were for everyone.</p>
-
-            <h2>The Emulator: Bringing the TRS-80 to Your Browser</h2>
-
-            <p>I built this emulator as an act of preservation and nostalgia. It recreates the experience of using a TRS-80 Model I, complete with the iconic green phosphor display, the warm wood-grain aesthetic of 1970s electronics, and a library of software on virtual floppy diskettes.</p>
-
-            <h3>Features</h3>
-
-            <p><strong>Authentic Presentation</strong>: The emulator is housed in a virtual wood-grain cabinet, true to the furniture-style electronics of the era. The CRT monitor features subtle scanlines and the characteristic green glow of phosphor displays.</p>
-
-            <p><strong>Working BASIC Interpreter</strong>: The heart of the TRS-80 experience was Level II BASIC, and this emulator includes a functional BASIC interpreter. You can write programs, save them in memory, and run them just like you would have in 1978.</p>
-
-            <p><strong>Software Library</strong>: Eight virtual diskettes contain ready-to-run programs:</p>
             <ul>
-                <li><strong>Level II BASIC</strong> — Boot directly to the BASIC prompt</li>
-                <li><strong>Space Invaders</strong> — Defend Earth from alien invasion</li>
-                <li><strong>Snake</strong> — The classic snake game</li>
-                <li><strong>Lunar Lander</strong> — Land your spacecraft safely on the moon</li>
-                <li><strong>Cave Adventure</strong> — A text adventure game with treasures and dragons</li>
-                <li><strong>Scientific Calculator</strong> — A full-featured calculator with trig functions</li>
-                <li><strong>Blackjack</strong> — Try your luck at the card table</li>
-                <li><strong>Memory Match</strong> — Test your memory with this card-matching game</li>
+                <li>Cars going <strong>right</strong> drive in the bottom lane</li>
+                <li>Cars going <strong>left</strong> drive in the top lane</li>
+                <li>Cars going <strong>down</strong> drive in the left lane</li>
+                <li>Cars going <strong>up</strong> drive in the right lane</li>
             </ul>
 
-            <p><strong>View the Source Code</strong>: After playing any game, you can type <code>LIST</code> at the BASIC prompt to see its complete source code—just like curious kids did in the 1970s and 80s, learning to program by studying and modifying existing programs.</p>
+            <p>This right-hand traffic system means cars naturally pass each other when traveling in opposite directions. No complex collision avoidance needed—just geometry.</p>
 
-            <h3>How to Use the Emulator</h3>
+            <h2>Two Types of Intersections</h2>
 
-            <h4>Getting Started</h4>
+            <p>The simulation features two types of intersections: <strong>4-way stop signs</strong> and <strong>traffic lights</strong>.</p>
+
+            <h3>Stop Sign Logic</h3>
+
+            <p>At stop sign intersections, cars follow proper 4-way stop etiquette:</p>
 
             <ol>
-                <li><strong>Click the screen</strong> to give it focus (this allows keyboard input to be captured).</li>
-                <li><strong>Insert a diskette</strong> by clicking on any of the floppy disks in the Software Library at the bottom. The disk drive LED will flash red as the program loads.</li>
-                <li><strong>Wait for the prompt</strong> — after loading, you'll either see a game start or the <code>READY</code> prompt, depending on the software.</li>
+                <li>When a car approaches an intersection, it registers its arrival and joins a queue</li>
+                <li>Each car receives an arrival timestamp and a random tiebreaker value</li>
+                <li>Cars must come to a complete stop before proceeding</li>
+                <li>The car that arrived first gets to go first</li>
+                <li>If two cars arrive simultaneously, the random tiebreaker decides who goes</li>
             </ol>
 
-            <h4>Playing the Games</h4>
+            <p>This creates realistic stop-and-go behavior. You'll see cars politely taking turns, with occasional brief pauses as they "check" that the intersection is clear.</p>
 
-            <p>Each game displays its controls when it starts. Common controls include:</p>
+            <h3>Traffic Light Logic</h3>
 
-            <table>
-                <tr>
-                    <th>Game</th>
-                    <th>Controls</th>
-                </tr>
-                <tr>
-                    <td>Space Invaders</td>
-                    <td><code>A</code>/<code>D</code> or Arrow Keys to move, <code>SPACE</code> to fire, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Snake</td>
-                    <td><code>W</code>/<code>A</code>/<code>S</code>/<code>D</code> or Arrow Keys to change direction, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Lunar Lander</td>
-                    <td><code>A</code>/<code>D</code> to rotate, <code>SPACE</code> for thrust, <code>Q</code> to abort</td>
-                </tr>
-                <tr>
-                    <td>Adventure</td>
-                    <td><code>N</code>/<code>S</code>/<code>E</code>/<code>W</code> to move, <code>GET</code>/<code>DROP</code>/<code>INV</code>/<code>LOOK</code>/<code>ATTACK</code> commands</td>
-                </tr>
-                <tr>
-                    <td>Blackjack</td>
-                    <td><code>H</code> to hit, <code>S</code> to stand, enter bet amounts when prompted</td>
-                </tr>
-                <tr>
-                    <td>Memory Match</td>
-                    <td>Enter coordinates like <code>A1</code>, <code>B3</code>, etc.</td>
-                </tr>
-            </table>
+            <p>Seven intersections are randomly selected to become traffic lights instead of stop signs. These cycle through phases:</p>
 
-            <h4>Using BASIC</h4>
-
-            <p>When you're at the <code>READY</code> prompt, you can type BASIC commands:</p>
-
-            <p><strong>Immediate Commands:</strong></p>
             <ul>
-                <li><code>PRINT 2+2</code> — Calculate and display results</li>
-                <li><code>CLS</code> — Clear the screen</li>
-                <li><code>LIST</code> — Show the current program in memory</li>
-                <li><code>RUN</code> — Execute the current program</li>
-                <li><code>NEW</code> — Clear the program from memory</li>
+                <li><strong>Green phase</strong> (3 seconds): North-south traffic flows freely</li>
+                <li><strong>Yellow phase</strong> (0.75 seconds): Warning to stop</li>
+                <li><strong>Red phase</strong>: Traffic stops while the perpendicular direction gets green</li>
             </ul>
 
-            <p><strong>Writing Programs:</strong></p>
+            <p>The lights are staggered—they don't all change at the same time—which creates more natural traffic flow and prevents citywide synchronized gridlock.</p>
 
-            <p>Type line numbers followed by BASIC statements:</p>
+            <p>Cars approaching a green light don't need to stop at all (unless there's a car ahead of them). Red means stop. Yellow means stop if you're not already in the intersection.</p>
 
-            <pre><code>10 PRINT "HELLO, WORLD!"
-20 FOR I = 1 TO 10
-30 PRINT I
-40 NEXT I
-50 END
-RUN</code></pre>
+            <h2>Car Behavior</h2>
 
-            <p><strong>Breaking Out of Programs:</strong></p>
+            <p>Each car is a simple state machine with the following states:</p>
 
-            <p>Press <code>ESC</code> at any time to break out of a running program. You'll see <code>?BREAK AT LINE XXX</code> and return to the <code>READY</code> prompt.</p>
+            <ul>
+                <li><strong>Driving</strong>: Moving forward at cruising speed</li>
+                <li><strong>Approaching</strong>: Getting close to an intersection</li>
+                <li><strong>Stopping</strong>: Coming to a complete stop</li>
+                <li><strong>Waiting</strong>: Stopped and waiting for right-of-way</li>
+                <li><strong>Crossing</strong>: Actively moving through an intersection</li>
+            </ul>
 
-            <p><strong>Returning to BASIC:</strong></p>
+            <p>Cars also have individual personality—each one gets a slightly randomized speed (80% to 120% of base speed), so faster cars will eventually catch up to slower ones.</p>
 
-            <p>Type <code>SYSTEM</code> from anywhere to reset and return to the BASIC prompt.</p>
+            <h3>Following Distance</h3>
 
-            <h4>Viewing Game Source Code</h4>
+            <p>Cars maintain safe following distance using a simple check: if there's another car ahead in the same lane within about 25 pixels, stop. This prevents rear-end collisions and creates natural traffic bunching behavior.</p>
 
-            <p>One of the joys of early computing was learning by reading code. After loading any game:</p>
+            <h3>Turning</h3>
+
+            <p>When cars clear an intersection, they have a 30% chance of turning onto the perpendicular road. When turning, they snap to the correct lane for their new direction. This keeps traffic circulating throughout the city rather than just driving in straight lines forever.</p>
+
+            <h3>Edge Wrapping</h3>
+
+            <p>Cars that drive off one edge of the screen wrap around to the opposite side, creating an infinite city illusion. When wrapping, they clear any intersection state to prevent ghost cars from blocking intersections they've left behind.</p>
+
+            <h2>The Cityscape</h2>
+
+            <p>What's a city without buildings? The simulation procedurally generates buildings to fill each city block. Each block gets one of four layout types:</p>
 
             <ol>
-                <li>Quit the game (press <code>Q</code> or let it end naturally)</li>
-                <li>At the <code>READY</code> prompt, type <code>LIST</code></li>
-                <li>Scroll through to see the complete BASIC source code</li>
+                <li><strong>Single large building</strong>: One structure fills most of the block</li>
+                <li><strong>2x2 grid</strong>: Four smaller buildings arranged in a grid</li>
+                <li><strong>Row of buildings</strong>: 2-3 buildings side by side</li>
+                <li><strong>L-shaped arrangement</strong>: A large building with smaller ones tucked beside it</li>
             </ol>
 
-            <p>The code is written in authentic TRS-80 BASIC style, with line numbers, <code>GOSUB</code> subroutines, <code>FOR</code>/<code>NEXT</code> loops, and all the idioms of the era.</p>
+            <p>Buildings have randomized features:</p>
 
-            <h2>Why This Matters</h2>
+            <ul>
+                <li><strong>Colors</strong>: Browns, grays, tans, greens, reds, and blues</li>
+                <li><strong>Roof colors</strong>: Dark browns, blues, grays, and reds</li>
+                <li><strong>Roof details</strong>: Some buildings have AC units on top</li>
+                <li><strong>Windows</strong>: Three different styles (square, wide, or tall)</li>
+                <li><strong>Doors</strong>: Larger buildings get entrance doors</li>
+            </ul>
 
-            <p>There's a reason so many technologists of a certain age get misty-eyed talking about their first computers. These machines weren't just tools—they were teachers, playgrounds, and windows into a new way of thinking.</p>
+            <h3>Living Windows</h3>
 
-            <p>The TRS-80 arrived at the perfect moment: powerful enough to be useful, simple enough to be understood, and cheap enough to be accessible. It invited you to look under the hood, to type <code>LIST</code> and see how things worked, to modify and experiment and break things and fix them again.</p>
+            <p>The windows have three states: dark (unlit), blue (reflective/daytime), and yellow (lit from inside). These states are pre-generated when buildings are created, but they slowly change over time—roughly one window per building might change every 25 seconds or so. This creates a subtle "lived-in" effect without the disco-ball flickering of purely random rendering.</p>
 
-            <p>That spirit of accessible, explorable computing is something we've lost in the age of sealed devices and app stores. Modern computers are vastly more powerful, but they're also more opaque. The journey from curiosity to creation is longer and more obscured.</p>
+            <h2>Avoiding Gridlock</h2>
 
-            <p>This emulator is my small attempt to preserve a piece of that original magic. Whether you're a veteran of the 8-bit era revisiting old memories, or a curious newcomer wondering what all the fuss was about, I hope you'll spend a few minutes with this virtual TRS-80.</p>
+            <p>Traffic simulations are prone to deadlocks. A car waiting for an intersection that's waiting for another car that's waiting for the first car... classic gridlock.</p>
 
-            <p>Load up Space Invaders. Type <code>10 PRINT "HELLO"</code> and press <code>RUN</code>. Feel the satisfying clunk of those virtual keys and watch the green phosphor glow.</p>
+            <p>The simulation handles this with a few safety valves:</p>
 
-            <p>And maybe, just maybe, you'll understand why a twelve-year-old kid stayed up way past his bedtime, bathed in that eerie green light, absolutely certain that the future had arrived in his bedroom—courtesy of a grandmother who found a treasure at a garage sale.</p>
+            <ol>
+                <li><strong>Timeout recovery</strong>: If a car waits more than 300 frames (~5 seconds), it forces the intersection clear and proceeds</li>
+                <li><strong>Periodic cleanup</strong>: Every second, the simulation scrubs intersection queues to remove any stale references</li>
+                <li><strong>Crossing car exception</strong>: Cars won't get stuck behind another car that's actively crossing an intersection</li>
+            </ol>
+
+            <p>These aren't perfect solutions, but they prevent the simulation from ever getting permanently stuck.</p>
+
+            <h2>The Power of Iterative Development</h2>
+
+            <p>What struck me most about building this wasn't the technical details—it was the process. I started with "make a traffic simulator with cars as squares on a grid." Then I refined:</p>
+
+            <ul>
+                <li>"Cars should stay in their lane and pass each other"</li>
+                <li>"Make stop signs work properly—first to arrive goes first"</li>
+                <li>"Add some traffic lights"</li>
+                <li>"Add buildings to make it look like a city"</li>
+                <li>"The window lights are changing too fast"</li>
+            </ul>
+
+            <p>Each iteration built on the last. Problems were identified and fixed in real-time. Features were added incrementally. The AI handled the boilerplate while I focused on what I actually wanted the simulation to <em>do</em>.</p>
+
+            <p>This is the promise of AI-assisted development: not replacing programmers, but amplifying them. I have the domain knowledge (how traffic should flow, what makes a city feel alive) and the AI has the patience to write the rendering code, track down edge cases, and refactor when requirements change.</p>
+
+            <h2>Try It Yourself</h2>
+
+            <p>The full simulation runs in a single HTML file—no dependencies, no build step. Click anywhere on a road to add a car. Use the control panel to add multiple cars or clear the simulation. Resize your browser window to regenerate the city layout.</p>
+
+            <p>Watch the cars negotiate intersections. Notice how traffic backs up at red lights, then flows freely when the light changes. See if you can spot the moment when a waiting car's brake lights go dark as it starts to move.</p>
+
+            <p>It's not a perfect simulation of real traffic—there's no route planning, no pedestrians, no accidents, no road rage. But it captures something essential about the flow of vehicles through a city grid. And it took an afternoon to build instead of a month.</p>
+
+            <p>That's the future of creative programming: more time thinking about what you want to build, less time fighting with the how.</p>
+
+            <hr>
+
+            <p><em>The traffic simulator is built with vanilla JavaScript and HTML5 Canvas. No frameworks were harmed in the making of this simulation.</em></p>
         </div>
 
             <aside class="article-illustration">
                 <div class="illustration-container">
-                    <img src="./t80.png" alt="TRS-80 Model I Emulator">
-                    <p class="illustration-caption">TRS-80 Model I emulator with authentic green phosphor display</p>
+                    <img src="./ts.png" alt="City Traffic Simulation">
+                    <p class="illustration-caption">Interactive city traffic simulation with buildings, stoplights, and intelligent vehicles</p>
                 </div>
 
                 <div class="illustration-container">
-                    <p><a href="./app.html">Try the Emulator</a></p>
+                    <p><a href="./app.html">Try the Simulator</a></p>
                 </div>
             </aside>
         </div>

@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Select and display random featured experiment
     const articles = [
         {
+            title: "BUILDING A TRAFFIC SIMULATOR WITH AI",
+            url: "notes/traffic-simulation/index.html",
+            image: "notes/traffic-simulation/ts.png",
+            description: "I've always been fascinated by traffic simulations—watching tiny cars navigate a grid of streets, stopping at intersections, flowing through a city like blood through veins. Building one from scratch used to be a weekend-long project at minimum. But with AI-assisted development, what used to take days became an iterative conversation. The result? A fully functional city traffic simulation complete with buildings, stoplights, and cars that actually follow traffic laws. Click anywhere on a road to add a car. Watch them negotiate 4-way stops and traffic lights. See emergent traffic patterns form from simple rules. This is the future of creative programming: more time thinking about what you want to build, less time fighting with the how.",
+            category: "Category: Notes & Inquiries"
+        },
+        {
             title: "THE SHAPES OF RANDOMNESS",
             url: "mathematics/statistical-distributions/index.html",
             image: "mathematics/statistical-distributions/sd.png",
