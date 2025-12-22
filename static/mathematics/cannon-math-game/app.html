@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parabolic Cannon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a12;
+            --bg-medium: #141428;
+            --accent-gold: #ffd700;
+            --accent-orange: #ff6b35;
+            --accent-cyan: #00ffff;
+            --grass-green: #2d5a27;
+            --sky-top: #0c1445;
+            --sky-bottom: #1a3a6e;
+            --wood-brown: #8b4513;
+            --wood-light: #cd853f;
+            --basket-color: #daa520;
+            --ball-color: #ff4444;
+            --grid-color: rgba(255, 215, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'VT323', monospace;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            width: 900px;
+            max-width: 95vw;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(180deg, var(--bg-medium) 0%, transparent 100%);
+            border-bottom: 2px solid var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px var(--accent-gold), 0 0 20px var(--accent-orange);
+            letter-spacing: 2px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            font-size: 22px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: var(--accent-cyan);
+            font-size: 16px;
+        }
+
+        .stat-value {
+            color: var(--accent-gold);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+
+        .game-canvas-wrapper {
+            position: relative;
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 70%, var(--grass-green) 85%, #1a3d16 100%);
+        }
+
+        #gameCanvas {
+            display: block;
+        }
+
+        .controls {
+            margin-top: 15px;
+            padding: 20px;
+            background: var(--bg-medium);
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .equation-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .equation-label {
+            font-size: 24px;
+            color: var(--accent-cyan);
+        }
+
+        .equation-display {
+            font-family: 'VT323', monospace;
+            font-size: 28px;
+            color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border: 1px solid var(--accent-gold);
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .coefficient-inputs {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .coef-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .coef-label {
+            font-size: 22px;
+            color: #aaa;
+        }
+
+        .coef-input {
+            width: 80px;
+            padding: 8px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 24px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-gold);
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .coef-input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .coef-input::-webkit-inner-spin-button,
+        .coef-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .fire-btn {
+            padding: 12px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            background: linear-gradient(180deg, var(--accent-orange) 0%, #cc4400 100%);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 0 #8b2500, 0 0 20px rgba(255, 107, 53, 0.5);
+            transition: all 0.1s;
+            margin-left: 20px;
+        }
+
+        .fire-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #8b2500, 0 0 30px rgba(255, 107, 53, 0.7);
+        }
+
+        .fire-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #8b2500, 0 0 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .fire-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message-bar {
+            margin-top: 15px;
+            padding: 12px;
+            text-align: center;
+            font-size: 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--accent-gold);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-bar.success {
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            animation: flash 0.5s ease-in-out 3;
+        }
+
+        .message-bar.fail {
+            color: var(--accent-orange);
+        }
+
+        .message-bar.info {
+            color: var(--accent-cyan);
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hint-section {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 18px;
+            color: #888;
+            text-align: center;
+        }
+
+        .hint-section span {
+            color: var(--accent-cyan);
+        }
+
+        /* Scanline effect */
+        .game-canvas-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* Stars in background */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+        }
+
+        .mode-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-label {
+            font-size: 20px;
+            color: var(--accent-cyan);
+        }
+
+        .mode-select {
+            padding: 8px 15px;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-gold);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .mode-select:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .mode-select option {
+            background: var(--bg-dark);
+            color: var(--accent-gold);
+        }
+
+        .input-group {
+            display: none;
+        }
+
+        .input-group.active {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .equation-display {
+            font-family: 'VT323', monospace;
+            font-size: 26px;
+            color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border: 1px solid var(--accent-gold);
+            flex-grow: 1;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .equation-line {
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="title">💣 PARABOLIC CANNON 💣</div>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">ROUND</span>
+                    <span class="stat-value" id="round">1</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">TRIES</span>
+                    <span class="stat-value" id="tries">5</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="score">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-canvas-wrapper">
+            <div class="stars" id="stars"></div>
+            <canvas id="gameCanvas" width="900" height="450"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="mode-selector">
+                <span class="mode-label">Equation Form:</span>
+                <select class="mode-select" id="modeSelect">
+                    <option value="standard">Standard: y = ax² + bx + c</option>
+                    <option value="vertex">Vertex: y = a(x - h)² + k</option>
+                    <option value="polar">Polar: r(θ)</option>
+                </select>
+            </div>
+
+            <div class="equation-section">
+                <div class="equation-display" id="equationDisplay">y = ax² + bx + c</div>
+            </div>
+
+            <!-- Standard Form: y = ax² + bx + c -->
+            <div class="input-group active" id="standardInputs">
+                <div class="coef-group">
+                    <span class="coef-label">a =</span>
+                    <input type="number" class="coef-input" id="coefA" value="-0.01" step="0.005">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">b =</span>
+                    <input type="number" class="coef-input" id="coefB" value="1.5" step="0.1">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">c =</span>
+                    <input type="number" class="coef-input" id="coefC" value="0" step="1">
+                </div>
+                <button class="fire-btn" id="fireBtn">🔥 FIRE!</button>
+                <button class="reset-btn" id="resetBtn">↺ RESET</button>
+            </div>
+
+            <!-- Vertex Form: y = a(x - h)² + k -->
+            <div class="input-group" id="vertexInputs">
+                <div class="coef-group">
+                    <span class="coef-label">a =</span>
+                    <input type="number" class="coef-input" id="vertexA" value="-0.01" step="0.005">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">h =</span>
+                    <input type="number" class="coef-input" id="vertexH" value="150" step="10">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">k =</span>
+                    <input type="number" class="coef-input" id="vertexK" value="225" step="10">
+                </div>
+                <button class="fire-btn fire-btn-alt" id="fireBtnVertex">🔥 FIRE!</button>
+                <button class="reset-btn reset-btn-alt" id="resetBtnVertex">↺ RESET</button>
+            </div>
+
+            <!-- Polar Form: r = v₀²sin(2θ) / g  (range formula inspiration) -->
+            <div class="input-group" id="polarInputs">
+                <div class="coef-group">
+                    <span class="coef-label">v₀ =</span>
+                    <input type="number" class="coef-input" id="polarV" value="15" step="0.5">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">θ° =</span>
+                    <input type="number" class="coef-input" id="polarTheta" value="45" step="1">
+                </div>
+                <div class="coef-group">
+                    <span class="coef-label">g =</span>
+                    <input type="number" class="coef-input" id="polarG" value="0.12" step="0.01">
+                </div>
+                <button class="fire-btn" id="fireBtnPolar">🔥 FIRE!</button>
+                <button class="reset-btn" id="resetBtnPolar">↺ RESET</button>
+            </div>
+        </div>
+
+        <div class="message-bar" id="messageBar">
+            Adjust the coefficients and fire the cannon!
+        </div>
+
+        <div class="hint-section" id="hintSection">
+            <span>Hint:</span> <span id="hintText">Negative <span>a</span> curves downward. Adjust <span>b</span> for launch angle, <span>c</span> for vertical offset.</span>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const state = {
+            round: 1,
+            tries: 5,
+            maxTries: 5,
+            score: 0,
+            isAnimating: false,
+            catapultX: 50,
+            catapultY: 0, // Will be set based on ground level
+            basketX: 0,
+            basketY: 0,
+            basketWidth: 60,
+            basketHeight: 50,
+            ballRadius: 12,
+            groundY: 380,
+            previousPaths: [],
+            mode: 'standard'
+        };
+
+        // Canvas setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // DOM elements - Mode selector
+        const modeSelect = document.getElementById('modeSelect');
+        const hintText = document.getElementById('hintText');
+
+        // Standard form inputs
+        const coefA = document.getElementById('coefA');
+        const coefB = document.getElementById('coefB');
+        const coefC = document.getElementById('coefC');
+
+        // Vertex form inputs
+        const vertexA = document.getElementById('vertexA');
+        const vertexH = document.getElementById('vertexH');
+        const vertexK = document.getElementById('vertexK');
+
+        // Polar form inputs
+        const polarV = document.getElementById('polarV');
+        const polarTheta = document.getElementById('polarTheta');
+        const polarG = document.getElementById('polarG');
+
+        // Buttons
+        const fireBtn = document.getElementById('fireBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const fireBtnVertex = document.getElementById('fireBtnVertex');
+        const resetBtnVertex = document.getElementById('resetBtnVertex');
+        const fireBtnPolar = document.getElementById('fireBtnPolar');
+        const resetBtnPolar = document.getElementById('resetBtnPolar');
+
+        // Other elements
+        const messageBar = document.getElementById('messageBar');
+        const equationDisplay = document.getElementById('equationDisplay');
+        const roundDisplay = document.getElementById('round');
+        const triesDisplay = document.getElementById('tries');
+        const scoreDisplay = document.getElementById('score');
+
+        // Input groups
+        const inputGroups = {
+            standard: document.getElementById('standardInputs'),
+            vertex: document.getElementById('vertexInputs'),
+            polar: document.getElementById('polarInputs')
+        };
+
+        // Hints for each mode
+        const hints = {
+            standard: 'Negative <span>a</span> curves downward. Adjust <span>b</span> for launch angle, <span>c</span> for vertical offset.',
+            vertex: '<span>h</span> is the x-coordinate of the peak, <span>k</span> is the maximum height. Negative <span>a</span> opens downward.',
+            polar: 'Physics-based: <span>v₀</span> is initial velocity, <span>θ</span> is launch angle, <span>g</span> is gravity.'
+        };
+
+        // Generate stars
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.opacity = Math.random() * 0.5 + 0.3;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Initialize basket position
+        function placeBasket() {
+            state.basketX = 300 + Math.random() * 500;
+            state.basketY = state.groundY - state.basketHeight;
+            state.previousPaths = [];
+        }
+
+        // Get standard form coefficients from current mode
+        function getStandardCoefficients() {
+            switch (state.mode) {
+                case 'standard':
+                    return {
+                        a: parseFloat(coefA.value) || 0,
+                        b: parseFloat(coefB.value) || 0,
+                        c: parseFloat(coefC.value) || 0
+                    };
+                case 'vertex':
+                    // y = a(x - h)² + k  =>  y = ax² - 2ahx + ah² + k
+                    const va = parseFloat(vertexA.value) || 0;
+                    const h = parseFloat(vertexH.value) || 0;
+                    const k = parseFloat(vertexK.value) || 0;
+                    return {
+                        a: va,
+                        b: -2 * va * h,
+                        c: va * h * h + k
+                    };
+                case 'polar':
+                    // x = v₀cos(θ)t, y = v₀sin(θ)t - ½gt²
+                    // Eliminate t: t = x / (v₀cos(θ))
+                    // y = v₀sin(θ) * x/(v₀cos(θ)) - ½g * (x/(v₀cos(θ)))²
+                    // y = x*tan(θ) - (g / (2v₀²cos²(θ))) * x²
+                    const v0 = parseFloat(polarV.value) || 1;
+                    const thetaDeg = parseFloat(polarTheta.value) || 45;
+                    const g = parseFloat(polarG.value) || 0.1;
+                    
+                    const theta = thetaDeg * Math.PI / 180;
+                    const cosTheta = Math.cos(theta);
+                    const tanTheta = Math.tan(theta);
+                    
+                    return {
+                        a: -g / (2 * v0 * v0 * cosTheta * cosTheta),
+                        b: tanTheta,
+                        c: 0
+                    };
+                default:
+                    return { a: -0.01, b: 1, c: 0 };
+            }
+        }
+
+        // Calculate cannon angle from equation coefficients
+        function getCannonAngle() {
+            const { b } = getStandardCoefficients();
+            // The derivative at x=0 (launch point) is just b
+            // Convert slope to angle, clamped to reasonable range
+            const angle = Math.atan(b);
+            // Clamp between 10 and 80 degrees
+            const minAngle = 10 * Math.PI / 180;
+            const maxAngle = 80 * Math.PI / 180;
+            return Math.max(minAngle, Math.min(maxAngle, angle));
+        }
+
+        // Get the muzzle position (end of cannon barrel)
+        function getMuzzlePosition() {
+            const x = state.catapultX;
+            const y = state.groundY;
+            const cannonAngle = getCannonAngle();
+            
+            const pivotX = x;
+            const pivotY = y - 25;
+            const barrelLength = 70;
+            
+            // Calculate muzzle position based on barrel angle
+            const muzzleX = pivotX + Math.cos(cannonAngle) * barrelLength;
+            const muzzleY = pivotY - Math.sin(cannonAngle) * barrelLength;
+            
+            return { x: muzzleX, y: muzzleY };
+        }
+
+        // Draw cannon
+        function drawCatapult() {
+            const x = state.catapultX;
+            const y = state.groundY;
+            const cannonAngle = getCannonAngle();
+            
+            ctx.save();
+            
+            // Cannon base/carriage
+            ctx.fillStyle = '#4a3728';
+            ctx.beginPath();
+            ctx.moveTo(x - 35, y);
+            ctx.lineTo(x + 35, y);
+            ctx.lineTo(x + 30, y - 20);
+            ctx.lineTo(x - 30, y - 20);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Carriage details
+            ctx.fillStyle = '#3a2a1a';
+            ctx.fillRect(x - 28, y - 18, 56, 4);
+            
+            // Wheels
+            ctx.fillStyle = '#2a2a2a';
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 3;
+            
+            // Left wheel
+            ctx.beginPath();
+            ctx.arc(x - 22, y, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Right wheel
+            ctx.beginPath();
+            ctx.arc(x + 22, y, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Wheel spokes
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+            for (let wheel of [x - 22, x + 22]) {
+                for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+                    ctx.beginPath();
+                    ctx.moveTo(wheel, y);
+                    ctx.lineTo(wheel + Math.cos(a) * 11, y + Math.sin(a) * 11);
+                    ctx.stroke();
+                }
+            }
+            
+            // Wheel hubs
+            ctx.fillStyle = '#666';
+            ctx.beginPath();
+            ctx.arc(x - 22, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + 22, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cannon pivot point
+            const pivotX = x;
+            const pivotY = y - 25;
+            
+            ctx.save();
+            ctx.translate(pivotX, pivotY);
+            ctx.rotate(-cannonAngle); // Negative because canvas y is inverted
+            
+            // Cannon barrel
+            const barrelLength = 70;
+            const barrelWidth = 22;
+            
+            // Barrel gradient for 3D effect
+            const barrelGradient = ctx.createLinearGradient(0, -barrelWidth/2, 0, barrelWidth/2);
+            barrelGradient.addColorStop(0, '#5a5a5a');
+            barrelGradient.addColorStop(0.3, '#7a7a7a');
+            barrelGradient.addColorStop(0.5, '#8a8a8a');
+            barrelGradient.addColorStop(0.7, '#6a6a6a');
+            barrelGradient.addColorStop(1, '#4a4a4a');
+            
+            ctx.fillStyle = barrelGradient;
+            ctx.beginPath();
+            ctx.roundRect(-5, -barrelWidth/2, barrelLength, barrelWidth, 3);
+            ctx.fill();
+            
+            // Barrel rings/bands
+            ctx.fillStyle = '#3a3a3a';
+            ctx.fillRect(10, -barrelWidth/2 - 2, 6, barrelWidth + 4);
+            ctx.fillRect(35, -barrelWidth/2 - 2, 6, barrelWidth + 4);
+            
+            // Muzzle (end of barrel)
+            ctx.fillStyle = '#2a2a2a';
+            ctx.beginPath();
+            ctx.roundRect(barrelLength - 8, -barrelWidth/2 - 3, 10, barrelWidth + 6, 2);
+            ctx.fill();
+            
+            // Muzzle hole
+            ctx.fillStyle = '#111';
+            ctx.beginPath();
+            ctx.ellipse(barrelLength, 0, 8, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Fuse hole on top
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(5, -barrelWidth/2 - 1, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+            
+            // Cannon base/trunnion mount
+            ctx.fillStyle = '#5a4a3a';
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#4a3a2a';
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        // Draw basket
+        function drawBasket() {
+            const x = state.basketX;
+            const y = state.basketY;
+            const w = state.basketWidth;
+            const h = state.basketHeight;
+            
+            ctx.save();
+            
+            // Basket body (woven look)
+            const gradient = ctx.createLinearGradient(x, y, x, y + h);
+            gradient.addColorStop(0, '#DAA520');
+            gradient.addColorStop(0.5, '#B8860B');
+            gradient.addColorStop(1, '#8B6914');
+            ctx.fillStyle = gradient;
+            
+            // Basket shape (trapezoid)
+            ctx.beginPath();
+            ctx.moveTo(x - w/2 + 10, y);
+            ctx.lineTo(x + w/2 - 10, y);
+            ctx.lineTo(x + w/2, y + h);
+            ctx.lineTo(x - w/2, y + h);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Rim
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(x - w/2 + 5, y);
+            ctx.lineTo(x + w/2 - 5, y);
+            ctx.stroke();
+            
+            // Weave pattern
+            ctx.strokeStyle = 'rgba(101, 67, 33, 0.4)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                const yLine = y + 8 + i * 10;
+                ctx.beginPath();
+                ctx.moveTo(x - w/2 + 5, yLine);
+                ctx.lineTo(x + w/2 - 5, yLine);
+                ctx.stroke();
+            }
+            
+            // Target indicator (glowing)
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(x, y + h/2, w/2 + 15, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.restore();
+        }
+
+        // Draw ground
+        function drawGround() {
+            // Grass
+            const grassGradient = ctx.createLinearGradient(0, state.groundY, 0, canvas.height);
+            grassGradient.addColorStop(0, '#3d7a35');
+            grassGradient.addColorStop(0.3, '#2d5a27');
+            grassGradient.addColorStop(1, '#1a3d16');
+            ctx.fillStyle = grassGradient;
+            ctx.fillRect(0, state.groundY, canvas.width, canvas.height - state.groundY);
+            
+            // Grass tufts
+            ctx.strokeStyle = '#4a9440';
+            ctx.lineWidth = 2;
+            for (let x = 0; x < canvas.width; x += 20) {
+                const variation = Math.sin(x * 0.1) * 3;
+                ctx.beginPath();
+                ctx.moveTo(x, state.groundY);
+                ctx.lineTo(x - 3, state.groundY - 8 - variation);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x + 5, state.groundY);
+                ctx.lineTo(x + 8, state.groundY - 6 - variation);
+                ctx.stroke();
+            }
+        }
+
+        // Draw grid lines
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.08)';
+            ctx.lineWidth = 1;
+            
+            // Vertical lines
+            for (let x = 0; x <= canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, state.groundY);
+                ctx.stroke();
+            }
+            
+            // Horizontal lines
+            for (let y = 0; y <= state.groundY; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Axis labels
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.font = '12px VT323';
+            for (let x = 100; x <= canvas.width; x += 100) {
+                ctx.fillText(x.toString(), x - 10, state.groundY + 15);
+            }
+        }
+
+        // Draw previous paths (faded)
+        function drawPreviousPaths() {
+            state.previousPaths.forEach((path, index) => {
+                const alpha = 0.2 + (index / state.previousPaths.length) * 0.3;
+                ctx.strokeStyle = `rgba(255, 100, 100, ${alpha})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                path.forEach((point, i) => {
+                    if (i === 0) ctx.moveTo(point.x, point.y);
+                    else ctx.lineTo(point.x, point.y);
+                });
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+        }
+
+        // Calculate y position for given x (parabola starts at muzzle)
+        function calculateY(x, a, b, c) {
+            const muzzle = getMuzzlePosition();
+            // Translate so x=0 is at muzzle
+            const relX = x - muzzle.x;
+            const relY = a * relX * relX + b * relX + c;
+            // Convert to canvas coordinates (y increases downward)
+            // Start from muzzle y position
+            return muzzle.y - relY;
+        }
+
+        // Calculate using current mode's coefficients
+        function calculateYFromMode(x) {
+            const { a, b, c } = getStandardCoefficients();
+            return calculateY(x, a, b, c);
+        }
+
+        // Main draw function
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawGround();
+            drawPreviousPaths();
+            drawBasket();
+            drawCatapult();
+        }
+
+        // Animate projectile
+        function animateProjectile(a, b, c) {
+            state.isAnimating = true;
+            [fireBtn, fireBtnVertex, fireBtnPolar].forEach(btn => btn.disabled = true);
+            
+            const path = [];
+            const muzzle = getMuzzlePosition();
+            let x = muzzle.x;
+            const speed = 4;
+            let landed = false;
+            let success = false;
+            
+            function frame() {
+                x += speed;
+                const y = calculateY(x, a, b, c);
+                
+                path.push({ x, y });
+                
+                // Draw current state
+                draw();
+                
+                // Draw current path
+                ctx.strokeStyle = '#ff6b35';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#ff6b35';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                path.forEach((point, i) => {
+                    if (i === 0) ctx.moveTo(point.x, point.y);
+                    else ctx.lineTo(point.x, point.y);
+                });
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                // Draw ball
+                ctx.fillStyle = '#ff4444';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(x, y, state.ballRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                // Check if ball hit ground
+                if (y >= state.groundY - state.ballRadius) {
+                    landed = true;
+                }
+                
+                // Check if ball is in basket
+                const basketLeft = state.basketX - state.basketWidth / 2;
+                const basketRight = state.basketX + state.basketWidth / 2;
+                const basketTop = state.basketY;
+                const basketBottom = state.basketY + state.basketHeight;
+                
+                if (x >= basketLeft && x <= basketRight && 
+                    y >= basketTop - state.ballRadius && y <= basketBottom) {
+                    landed = true;
+                    success = true;
+                }
+                
+                // Check if off screen
+                if (x > canvas.width + 50 || y > canvas.height + 50) {
+                    landed = true;
+                }
+                
+                if (!landed) {
+                    requestAnimationFrame(frame);
+                } else {
+                    // Animation complete
+                    state.previousPaths.push([...path]);
+                    if (state.previousPaths.length > 5) {
+                        state.previousPaths.shift();
+                    }
+                    
+                    if (success) {
+                        handleSuccess();
+                    } else {
+                        handleMiss();
+                    }
+                    
+                    state.isAnimating = false;
+                    [fireBtn, fireBtnVertex, fireBtnPolar].forEach(btn => btn.disabled = false);
+                }
+            }
+            
+            requestAnimationFrame(frame);
+        }
+
+        // Handle successful shot
+        function handleSuccess() {
+            const bonus = state.tries * 100;
+            state.score += bonus;
+            scoreDisplay.textContent = state.score;
+            
+            setMessage(`🎯 PERFECT HIT! +${bonus} points!`, 'success');
+            
+            // Celebration effect
+            createParticles(state.basketX, state.basketY);
+            
+            setTimeout(() => {
+                nextRound();
+            }, 2000);
+        }
+
+        // Handle missed shot
+        function handleMiss() {
+            state.tries--;
+            triesDisplay.textContent = state.tries;
+            
+            if (state.tries <= 0) {
+                setMessage('Out of tries! Moving to next target...', 'fail');
+                setTimeout(() => {
+                    nextRound();
+                }, 1500);
+            } else {
+                // Give hint based on where ball landed
+                const a = parseFloat(coefA.value);
+                const b = parseFloat(coefB.value);
+                const c = parseFloat(coefC.value);
+                
+                // Calculate where ball would be at basket x
+                const yAtBasket = calculateY(state.basketX, a, b, c);
+                const basketMidY = state.basketY + state.basketHeight / 2;
+                
+                let hint = '';
+                if (yAtBasket < state.basketY - 50) {
+                    hint = 'Too high at the target! Try decreasing b or increasing |a|.';
+                } else if (yAtBasket > state.groundY) {
+                    hint = 'Falling short! Try increasing b or decreasing |a|.';
+                } else {
+                    hint = `${state.tries} tries remaining. Adjust your coefficients!`;
+                }
+                
+                setMessage(hint, 'fail');
+            }
+            
+            draw();
+        }
+
+        // Particle effect for celebration
+        function createParticles(x, y) {
+            const particles = [];
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: -Math.random() * 10 - 5,
+                    life: 60,
+                    color: ['#ffd700', '#ff6b35', '#00ffff', '#ff4444'][Math.floor(Math.random() * 4)]
+                });
+            }
+            
+            function animateParticles() {
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3;
+                    p.life--;
+                    
+                    if (p.life > 0) {
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.life / 60;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    }
+                });
+                
+                if (particles.some(p => p.life > 0)) {
+                    requestAnimationFrame(animateParticles);
+                }
+            }
+            
+            animateParticles();
+        }
+
+        // Move to next round
+        function nextRound() {
+            state.round++;
+            state.tries = state.maxTries;
+            roundDisplay.textContent = state.round;
+            triesDisplay.textContent = state.tries;
+            
+            placeBasket();
+            draw();
+            
+            setMessage('New target! Adjust your equation and fire!', 'info');
+        }
+
+        // Update equation display based on current mode
+        function updateEquationDisplay() {
+            let html = '';
+            
+            switch (state.mode) {
+                case 'standard': {
+                    const a = parseFloat(coefA.value) || 0;
+                    const b = parseFloat(coefB.value) || 0;
+                    const c = parseFloat(coefC.value) || 0;
+                    html = formatStandardEquation(a, b, c);
+                    break;
+                }
+                case 'vertex': {
+                    const a = parseFloat(vertexA.value) || 0;
+                    const h = parseFloat(vertexH.value) || 0;
+                    const k = parseFloat(vertexK.value) || 0;
+                    html = formatVertexEquation(a, h, k);
+                    break;
+                }
+                case 'polar': {
+                    const v = parseFloat(polarV.value) || 0;
+                    const theta = parseFloat(polarTheta.value) || 0;
+                    const g = parseFloat(polarG.value) || 0;
+                    html = formatPolarEquation(v, theta, g);
+                    break;
+                }
+            }
+            
+            equationDisplay.innerHTML = html;
+        }
+
+        function formatStandardEquation(a, b, c) {
+            let eq = 'y = ';
+            
+            if (a !== 0) {
+                if (a === 1) eq += 'x²';
+                else if (a === -1) eq += '-x²';
+                else eq += `${a}x²`;
+            }
+            
+            if (b !== 0) {
+                if (a !== 0) {
+                    if (b > 0) eq += ` + ${b}x`;
+                    else eq += ` - ${Math.abs(b)}x`;
+                } else {
+                    if (b === 1) eq += 'x';
+                    else if (b === -1) eq += '-x';
+                    else eq += `${b}x`;
+                }
+            }
+            
+            if (c !== 0) {
+                if (a !== 0 || b !== 0) {
+                    if (c > 0) eq += ` + ${c}`;
+                    else eq += ` - ${Math.abs(c)}`;
+                } else {
+                    eq += c;
+                }
+            }
+            
+            if (a === 0 && b === 0 && c === 0) {
+                eq += '0';
+            }
+            
+            return eq;
+        }
+
+        function formatVertexEquation(a, h, k) {
+            let eq = 'y = ';
+            
+            if (a === 1) eq += '';
+            else if (a === -1) eq += '-';
+            else eq += `${a}`;
+            
+            if (h === 0) {
+                eq += 'x²';
+            } else if (h > 0) {
+                eq += `(x - ${h})²`;
+            } else {
+                eq += `(x + ${Math.abs(h)})²`;
+            }
+            
+            if (k !== 0) {
+                if (k > 0) eq += ` + ${k}`;
+                else eq += ` - ${Math.abs(k)}`;
+            }
+            
+            return eq;
+        }
+
+        function formatPolarEquation(v, theta, g) {
+            // Express in polar: the trajectory in polar coords from muzzle
+            // r = distance from muzzle, φ = angle from horizontal
+            const thetaRad = theta * Math.PI / 180;
+            const range = ((v * v * Math.sin(2 * thetaRad)) / g).toFixed(1);
+            const maxHeight = ((v * v * Math.sin(thetaRad) * Math.sin(thetaRad)) / (2 * g)).toFixed(1);
+            
+            return `<div class="equation-line">r(φ) = v₀²sin(2θ) / (g·cos²φ) · cos(φ-θ)</div>` +
+                   `<div class="equation-line" style="font-size: 18px; color: #aaa;">Range ≈ ${range}, Max Height ≈ ${maxHeight}</div>`;
+        }
+
+        // Switch equation mode
+        function switchMode(newMode) {
+            state.mode = newMode;
+            
+            // Hide all input groups
+            Object.values(inputGroups).forEach(group => group.classList.remove('active'));
+            
+            // Show selected input group
+            inputGroups[newMode].classList.add('active');
+            
+            // Update hint
+            hintText.innerHTML = hints[newMode];
+            
+            // Update display
+            updateEquationDisplay();
+            drawPreview();
+        }
+
+        // Set message
+        function setMessage(text, type) {
+            messageBar.textContent = text;
+            messageBar.className = 'message-bar ' + type;
+        }
+
+        // Generic fire function
+        function fireProjectile() {
+            if (state.isAnimating) return;
+            
+            const { a, b, c } = getStandardCoefficients();
+            
+            if (a >= 0) {
+                setMessage('⚠️ The trajectory must curve downward (negative "a" in standard form)!', 'fail');
+                return;
+            }
+            
+            animateProjectile(a, b, c);
+        }
+
+        // Generic reset function
+        function resetGame() {
+            if (state.isAnimating) return;
+            state.round = 1;
+            state.tries = state.maxTries;
+            state.score = 0;
+            roundDisplay.textContent = state.round;
+            triesDisplay.textContent = state.tries;
+            scoreDisplay.textContent = state.score;
+            
+            // Reset all inputs to defaults
+            coefA.value = -0.01;
+            coefB.value = 1.5;
+            coefC.value = 0;
+            
+            vertexA.value = -0.01;
+            vertexH.value = 150;
+            vertexK.value = 225;
+            
+            polarV.value = 15;
+            polarTheta.value = 45;
+            polarG.value = 0.12;
+            
+            updateEquationDisplay();
+            placeBasket();
+            draw();
+            drawPreview();
+            setMessage('Game reset! Adjust the equation and fire!', 'info');
+        }
+
+        // Event listeners - Mode selector
+        modeSelect.addEventListener('change', (e) => {
+            switchMode(e.target.value);
+        });
+
+        // Fire buttons
+        [fireBtn, fireBtnVertex, fireBtnPolar].forEach(btn => {
+            btn.addEventListener('click', fireProjectile);
+        });
+
+        // Reset buttons
+        [resetBtn, resetBtnVertex, resetBtnPolar].forEach(btn => {
+            btn.addEventListener('click', resetGame);
+        });
+
+        // Input change listeners for each mode
+        [coefA, coefB, coefC].forEach(input => {
+            input.addEventListener('input', () => {
+                updateEquationDisplay();
+                drawPreview();
+            });
+        });
+
+        [vertexA, vertexH, vertexK].forEach(input => {
+            input.addEventListener('input', () => {
+                updateEquationDisplay();
+                drawPreview();
+            });
+        });
+
+        [polarV, polarTheta, polarG].forEach(input => {
+            input.addEventListener('input', () => {
+                updateEquationDisplay();
+                drawPreview();
+            });
+        });
+
+        // Preview trajectory on hover (optional feature)
+        function drawPreview() {
+            if (state.isAnimating) return;
+            
+            const { a, b, c } = getStandardCoefficients();
+            
+            if (a >= 0) {
+                draw();
+                return;
+            }
+            
+            draw();
+            
+            const muzzle = getMuzzlePosition();
+            
+            // Draw preview path starting from muzzle
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            
+            let started = false;
+            for (let x = muzzle.x; x <= canvas.width; x += 5) {
+                const y = calculateY(x, a, b, c);
+                if (y > state.groundY) break;
+                if (!started) {
+                    ctx.moveTo(x, y);
+                    started = true;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Initialize game
+        function init() {
+            generateStars();
+            placeBasket();
+            updateEquationDisplay();
+            draw();
+            drawPreview();
+        }
+
+        init();
+    </script>
+</body>
+</html>

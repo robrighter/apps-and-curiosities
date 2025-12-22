@@ -29,19 +29,9 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Featured Article -->
-  <url>
-    <loc>https://www.robrighter.com/article.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
+
 
   <!-- Games Section -->
-  <url>
-    <loc>https://www.robrighter.com/games/asteroid-miner.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
   <url>
     <loc>https://www.robrighter.com/games/luner-lander/index.html</loc>
     <changefreq>yearly</changefreq>
@@ -49,11 +39,6 @@
   </url>
 
   <!-- Mathematics Section -->
-  <url>
-    <loc>https://www.robrighter.com/mathematics/circuit-breaker.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
   <url>
     <loc>https://www.robrighter.com/mathematics/statistical-distributions/index.html</loc>
     <changefreq>yearly</changefreq>
@@ -79,8 +64,8 @@
 
   <!-- Retro-Computing Section -->
   <url>
-    <loc>https://www.robrighter.com/retro/retro-compuries.html</loc>
-    <changefreq>yearly</changefreq>
+    <loc>https://www.robrighter.com/retro</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
