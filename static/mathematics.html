@@ -65,7 +65,15 @@
     </main>
 
     <footer class="site-footer">
-        <p>&copy; 2024 All Rights Reserved.</p>
+        <div class="footer-content">
+            <p>&copy; <span id="current-year">2024</span> All Rights Reserved.</p>
+            <a href="https://github.com/robrighter/apps-and-curiosities" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="View source on GitHub">
+                <img src="github-mark.svg" alt="GitHub" class="github-icon">
+            </a>
+        </div>
+        <script>
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        </script>
     </footer>
 
     <script src="script.js"></script>
