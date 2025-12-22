@@ -40,6 +40,11 @@
 
   <!-- Mathematics Section -->
   <url>
+    <loc>https://www.robrighter.com/mathematics/cannon-math-game/index.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.robrighter.com/mathematics/statistical-distributions/index.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
