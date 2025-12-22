@@ -19,6 +19,13 @@ document.addEventListener('DOMContentLoaded', function() {
             category: "Category: Notes & Inquiries"
         },
         {
+            title: "PARABOLIC CANNON: LEARNING QUADRATIC EQUATIONS THROUGH PLAY",
+            url: "mathematics/cannon-math-game/index.html",
+            image: "mathematics/cannon-math-game/cg.png",
+            description: "There's something deeply satisfying about watching a cannonball arc through the air and land exactly where you intended. Parabolic Cannon transforms the abstract world of quadratic equations into something you can see, tweak, and immediately understand. Switch between three equation forms—standard, vertex, and polar—while aiming at targets. Watch your trajectory predictions play out in real-time, with ghosted previous attempts showing your mathematical reasoning. This isn't just a game; it's an interactive laboratory for building genuine intuition about parabolas, projectile motion, and the beautiful intersection of physics and mathematics.",
+            category: "Category: Mathematics"
+        },
+        {
             title: "THE SHAPES OF RANDOMNESS",
             url: "mathematics/statistical-distributions/index.html",
             image: "mathematics/statistical-distributions/sd.png",
