@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Select and display random featured experiment
     const articles = [
         {
+            title: "UNDERSTANDING RIEMANN SUMS: FROM ANCIENT INTUITION TO MODERN COMPUTATION",
+            url: "mathematics/riemann-sums/index.html",
+            image: "mathematics/riemann-sums/rs.png",
+            description: "How do you measure the area under a curve? This deceptively simple question captivated mathematicians for millennia, from Archimedes' geometric constructions to Riemann's rigorous definitions. The answer lies in one of mathematics' most elegant ideas: approximation through subdivision. Fill a curved region with rectangles, make them narrower and narrower, and watch as discrete approximation becomes continuous truth. This interactive visualizer brings convergence to life—drag the slider from 1 to 500 rectangles and witness errors shrink, gaps vanish, and Riemann sums approach exact integrals. Toggle between Left, Right, Midpoint, and Trapezoid rules to see how different sampling strategies affect accuracy. In the dance between finite approximation and infinite limit lies one of calculus' deepest insights.",
+            category: "Category: Mathematics"
+        },
+        {
             title: "BUILDING A TRAFFIC SIMULATOR WITH AI",
             url: "notes/traffic-simulation/index.html",
             image: "notes/traffic-simulation/ts.png",
