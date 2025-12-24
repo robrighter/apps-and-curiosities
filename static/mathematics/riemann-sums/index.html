@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parabolic Cannon: Learning Quadratic Equations Through Play - Rob Righter's Apps & Curiosities</title>
+    <title>Understanding Riemann Sums: From Ancient Intuition to Modern Computation - Rob Righter's Apps & Curiosities</title>
     <link rel="stylesheet" href="../../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,10 +25,10 @@
 
     <article>
         <header class="article-header">
-            <h1 class="article-title">Parabolic Cannon: Learning Quadratic Equations Through Play</h1>
+            <h1 class="article-title">Understanding Riemann Sums: From Ancient Intuition to Modern Computation</h1>
             <div class="article-meta">
                 <span>By Rob Righter</span>
-                <span>Published: December 23, 2024</span>
+                <span>Published: December 24, 2024</span>
                 <span>Category: Mathematics</span>
             </div>
         </header>
@@ -36,67 +36,185 @@
         <div class="article-content">
             <div class="article-text">
 
-            <p>There's something deeply satisfying about watching a cannonball arc through the air and land exactly where you intended. That satisfaction becomes even richer when you realize you're not just playing a game—you're doing mathematics.</p>
-
-            <p><strong>Parabolic Cannon</strong> is a browser-based game that transforms the abstract world of quadratic equations into something you can see, tweak, and immediately understand. No graph paper required.</p>
-
-            <h2>The Core Idea</h2>
-
-            <p>Every projectile follows a parabolic path. This is one of those beautiful intersections of physics and mathematics that we often teach separately but rarely let students <em>experience</em> together. In Parabolic Cannon, your goal is simple: adjust a quadratic equation so that the cannonball lands in a basket. Miss, and you'll see exactly how your equation translated into motion. Hit, and you'll have internalized something about parabolas that no textbook explanation could match.</p>
-
-            <p>The game gives you five tries per target. After each shot, you can see your previous trajectories ghosted on the screen—a visual history of your mathematical reasoning. Too high? Too far? The evidence is right there, guiding your next adjustment.</p>
-
-            <h2>Three Ways to Think About the Same Curve</h2>
-
-            <p>What makes this more than just a targeting game is the ability to switch between different representations of the same parabola:</p>
-
-            <h3>Standard Form: y = ax² + bx + c</h3>
-
-            <p>This is the form most students encounter first. The coefficient <strong>a</strong> controls how "steep" the parabola is (and whether it opens up or down—for our cannon, it must be negative). The coefficient <strong>b</strong> affects the initial direction, and <strong>c</strong> shifts everything vertically.</p>
-
-            <p>Playing with standard form, you develop intuition for questions like: "If I want the ball to travel farther, should I increase or decrease |a|?" The answer becomes obvious after a few shots in a way that solving equations on paper never quite achieves.</p>
-
-            <h3>Vertex Form: y = a(x - h)² + k</h3>
-
-            <p>Here's where things get interesting for students who've struggled with the abstraction of "completing the square." In vertex form, <strong>h</strong> and <strong>k</strong> directly specify the highest point of the trajectory. Want the cannonball to peak at x = 200 and reach a maximum height of 150? Just set h = 200 and k = 150.</p>
-
-            <p>This representation makes it trivial to aim for a specific apex—something that requires real algebraic manipulation to figure out from standard form. Playing with both forms builds an intuitive bridge between them.</p>
-
-            <h3>Polar Form: r(φ) with Physics Parameters</h3>
-
-            <p>The polar representation takes a different approach entirely. Instead of abstract coefficients, you specify:</p>
-
-            <ul>
-                <li><strong>v₀</strong>: Initial velocity (how hard you're firing)</li>
-                <li><strong>θ</strong>: Launch angle in degrees</li>
-                <li><strong>g</strong>: Gravitational acceleration</li>
-            </ul>
-
-            <p>This is the physicist's view of projectile motion. The game displays the computed range and maximum height, connecting the physical parameters to their geometric consequences. Students can explore questions like: "What launch angle maximizes range?" (Spoiler: it's 45° in ideal conditions, but seeing it emerge from experimentation is far more memorable than being told.)</p>
-
-            <h2>Why Games Work for Math Education</h2>
-
-            <p>There's substantial research behind game-based learning, but the intuition is simple: games provide immediate, meaningful feedback in a context where failure is cheap and iteration is natural.</p>
-
-            <p>When a student gets a wrong answer on a worksheet, the feedback is often delayed and abstract—a red mark, a point deduction. When a cannonball misses a basket, the feedback is instant and visceral. You <em>see</em> the error. More importantly, you see <em>how</em> it was wrong, which points directly toward correction.</p>
-
-            <p>The game also sidesteps the anxiety that many students feel around mathematics. You're not solving equations; you're aiming a cannon. The mathematics happens almost incidentally, which is often exactly what's needed to build genuine understanding before formal symbolic manipulation.</p>
-
-            <h2>Technical Notes</h2>
-
-            <p>Parabolic Cannon runs entirely in the browser—no installation, no plugins, just HTML, CSS, and JavaScript. The cannon's barrel angle adjusts in real-time as you modify your equation, providing continuous visual feedback. A dashed preview line shows your current trajectory before you fire, letting you reason about your parameters without committing to a shot.</p>
-
-            <p>The game tracks your score across rounds, with points awarded based on how few tries you needed. This adds a light competitive element without making it feel like a test.</p>
-
-            <h2>Try It Yourself</h2>
-
-            <p>Whether you're a student trying to build intuition for quadratic functions, a teacher looking for a classroom demonstration, or just someone who enjoys the intersection of math and games, Parabolic Cannon offers a few minutes of genuinely educational entertainment.</p>
-
-            <p>Load it up, adjust your coefficients, and fire away. The parabola will teach you the rest.</p>
+            <p><em>An exploration of how mathematicians learned to measure the immeasurable</em></p>
 
             <hr>
 
-            <p><em>Parabolic Cannon was built as an experiment in making abstract mathematical concepts tangible. The best way to understand a parabola might just be to throw something along one.</em></p>
+            <h2>The Problem That Captivated Mathematicians for Millennia</h2>
+
+            <p>How do you measure the area of a shape with curved boundaries? This deceptively simple question has occupied some of the greatest minds in mathematical history. A rectangle is easy—multiply length by width. A triangle? Half of base times height. But what about the area under a parabola, or beneath a sine wave? These curves refuse to yield to simple formulas.</p>
+
+            <p>The answer lies in one of the most elegant ideas in mathematics: approximation through subdivision. If we cannot measure a curved region directly, we can fill it with shapes we <em>can</em> measure—rectangles—and then make those rectangles narrower and narrower until our approximation becomes exact.</p>
+
+            <p>This is the essence of the <strong>Riemann sum</strong>.</p>
+
+            <hr>
+
+            <h2>A Brief History: From Exhaustion to Rigor</h2>
+
+            <h3>The Ancient Foundations</h3>
+
+            <p>The story begins in ancient Greece, around 370 BCE. The mathematician <strong>Eudoxus of Cnidus</strong> developed what we now call the <em>method of exhaustion</em>—a technique for finding areas by inscribing polygons inside curved shapes. As the polygons gained more sides, they "exhausted" more of the area, providing increasingly accurate approximations.</p>
+
+            <p><strong>Archimedes</strong> (c. 287–212 BCE) elevated this method to an art form. In his famous <em>Quadrature of the Parabola</em>, he proved that the area under a parabolic arc is exactly 4/3 the area of an inscribed triangle. His approach was remarkably sophisticated: he filled the parabolic region with an infinite sequence of triangles whose areas formed a geometric series:</p>
+
+            <p>1 + 1/4 + 1/16 + 1/64 + ⋯ = 4/3</p>
+
+            <p>Archimedes also famously approximated π by inscribing and circumscribing 96-sided polygons around a circle, establishing that 3 10/71 &lt; π &lt; 3 10/70.</p>
+
+            <h3>The 17th Century Revolution</h3>
+
+            <p>After centuries of relative dormancy, integration exploded back into prominence in the 1600s. <strong>Bonaventura Cavalieri</strong> introduced his <em>method of indivisibles</em> (1635), imagining areas as composed of infinitely many infinitesimally thin slices. His contemporary <strong>Pierre de Fermat</strong> developed techniques for finding areas under curves like y = x<sup>n</sup>.</p>
+
+            <p>The breakthrough came with <strong>Isaac Newton</strong> and <strong>Gottfried Wilhelm Leibniz</strong>, who independently discovered the <em>Fundamental Theorem of Calculus</em> in the 1660s and 1670s. This remarkable result connected two seemingly unrelated operations: finding areas (integration) and finding slopes (differentiation). Suddenly, to compute the area under a curve, one needed only to find an antiderivative.</p>
+
+            <p>Yet there remained a troubling gap. Newton and Leibniz worked with "infinitesimals"—quantities infinitely small but somehow not zero. Bishop Berkeley famously mocked these as "ghosts of departed quantities." The calculus worked brilliantly in practice, but its foundations were philosophically shaky.</p>
+
+            <h3>Riemann's Rigorous Definition</h3>
+
+            <p>Enter <strong>Georg Friedrich Bernhard Riemann</strong> (1826–1866), a German mathematician whose brief life produced some of the most profound ideas in mathematical history. In his 1854 <em>Habilitationsschrift</em> (a qualifying dissertation required for German professors), Riemann gave the first completely rigorous definition of the integral.</p>
+
+            <p>Riemann's insight was to return to the ancient idea of approximation, but with modern precision. Rather than vague talk of infinitesimals, he defined the integral as the <em>limit</em> of a specific type of sum—now called a Riemann sum.</p>
+
+            <p>His definition was presented at the University of Göttingen in 1854, though it wasn't published until 1868, two years after his untimely death from tuberculosis at age 39.</p>
+
+            <hr>
+
+            <h2>The Mathematics: What Is a Riemann Sum?</h2>
+
+            <p>Consider a function f(x) defined on an interval [a, b]. We want to find the area between the curve and the x-axis.</p>
+
+            <h3>The Construction</h3>
+
+            <p>We begin by partitioning the interval into n subintervals, each of width:</p>
+
+            <p>Δx = (b - a) / n</p>
+
+            <p>The i-th subinterval runs from x<sub>i</sub> = a + i · Δx to x<sub>i+1</sub> = a + (i+1) · Δx.</p>
+
+            <p>For each subinterval, we construct a rectangle. The width is Δx; the height is determined by the function value at some point in the subinterval. The choice of that point gives rise to different methods:</p>
+
+            <p><strong>Left Riemann Sum:</strong> Use the left endpoint of each subinterval.</p>
+
+            <p><strong>Right Riemann Sum:</strong> Use the right endpoint of each subinterval.</p>
+
+            <p><strong>Midpoint Rule:</strong> Use the center of each subinterval.</p>
+
+            <p><strong>Trapezoid Rule:</strong> Average the left and right endpoints (geometrically, this creates trapezoids rather than rectangles).</p>
+
+            <h3>The Limit</h3>
+
+            <p>The magic happens as n → ∞. As we use more and more rectangles (making each one thinner), the sum approaches the true area. Riemann's definition states:</p>
+
+            <p>∫<sub>a</sub><sup>b</sup> f(x) dx = lim<sub>n→∞</sub> Σ f(x<sub>i</sub>*) · Δx</p>
+
+            <p>where x<sub>i</sub>* is any point in the i-th subinterval. The remarkable fact is that for "nice" functions (continuous functions, for instance), this limit exists and is the same regardless of how we choose the sample points.</p>
+
+            <h3>An Example: The Area Under a Parabola</h3>
+
+            <p>Let's compute ∫<sub>0</sub><sup>2</sup> x<sup>2</sup> dx using Riemann sums.</p>
+
+            <p>With n rectangles and left endpoints:</p>
+
+            <p>L<sub>n</sub> = Σ (2i/n)<sup>2</sup> · (2/n) = (8/n<sup>3</sup>) Σ i<sup>2</sup> = (8/n<sup>3</sup>) · [(n-1)n(2n-1)/6]</p>
+
+            <p>As n → ∞, this approaches 8/3—exactly what we get from the antiderivative: [x<sup>3</sup>/3]<sub>0</sub><sup>2</sup> = 8/3.</p>
+
+            <hr>
+
+            <h2>The Visualizer: Seeing Convergence in Action</h2>
+
+            <p>The interactive Riemann Sum Visualizer brings these abstract concepts to life. Here's what it offers:</p>
+
+            <h3>Function Input</h3>
+
+            <p>Enter any function using standard mathematical notation. The parser understands:</p>
+            <ul>
+                <li>Basic operations: +, -, *, /, ^ (exponentiation)</li>
+                <li>Standard functions: sin, cos, tan, exp, log, sqrt, abs</li>
+                <li>Constants: pi, e</li>
+            </ul>
+
+            <p>Examples: x^2, sin(x), exp(-x^2), 1/x, x^3 - 3*x</p>
+
+            <h3>Adjustable Parameters</h3>
+
+            <ul>
+                <li><strong>Bounds [a, b]:</strong> Set the integration limits to focus on any region of interest.</li>
+                <li><strong>Number of Rectangles n:</strong> A slider lets you smoothly adjust from 1 to 500 subdivisions. Watch in real-time as the approximation improves.</li>
+            </ul>
+
+            <h3>Four Approximation Methods</h3>
+
+            <p>Toggle between Left, Right, Midpoint, and Trapezoid rules to see how different sampling strategies affect accuracy. You'll notice that the Midpoint rule often outperforms Left and Right rules for the same number of rectangles—a fact that can be proven theoretically.</p>
+
+            <h3>Visual Feedback</h3>
+
+            <p>The graph displays:</p>
+            <ul>
+                <li>The function curve in green</li>
+                <li>Rectangles (or trapezoids) in blue for positive areas, red for negative areas</li>
+                <li>A clean coordinate grid with labeled axes</li>
+            </ul>
+
+            <h3>Numerical Results</h3>
+
+            <p>Below the graph, four key values update in real-time:</p>
+            <ul>
+                <li><strong>Riemann Sum:</strong> Your current approximation</li>
+                <li><strong>Actual Integral:</strong> Computed via high-precision numerical integration (Simpson's rule with 10,000 subdivisions)</li>
+                <li><strong>Absolute Error:</strong> The difference between approximation and true value</li>
+                <li><strong>Relative Error:</strong> The percentage error</li>
+            </ul>
+
+            <h3>The Convergence Experience</h3>
+
+            <p>The true power of the visualizer emerges when you drag the slider from n = 1 to n = 500. Watch as:</p>
+            <ul>
+                <li>The rectangles become thinner and more numerous</li>
+                <li>Gaps between rectangles and curve shrink to invisibility</li>
+                <li>The error drops from substantial to negligible</li>
+                <li>The Riemann sum converges to the actual integral</li>
+            </ul>
+
+            <p>This visual demonstration of convergence—seeing the approximation approach the limit—provides an intuition that formulas alone cannot convey.</p>
+
+            <hr>
+
+            <h2>Pedagogical Insights</h2>
+
+            <h3>Why Different Methods Have Different Accuracies</h3>
+
+            <p>For a monotonically increasing function, the Left rule consistently underestimates (each rectangle's height is the minimum in its interval), while the Right rule overestimates. The Midpoint and Trapezoid rules balance these errors, typically achieving better accuracy for the same computational effort.</p>
+
+            <h3>The Rate of Convergence</h3>
+
+            <p>Error analysis reveals that:</p>
+            <ul>
+                <li>Left/Right rules have error O(1/n)</li>
+                <li>Trapezoid rule has error O(1/n<sup>2</sup>)</li>
+                <li>Midpoint rule also has error O(1/n<sup>2</sup>)</li>
+            </ul>
+
+            <p>This explains why doubling the number of rectangles roughly halves the error for Left/Right rules, but quarters it for Trapezoid and Midpoint.</p>
+
+            <h3>Connecting to the Fundamental Theorem</h3>
+
+            <p>The visualizer helps students appreciate why the Fundamental Theorem is so powerful. Computing Riemann sums by hand is tedious; computing limits of Riemann sums is even more so. But finding an antiderivative often reduces pages of work to a single line.</p>
+
+            <hr>
+
+            <h2>Conclusion</h2>
+
+            <p>The Riemann sum stands as a testament to a profound mathematical insight: that the infinite can be tamed through careful limiting processes. From Archimedes' geometric constructions to Riemann's rigorous definitions to modern numerical algorithms, the idea of approximation through subdivision has proven remarkably durable.</p>
+
+            <p>The visualizer transforms this abstract concept into a tangible experience. By watching rectangles multiply and errors shrink, students can develop an intuition for convergence that complements the formal definitions. In the dance between discrete approximation and continuous limit lies one of mathematics' deepest truths—and now you can watch it unfold before your eyes.</p>
+
+            <hr>
+
+            <p><em>"Give me a place to stand, and I shall move the Earth."</em> — Archimedes</p>
+
+            <p><em>And give me enough rectangles, and I shall measure any area.</em></p>
 
         </div>
 
@@ -125,7 +243,15 @@
     </article>
 
     <footer class="site-footer">
-        <p>&copy; 2024 All Rights Reserved.</p>
+        <div class="footer-content">
+            <p>&copy; <span id="current-year">2024</span> All Rights Reserved.</p>
+            <a href="https://github.com/robrighter/apps-and-curiosities" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="View source on GitHub">
+                <img src="../../github-mark.svg" alt="GitHub" class="github-icon">
+            </a>
+        </div>
+        <script>
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        </script>
     </footer>
 
     <script src="../../script.js"></script>
