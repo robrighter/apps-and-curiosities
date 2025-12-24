@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riemann Sum Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group input[type="text"],
+        .control-group input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .control-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .slider-group {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slider-header label {
+            font-size: 0.85rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slider-value {
+            font-family: 'Fira Code', monospace;
+            color: #00ff88;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            cursor: grab;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .method-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .method-btn {
+            padding: 10px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: transparent;
+            color: #aaa;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .method-btn:hover {
+            border-color: #00d9ff;
+            color: #fff;
+        }
+
+        .method-btn.active {
+            background: linear-gradient(135deg, #00d9ff, #00ff88);
+            border-color: transparent;
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .canvas-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-card h3 {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .result-card .value {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .riemann-value { color: #00d9ff; }
+        .actual-value { color: #00ff88; }
+        .error-value { color: #ff6b6b; }
+        .percent-value { color: #ffd93d; }
+
+        .presets {
+            margin-top: 16px;
+        }
+
+        .presets label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preset-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d9ff;
+            color: #fff;
+        }
+
+        .info-text {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #00d9ff;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #bbb;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.6rem; }
+            .controls { padding: 16px; }
+            .control-row { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Riemann Sum Visualizer</h1>
+        <p class="subtitle">Watch the approximation converge to the true integral as you increase subdivisions</p>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group" style="flex: 2;">
+                    <label>Function f(x)</label>
+                    <input type="text" id="equation" value="x^2" placeholder="e.g., x^2, sin(x), exp(-x^2)">
+                </div>
+                <div class="control-group">
+                    <label>Lower Bound (a)</label>
+                    <input type="number" id="lowerBound" value="0" step="0.1">
+                </div>
+                <div class="control-group">
+                    <label>Upper Bound (b)</label>
+                    <input type="number" id="upperBound" value="2" step="0.1">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <label>Number of Rectangles (n)</label>
+                        <span class="slider-value" id="rectCountDisplay">10</span>
+                    </div>
+                    <input type="range" id="rectCount" min="1" max="500" value="10">
+                </div>
+                <div class="control-group">
+                    <label>Approximation Method</label>
+                    <div class="method-selector">
+                        <button class="method-btn active" data-method="left">Left</button>
+                        <button class="method-btn" data-method="right">Right</button>
+                        <button class="method-btn" data-method="midpoint">Midpoint</button>
+                        <button class="method-btn" data-method="trapezoid">Trapezoid</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="presets">
+                <label>Example Functions</label>
+                <div class="preset-btns">
+                    <button class="preset-btn" data-eq="x^2" data-a="0" data-b="2">x²</button>
+                    <button class="preset-btn" data-eq="sin(x)" data-a="0" data-b="3.14159">sin(x)</button>
+                    <button class="preset-btn" data-eq="cos(x)" data-a="0" data-b="3.14159">cos(x)</button>
+                    <button class="preset-btn" data-eq="exp(-x^2)" data-a="-2" data-b="2">e^(-x²)</button>
+                    <button class="preset-btn" data-eq="1/x" data-a="1" data-b="5">1/x</button>
+                    <button class="preset-btn" data-eq="sqrt(x)" data-a="0" data-b="4">√x</button>
+                    <button class="preset-btn" data-eq="x^3 - 3*x" data-a="-2" data-b="2">x³ - 3x</button>
+                    <button class="preset-btn" data-eq="abs(sin(x))" data-a="0" data-b="6.28318">|sin(x)|</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="graph" width="1100" height="500"></canvas>
+        </div>
+
+        <div class="results">
+            <div class="result-card">
+                <h3>Riemann Sum</h3>
+                <div class="value riemann-value" id="riemannSum">0.000000</div>
+            </div>
+            <div class="result-card">
+                <h3>Actual Integral (Numerical)</h3>
+                <div class="value actual-value" id="actualIntegral">0.000000</div>
+            </div>
+            <div class="result-card">
+                <h3>Absolute Error</h3>
+                <div class="value error-value" id="absoluteError">0.000000</div>
+            </div>
+            <div class="result-card">
+                <h3>Relative Error</h3>
+                <div class="value percent-value" id="relativeError">0.00%</div>
+            </div>
+        </div>
+
+        <div class="info-text">
+            <strong>How it works:</strong> The Riemann sum approximates the definite integral ∫f(x)dx by summing the areas of rectangles. 
+            As you increase n (number of rectangles), the approximation converges to the true value of the integral. 
+            Try different methods to see how Left, Right, Midpoint, and Trapezoid rules compare in accuracy!
+        </div>
+    </div>
+
+    <script>
+        // Math expression parser
+        function parseExpression(expr) {
+            // Preprocess the expression
+            let processed = expr
+                .replace(/\^/g, '**')
+                .replace(/sin/g, 'Math.sin')
+                .replace(/cos/g, 'Math.cos')
+                .replace(/tan/g, 'Math.tan')
+                .replace(/exp/g, 'Math.exp')
+                .replace(/log/g, 'Math.log')
+                .replace(/ln/g, 'Math.log')
+                .replace(/sqrt/g, 'Math.sqrt')
+                .replace(/abs/g, 'Math.abs')
+                .replace(/pi/gi, 'Math.PI')
+                .replace(/e(?![xp])/g, 'Math.E');
+            
+            return new Function('x', `return ${processed};`);
+        }
+
+        // State
+        let state = {
+            equation: 'x^2',
+            a: 0,
+            b: 2,
+            n: 10,
+            method: 'left',
+            func: null
+        };
+
+        // DOM elements
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        const equationInput = document.getElementById('equation');
+        const lowerBoundInput = document.getElementById('lowerBound');
+        const upperBoundInput = document.getElementById('upperBound');
+        const rectCountSlider = document.getElementById('rectCount');
+        const rectCountDisplay = document.getElementById('rectCountDisplay');
+        const methodBtns = document.querySelectorAll('.method-btn');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+
+        // Results display
+        const riemannSumDisplay = document.getElementById('riemannSum');
+        const actualIntegralDisplay = document.getElementById('actualIntegral');
+        const absoluteErrorDisplay = document.getElementById('absoluteError');
+        const relativeErrorDisplay = document.getElementById('relativeError');
+
+        // Initialize
+        function init() {
+            updateFunction();
+            setupEventListeners();
+            draw();
+        }
+
+        function setupEventListeners() {
+            equationInput.addEventListener('input', debounce(() => {
+                updateFunction();
+                draw();
+            }, 300));
+
+            lowerBoundInput.addEventListener('input', () => {
+                state.a = parseFloat(lowerBoundInput.value) || 0;
+                draw();
+            });
+
+            upperBoundInput.addEventListener('input', () => {
+                state.b = parseFloat(upperBoundInput.value) || 1;
+                draw();
+            });
+
+            rectCountSlider.addEventListener('input', () => {
+                state.n = parseInt(rectCountSlider.value);
+                rectCountDisplay.textContent = state.n;
+                draw();
+            });
+
+            methodBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    methodBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.method = btn.dataset.method;
+                    draw();
+                });
+            });
+
+            presetBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    equationInput.value = btn.dataset.eq;
+                    lowerBoundInput.value = btn.dataset.a;
+                    upperBoundInput.value = btn.dataset.b;
+                    state.a = parseFloat(btn.dataset.a);
+                    state.b = parseFloat(btn.dataset.b);
+                    updateFunction();
+                    draw();
+                });
+            });
+
+            window.addEventListener('resize', debounce(draw, 100));
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function updateFunction() {
+            state.equation = equationInput.value;
+            try {
+                state.func = parseExpression(state.equation);
+                // Test the function
+                state.func(1);
+            } catch (e) {
+                state.func = x => 0;
+            }
+        }
+
+        function safeEval(x) {
+            try {
+                const result = state.func(x);
+                if (!isFinite(result)) return null;
+                return result;
+            } catch {
+                return null;
+            }
+        }
+
+        // Calculate Riemann sum
+        function calculateRiemannSum(a, b, n, method) {
+            const dx = (b - a) / n;
+            let sum = 0;
+
+            for (let i = 0; i < n; i++) {
+                let x;
+                switch (method) {
+                    case 'left':
+                        x = a + i * dx;
+                        break;
+                    case 'right':
+                        x = a + (i + 1) * dx;
+                        break;
+                    case 'midpoint':
+                        x = a + (i + 0.5) * dx;
+                        break;
+                    case 'trapezoid':
+                        const x1 = a + i * dx;
+                        const x2 = a + (i + 1) * dx;
+                        const y1 = safeEval(x1);
+                        const y2 = safeEval(x2);
+                        if (y1 !== null && y2 !== null) {
+                            sum += (y1 + y2) / 2 * dx;
+                        }
+                        continue;
+                }
+                
+                if (method !== 'trapezoid') {
+                    const y = safeEval(x);
+                    if (y !== null) {
+                        sum += y * dx;
+                    }
+                }
+            }
+
+            return sum;
+        }
+
+        // Calculate actual integral using Simpson's rule with many subdivisions
+        function calculateActualIntegral(a, b) {
+            const n = 10000;
+            const dx = (b - a) / n;
+            let sum = 0;
+
+            const fa = safeEval(a);
+            const fb = safeEval(b);
+            if (fa !== null) sum += fa;
+            if (fb !== null) sum += fb;
+
+            for (let i = 1; i < n; i++) {
+                const x = a + i * dx;
+                const y = safeEval(x);
+                if (y !== null) {
+                    sum += y * (i % 2 === 0 ? 2 : 4);
+                }
+            }
+
+            return sum * dx / 3;
+        }
+
+        // Drawing
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width;
+            const height = rect.height;
+            const padding = { top: 40, right: 40, bottom: 50, left: 60 };
+            const graphWidth = width - padding.left - padding.right;
+            const graphHeight = height - padding.top - padding.bottom;
+
+            // Clear canvas
+            ctx.fillStyle = '#0a0a15';
+            ctx.fillRect(0, 0, width, height);
+
+            // Find y range
+            let yMin = Infinity, yMax = -Infinity;
+            const samplePoints = 500;
+            const sampleDx = (state.b - state.a) / samplePoints;
+            
+            for (let i = 0; i <= samplePoints; i++) {
+                const x = state.a + i * sampleDx;
+                const y = safeEval(x);
+                if (y !== null) {
+                    yMin = Math.min(yMin, y);
+                    yMax = Math.max(yMax, y);
+                }
+            }
+
+            // Add some padding to y range
+            const yPadding = (yMax - yMin) * 0.15 || 1;
+            yMin -= yPadding;
+            yMax += yPadding;
+
+            // Include 0 in range if close
+            if (yMin > 0 && yMin < yPadding * 2) yMin = -yPadding * 0.5;
+            if (yMax < 0 && yMax > -yPadding * 2) yMax = yPadding * 0.5;
+
+            // Coordinate transformations
+            const xToPixel = x => padding.left + (x - state.a) / (state.b - state.a) * graphWidth;
+            const yToPixel = y => padding.top + (yMax - y) / (yMax - yMin) * graphHeight;
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+            ctx.lineWidth = 1;
+
+            // Vertical grid lines
+            const xGridStep = Math.pow(10, Math.floor(Math.log10(state.b - state.a))) / 2;
+            for (let x = Math.ceil(state.a / xGridStep) * xGridStep; x <= state.b; x += xGridStep) {
+                const px = xToPixel(x);
+                ctx.beginPath();
+                ctx.moveTo(px, padding.top);
+                ctx.lineTo(px, height - padding.bottom);
+                ctx.stroke();
+            }
+
+            // Horizontal grid lines
+            const yGridStep = Math.pow(10, Math.floor(Math.log10(yMax - yMin))) / 2;
+            for (let y = Math.ceil(yMin / yGridStep) * yGridStep; y <= yMax; y += yGridStep) {
+                const py = yToPixel(y);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, py);
+                ctx.lineTo(width - padding.right, py);
+                ctx.stroke();
+            }
+
+            // Draw axes
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+
+            // X-axis (if in range)
+            if (yMin <= 0 && yMax >= 0) {
+                const y0 = yToPixel(0);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y0);
+                ctx.lineTo(width - padding.right, y0);
+                ctx.stroke();
+            }
+
+            // Draw Riemann rectangles
+            const dx = (state.b - state.a) / state.n;
+            const y0Pixel = yMin <= 0 && yMax >= 0 ? yToPixel(0) : (yMin > 0 ? yToPixel(yMin) : yToPixel(yMax));
+
+            for (let i = 0; i < state.n; i++) {
+                const x = state.a + i * dx;
+                let sampleX;
+                
+                switch (state.method) {
+                    case 'left': sampleX = x; break;
+                    case 'right': sampleX = x + dx; break;
+                    case 'midpoint': sampleX = x + dx / 2; break;
+                    case 'trapezoid': sampleX = x; break;
+                }
+
+                const y = safeEval(sampleX);
+                if (y === null) continue;
+
+                const px = xToPixel(x);
+                const pxNext = xToPixel(x + dx);
+                const py = yToPixel(y);
+                const rectWidth = pxNext - px;
+
+                if (state.method === 'trapezoid') {
+                    const y2 = safeEval(x + dx);
+                    if (y2 === null) continue;
+                    const py2 = yToPixel(y2);
+                    const baseY = yMin <= 0 && yMax >= 0 ? yToPixel(0) : height - padding.bottom;
+
+                    // Fill trapezoid
+                    ctx.fillStyle = y >= 0 && y2 >= 0 ? 'rgba(0, 217, 255, 0.25)' : 
+                                   y <= 0 && y2 <= 0 ? 'rgba(255, 107, 107, 0.25)' :
+                                   'rgba(255, 217, 61, 0.25)';
+                    ctx.beginPath();
+                    ctx.moveTo(px, baseY);
+                    ctx.lineTo(px, py);
+                    ctx.lineTo(pxNext, py2);
+                    ctx.lineTo(pxNext, baseY);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Stroke trapezoid
+                    ctx.strokeStyle = y >= 0 && y2 >= 0 ? 'rgba(0, 217, 255, 0.6)' : 
+                                     y <= 0 && y2 <= 0 ? 'rgba(255, 107, 107, 0.6)' :
+                                     'rgba(255, 217, 61, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                } else {
+                    const baseY = yMin <= 0 && yMax >= 0 ? yToPixel(0) : height - padding.bottom;
+                    const rectHeight = baseY - py;
+
+                    // Fill color based on positive/negative
+                    ctx.fillStyle = y >= 0 ? 'rgba(0, 217, 255, 0.25)' : 'rgba(255, 107, 107, 0.25)';
+                    ctx.fillRect(px, Math.min(py, baseY), rectWidth, Math.abs(rectHeight));
+
+                    // Stroke
+                    ctx.strokeStyle = y >= 0 ? 'rgba(0, 217, 255, 0.6)' : 'rgba(255, 107, 107, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(px, Math.min(py, baseY), rectWidth, Math.abs(rectHeight));
+                }
+            }
+
+            // Draw function curve
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+
+            let firstPoint = true;
+            for (let i = 0; i <= samplePoints; i++) {
+                const x = state.a + i * sampleDx;
+                const y = safeEval(x);
+                if (y === null) {
+                    firstPoint = true;
+                    continue;
+                }
+                const px = xToPixel(x);
+                const py = yToPixel(y);
+
+                if (firstPoint) {
+                    ctx.moveTo(px, py);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+
+            // Draw axis labels
+            ctx.fillStyle = '#888';
+            ctx.font = '12px "Segoe UI", system-ui, sans-serif';
+            ctx.textAlign = 'center';
+
+            // X-axis labels
+            for (let x = Math.ceil(state.a / xGridStep) * xGridStep; x <= state.b; x += xGridStep) {
+                const px = xToPixel(x);
+                ctx.fillText(x.toFixed(2).replace(/\.?0+$/, ''), px, height - padding.bottom + 20);
+            }
+
+            // Y-axis labels
+            ctx.textAlign = 'right';
+            for (let y = Math.ceil(yMin / yGridStep) * yGridStep; y <= yMax; y += yGridStep) {
+                const py = yToPixel(y);
+                ctx.fillText(y.toFixed(2).replace(/\.?0+$/, ''), padding.left - 10, py + 4);
+            }
+
+            // Draw title
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`f(x) = ${state.equation}`, width / 2, 24);
+
+            // Calculate and display results
+            const riemannSum = calculateRiemannSum(state.a, state.b, state.n, state.method);
+            const actualIntegral = calculateActualIntegral(state.a, state.b);
+            const absoluteError = Math.abs(riemannSum - actualIntegral);
+            const relativeError = actualIntegral !== 0 ? (absoluteError / Math.abs(actualIntegral)) * 100 : 0;
+
+            riemannSumDisplay.textContent = riemannSum.toFixed(6);
+            actualIntegralDisplay.textContent = actualIntegral.toFixed(6);
+            absoluteErrorDisplay.textContent = absoluteError.toFixed(6);
+            relativeErrorDisplay.textContent = relativeError.toFixed(2) + '%';
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
