@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Courier+Prime&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
 </head>
 <body>
     <header class="site-header">
@@ -58,13 +67,13 @@
 
             <p><strong>Archimedes</strong> (c. 287–212 BCE) elevated this method to an art form. In his famous <em>Quadrature of the Parabola</em>, he proved that the area under a parabolic arc is exactly 4/3 the area of an inscribed triangle. His approach was remarkably sophisticated: he filled the parabolic region with an infinite sequence of triangles whose areas formed a geometric series:</p>
 
-            <p>1 + 1/4 + 1/16 + 1/64 + ⋯ = 4/3</p>
+            <p>$$1 + \frac{1}{4} + \frac{1}{16} + \frac{1}{64} + \cdots = \frac{4}{3}$$</p>
 
-            <p>Archimedes also famously approximated π by inscribing and circumscribing 96-sided polygons around a circle, establishing that 3 10/71 &lt; π &lt; 3 10/70.</p>
+            <p>Archimedes also famously approximated π by inscribing and circumscribing 96-sided polygons around a circle, establishing that $3\frac{10}{71} < \pi < 3\frac{10}{70}$.</p>
 
             <h3>The 17th Century Revolution</h3>
 
-            <p>After centuries of relative dormancy, integration exploded back into prominence in the 1600s. <strong>Bonaventura Cavalieri</strong> introduced his <em>method of indivisibles</em> (1635), imagining areas as composed of infinitely many infinitesimally thin slices. His contemporary <strong>Pierre de Fermat</strong> developed techniques for finding areas under curves like y = x<sup>n</sup>.</p>
+            <p>After centuries of relative dormancy, integration exploded back into prominence in the 1600s. <strong>Bonaventura Cavalieri</strong> introduced his <em>method of indivisibles</em> (1635), imagining areas as composed of infinitely many infinitesimally thin slices. His contemporary <strong>Pierre de Fermat</strong> developed techniques for finding areas under curves like $y = x^n$.</p>
 
             <p>The breakthrough came with <strong>Isaac Newton</strong> and <strong>Gottfried Wilhelm Leibniz</strong>, who independently discovered the <em>Fundamental Theorem of Calculus</em> in the 1660s and 1670s. This remarkable result connected two seemingly unrelated operations: finding areas (integration) and finding slopes (differentiation). Suddenly, to compute the area under a curve, one needed only to find an antiderivative.</p>
 
@@ -82,17 +91,17 @@
 
             <h2>The Mathematics: What Is a Riemann Sum?</h2>
 
-            <p>Consider a function f(x) defined on an interval [a, b]. We want to find the area between the curve and the x-axis.</p>
+            <p>Consider a function $f(x)$ defined on an interval $[a, b]$. We want to find the area between the curve and the x-axis.</p>
 
             <h3>The Construction</h3>
 
-            <p>We begin by partitioning the interval into n subintervals, each of width:</p>
+            <p>We begin by partitioning the interval into $n$ subintervals, each of width:</p>
 
-            <p>Δx = (b - a) / n</p>
+            <p>$$\Delta x = \frac{b - a}{n}$$</p>
 
-            <p>The i-th subinterval runs from x<sub>i</sub> = a + i · Δx to x<sub>i+1</sub> = a + (i+1) · Δx.</p>
+            <p>The $i$-th subinterval runs from $x_i = a + i \cdot \Delta x$ to $x_{i+1} = a + (i+1) \cdot \Delta x$.</p>
 
-            <p>For each subinterval, we construct a rectangle. The width is Δx; the height is determined by the function value at some point in the subinterval. The choice of that point gives rise to different methods:</p>
+            <p>For each subinterval, we construct a rectangle. The width is $\Delta x$; the height is determined by the function value at some point in the subinterval. The choice of that point gives rise to different methods:</p>
 
             <p><strong>Left Riemann Sum:</strong> Use the left endpoint of each subinterval.</p>
 
@@ -104,21 +113,21 @@
 
             <h3>The Limit</h3>
 
-            <p>The magic happens as n → ∞. As we use more and more rectangles (making each one thinner), the sum approaches the true area. Riemann's definition states:</p>
+            <p>The magic happens as $n \to \infty$. As we use more and more rectangles (making each one thinner), the sum approaches the true area. Riemann's definition states:</p>
 
-            <p>∫<sub>a</sub><sup>b</sup> f(x) dx = lim<sub>n→∞</sub> Σ f(x<sub>i</sub>*) · Δx</p>
+            <p>$$\int_a^b f(x)\,dx = \lim_{n \to \infty} \sum_{i=1}^n f(x_i^*) \cdot \Delta x$$</p>
 
-            <p>where x<sub>i</sub>* is any point in the i-th subinterval. The remarkable fact is that for "nice" functions (continuous functions, for instance), this limit exists and is the same regardless of how we choose the sample points.</p>
+            <p>where $x_i^*$ is any point in the $i$-th subinterval. The remarkable fact is that for "nice" functions (continuous functions, for instance), this limit exists and is the same regardless of how we choose the sample points.</p>
 
             <h3>An Example: The Area Under a Parabola</h3>
 
-            <p>Let's compute ∫<sub>0</sub><sup>2</sup> x<sup>2</sup> dx using Riemann sums.</p>
+            <p>Let's compute $\int_0^2 x^2\,dx$ using Riemann sums.</p>
 
-            <p>With n rectangles and left endpoints:</p>
+            <p>With $n$ rectangles and left endpoints:</p>
 
-            <p>L<sub>n</sub> = Σ (2i/n)<sup>2</sup> · (2/n) = (8/n<sup>3</sup>) Σ i<sup>2</sup> = (8/n<sup>3</sup>) · [(n-1)n(2n-1)/6]</p>
+            <p>$$L_n = \sum_{i=0}^{n-1} \left(\frac{2i}{n}\right)^2 \cdot \frac{2}{n} = \frac{8}{n^3} \sum_{i=0}^{n-1} i^2 = \frac{8}{n^3} \cdot \frac{(n-1)n(2n-1)}{6}$$</p>
 
-            <p>As n → ∞, this approaches 8/3—exactly what we get from the antiderivative: [x<sup>3</sup>/3]<sub>0</sub><sup>2</sup> = 8/3.</p>
+            <p>As $n \to \infty$, this approaches $\frac{8}{3}$—exactly what we get from the antiderivative: $\left[\frac{x^3}{3}\right]_0^2 = \frac{8}{3}$.</p>
 
             <hr>
 
@@ -140,8 +149,8 @@
             <h3>Adjustable Parameters</h3>
 
             <ul>
-                <li><strong>Bounds [a, b]:</strong> Set the integration limits to focus on any region of interest.</li>
-                <li><strong>Number of Rectangles n:</strong> A slider lets you smoothly adjust from 1 to 500 subdivisions. Watch in real-time as the approximation improves.</li>
+                <li><strong>Bounds $[a, b]$:</strong> Set the integration limits to focus on any region of interest.</li>
+                <li><strong>Number of Rectangles $n$:</strong> A slider lets you smoothly adjust from 1 to 500 subdivisions. Watch in real-time as the approximation improves.</li>
             </ul>
 
             <h3>Four Approximation Methods</h3>
@@ -169,7 +178,7 @@
 
             <h3>The Convergence Experience</h3>
 
-            <p>The true power of the visualizer emerges when you drag the slider from n = 1 to n = 500. Watch as:</p>
+            <p>The true power of the visualizer emerges when you drag the slider from $n = 1$ to $n = 500$. Watch as:</p>
             <ul>
                 <li>The rectangles become thinner and more numerous</li>
                 <li>Gaps between rectangles and curve shrink to invisibility</li>
@@ -191,9 +200,9 @@
 
             <p>Error analysis reveals that:</p>
             <ul>
-                <li>Left/Right rules have error O(1/n)</li>
-                <li>Trapezoid rule has error O(1/n<sup>2</sup>)</li>
-                <li>Midpoint rule also has error O(1/n<sup>2</sup>)</li>
+                <li>Left/Right rules have error $O(1/n)$</li>
+                <li>Trapezoid rule has error $O(1/n^2)$</li>
+                <li>Midpoint rule also has error $O(1/n^2)$</li>
             </ul>
 
             <p>This explains why doubling the number of rectangles roughly halves the error for Left/Right rules, but quarters it for Trapezoid and Midpoint.</p>
