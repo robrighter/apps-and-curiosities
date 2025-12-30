@@ -518,11 +518,11 @@
             <div class="label-cell label-orange">C</div>
             <div class="label-cell label-orange">D</div>
             <div class="label-cell label-orange">E</div>
-            <div class="label-cell label-white">MATRIX</div>
+            <div class="label-cell label-orange">MATRIX</div>
             <div class="label-cell label-orange">FIX</div>
             <div class="label-cell label-orange">SCI</div>
             <div class="label-cell label-orange">ENG</div>
-            <div class="label-cell label-white">SOLVE</div>
+            <div class="label-cell label-orange">SOLVE</div>
         </div>
 
         <div class="button-grid">
@@ -2350,6 +2350,7 @@
                     calc.fPrefix = false;
                     calc.updateDisplay();
                     break;
+                case 'ENTER':
                 case 'ENTER↑': 
                     if (calc.recording) {
                         calc.recordInstruction({ cmd: 'ENTER' });
