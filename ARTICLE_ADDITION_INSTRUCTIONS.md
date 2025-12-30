@@ -31,6 +31,24 @@ When the user provides markdown content for a new article, the coding agent must
 - **Action**: Ensure the favicon is properly added to the `<head>` section
 - The app.html file is the interactive component; only the favicon needs to be updated
 
+### 2.5. Google Analytics Tracking Code
+- **Files**: BOTH `static/{category}/{article-slug}/index.html` AND `static/{category}/{article-slug}/app.html`
+- **Action**: Add the Google Analytics tracking code to the `<head>` section of BOTH files
+- **CRITICAL**: This must be added to EVERY new HTML page created
+- **Location**: Insert after the `<meta name="viewport">` tag
+
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D809M2TLWJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-D809M2TLWJ');
+</script>
+```
+
 ### 3. Home Page Updates
 **File**: `static/index.html`
 
@@ -162,6 +180,7 @@ This applies to:
 Before completing the task, verify that:
 - [ ] Article content is properly updated in `index.html` (NOT app.html)
 - [ ] Favicon is added to `app.html`
+- [ ] **Google Analytics tracking code is added to BOTH `index.html` AND `app.html`**
 - [ ] All dates are current and accurate
 - [ ] Article is added to home page (`index.html`) in chronological order
 - [ ] All articles on home page are in chronological order (newest first)
@@ -183,6 +202,7 @@ After completing all updates:
 ## Common Pitfalls to Avoid
 - **DON'T put article content in app.html** - it goes in index.html
 - **DON'T forget the favicon** - always add it to app.html
+- **DON'T forget Google Analytics** - must be added to BOTH index.html AND app.html
 - **DON'T add articles randomly** - maintain chronological order everywhere
 - Don't forget to update ALL locations (home, category page, rotator, sitemap)
 - Ensure article slug consistency across all references
@@ -198,16 +218,17 @@ When the user says: "Update the article with this markdown: [content]"
 The agent should:
 1. Update the article's **`index.html`** (NOT app.html) with the provided content
 2. Add favicon to the article's `app.html` if missing
-3. Set the publication date (current date or as specified by user)
-4. Determine correct chronological position based on publication date
-5. Add the article to home page `index.html` in correct order
-6. Verify all articles on home page are in chronological order; reorder if needed
-7. Add the article to `script.js` rotator
-8. Add the article to the appropriate category page in correct order
-9. Verify all articles on category page are in chronological order; reorder if needed
-10. Add the article to `sitemap.xml`
-11. Verify all changes
-12. Commit and push
+3. Add Google Analytics tracking code to BOTH `index.html` AND `app.html` if missing
+4. Set the publication date (current date or as specified by user)
+5. Determine correct chronological position based on publication date
+6. Add the article to home page `index.html` in correct order
+7. Verify all articles on home page are in chronological order; reorder if needed
+8. Add the article to `script.js` rotator
+9. Add the article to the appropriate category page in correct order
+10. Verify all articles on category page are in chronological order; reorder if needed
+11. Add the article to `sitemap.xml`
+12. Verify all changes
+13. Commit and push
 
 ## Questions to Clarify (if needed)
 If any of the following are unclear from context, ask the user:
