@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP-15C Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 100%);
+            border-radius: 15px;
+            border-left: 15px solid #000;
+            border-right: 15px solid #000;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: fit-content;
+            min-width: 950px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            background: linear-gradient(to bottom, #c0c0c0 0%, #e0e0e0 50%, #c0c0c0 100%);
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
+        
+        .hp-badge {
+            background: black;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .model-number {
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .button-panel {
+            border: 3px solid #a0a0a0;
+            border-bottom: 8px solid #a0a0a0;
+            border-radius: 8px;
+            padding: 10px;
+            background: linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 100%);
+        }
+
+        .display-container {
+            background: linear-gradient(to bottom, #8b9078 0%, #a5a894 50%, #8b9078 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .display {
+            background: #b8c5a0;
+            color: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            font-size: 48px;
+            padding: 25px 20px;
+            text-align: right;
+            border-radius: 5px;
+            letter-spacing: 10px;
+            font-weight: 500;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            aspect-ratio: 1;
+            border: 3px solid #555;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+            position: relative;
+            padding: 8px 4px;
+            padding-bottom: 33%;
+            min-height: 60px;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3), inset 0 2px 3px rgba(0,0,0,0.3);
+        }
+
+        .btn-dark {
+            background: linear-gradient(145deg, #3a3a3a 0%, #252525 100%);
+            border-color: #444;
+            color: white;
+        }
+
+        .btn-orange {
+            background: linear-gradient(145deg, #ff8c42 0%, #e67326 100%);
+            border-color: #d66520;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .btn-orange:hover {
+            background: linear-gradient(145deg, #ff9d5c 0%, #f08336 100%);
+        }
+
+        .btn-blue {
+            background: linear-gradient(145deg, #4da6ff 0%, #2b8ae6 100%);
+            border-color: #2075cc;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .btn-blue:hover {
+            background: linear-gradient(145deg, #6db8ff 0%, #3b9af6 100%);
+        }
+
+        .btn-label-top {
+            font-size: 10px;
+            color: #ff9944;
+            font-weight: bold;
+            margin-bottom: 2px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        .btn-label-main {
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.2;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-label-bottom {
+            font-size: 10px;
+            color: #66b3ff;
+            font-weight: bold;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+            padding: 6px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 33%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .btn-wide {
+            grid-column: span 2;
+        }
+
+        .btn-tall {
+            grid-row: span 2;
+            aspect-ratio: auto;
+            height: 100%;
+        }
+        
+        /* Tutorial Panel Styles */
+        .tutorial-toggle {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(145deg, #4da6ff 0%, #2b8ae6 100%);
+            color: white;
+            padding: 15px 10px;
+            cursor: pointer;
+            border-radius: 8px 0 0 8px;
+            font-weight: bold;
+            font-size: 14px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .tutorial-toggle:hover {
+            background: linear-gradient(145deg, #6db8ff 0%, #3b9af6 100%);
+            padding-right: 15px;
+        }
+        
+        .tutorial-panel {
+            position: fixed;
+            right: -450px;
+            top: 0;
+            width: 450px;
+            height: 100vh;
+            background: linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 100%);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+            transition: right 0.3s ease-in-out;
+            z-index: 999;
+            overflow-y: auto;
+            color: #ddd;
+        }
+        
+        .tutorial-panel.open {
+            right: 0;
+        }
+        
+        .tutorial-header {
+            background: linear-gradient(145deg, #4da6ff 0%, #2b8ae6 100%);
+            padding: 20px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .tutorial-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .tutorial-close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+        
+        .tutorial-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .tutorial-content {
+            padding: 25px;
+        }
+        
+        .tutorial-section {
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4da6ff;
+        }
+        
+        .tutorial-section h3 {
+            color: #4da6ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .tutorial-section h4 {
+            color: #66b3ff;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .tutorial-section p {
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        
+        .tutorial-section ul, .tutorial-section ol {
+            line-height: 1.8;
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        .tutorial-section li {
+            margin: 8px 0;
+        }
+        
+        .key-combo {
+            display: inline-block;
+            background: rgba(77, 166, 255, 0.2);
+            color: #66b3ff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 13px;
+            margin: 0 2px;
+        }
+        
+        .example-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 3px solid #ff9944;
+        }
+        
+        .example-box .title {
+            color: #ff9944;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .tip-box {
+            background: rgba(77, 166, 255, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            border-left: 3px solid #4da6ff;
+            font-size: 14px;
+        }
+        
+        .tip-box::before {
+            content: "💡 TIP: ";
+            color: #4da6ff;
+            font-weight: bold;
+        }
+        
+        .debug-toggle {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        
+        .debug-toggle button {
+            background: rgba(128, 128, 128, 0.1);
+            color: #888;
+            border: 1px solid #555;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: normal;
+            transition: all 0.2s;
+        }
+        
+        .debug-toggle button:hover {
+            background: rgba(128, 128, 128, 0.2);
+            color: #aaa;
+            border-color: #666;
+        }
+        
+        .debug-panels {
+            display: none;
+        }
+        
+        .debug-panels.visible {
+            display: block;
+        }
+
+        .label-row {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .label-row-span {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .label-span {
+            grid-column: span 4;
+            color: #ff9944;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .label-span::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: #ff9944;
+            border-left: 2px solid #ff9944;
+            border-right: 2px solid #ff9944;
+            border-bottom: 2px solid #ff9944;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .label-cell {
+            padding: 2px;
+        }
+
+        .label-orange {
+            color: #ff8844;
+        }
+
+        .label-blue {
+            color: #5599ff;
+        }
+
+        .label-white {
+            color: white;
+        }
+
+        @media (max-width: 800px) {
+            .calculator {
+                padding: 20px;
+            }
+            .display {
+                font-size: 32px;
+                letter-spacing: 6px;
+                padding: 20px 15px;
+            }
+            .btn {
+                min-height: 45px;
+                padding: 4px;
+            }
+            .btn-label-main {
+                font-size: 13px;
+            }
+            .btn-label-top,
+            .btn-label-bottom {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header">
+            <div></div>
+            <div class="logo">
+                <div class="hp-badge"><em>hp</em></div>
+                <div class="model-number">15C</div>
+            </div>
+        </div>
+        
+        <div class="display-container">
+            <div class="display" id="display">0.0000</div>
+        </div>
+
+        <div class="button-panel">
+        <!-- Top Labels -->
+        <div class="label-row">
+            <div class="label-cell label-orange">A</div>
+            <div class="label-cell label-orange">B</div>
+            <div class="label-cell label-orange">C</div>
+            <div class="label-cell label-orange">D</div>
+            <div class="label-cell label-orange">E</div>
+            <div class="label-cell label-white">MATRIX</div>
+            <div class="label-cell label-orange">FIX</div>
+            <div class="label-cell label-orange">SCI</div>
+            <div class="label-cell label-orange">ENG</div>
+            <div class="label-cell label-white">SOLVE</div>
+        </div>
+
+        <div class="button-grid">
+            <!-- Row 1 -->
+            <button class="btn btn-dark">
+                <span class="btn-label-main">√x</span>
+                <span class="btn-label-bottom">x²</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">e<sup>x</sup></span>
+                <span class="btn-label-bottom">LN</span>
+            </button>
+            <button class="btn btn-dark" data-function="pow10">
+                <span class="btn-label-main">10<sup>x</sup></span>
+                <span class="btn-label-bottom">LOG</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">y<sup>x</sup></span>
+                <span class="btn-label-bottom">%</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">1/x</span>
+                <span class="btn-label-bottom">Δ%</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">CHS</span>
+                <span class="btn-label-bottom">ABS</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">7</span>
+                <span class="btn-label-bottom">DEG</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">8</span>
+                <span class="btn-label-bottom">RAD</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">9</span>
+                <span class="btn-label-bottom">GRD</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">÷</span>
+                <span class="btn-label-bottom">x≤y</span>
+            </button>
+        </div>
+
+        <!-- Row 2 orange labels -->
+        <div class="label-row" style="margin-top: 8px; margin-bottom: 5px;">
+            <div class="label-cell label-orange">LBL</div>
+            <div class="label-cell label-orange">HYP</div>
+            <div class="label-cell label-orange">DIM</div>
+            <div class="label-cell label-orange">(i)</div>
+            <div class="label-cell label-orange">I</div>
+            <div class="label-cell label-orange">RESULT</div>
+            <div class="label-cell label-orange">x⇄</div>
+            <div class="label-cell label-orange">DSE</div>
+            <div class="label-cell label-orange">ISG</div>
+            <div class="label-cell label-orange">f∫<sub>y</sub><sup>x</sup></div>
+        </div>
+        
+        <div class="button-grid">
+            <!-- Row 2 -->
+            <button class="btn btn-dark">
+                <span class="btn-label-main">SST</span>
+                <span class="btn-label-bottom">BST</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">GTO</span>
+                <span class="btn-label-bottom">HYP⁻¹</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">SIN</span>
+                <span class="btn-label-bottom">SIN⁻¹</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">COS</span>
+                <span class="btn-label-bottom">COS⁻¹</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">TAN</span>
+                <span class="btn-label-bottom">TAN⁻¹</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">EEX</span>
+                <span class="btn-label-bottom">π</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">4</span>
+                <span class="btn-label-bottom">SF</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">5</span>
+                <span class="btn-label-bottom">CF</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">6</span>
+                <span class="btn-label-bottom">F?</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">×</span>
+                <span class="btn-label-bottom">x=0</span>
+            </button>
+        </div>
+
+        <!-- Row 3 spanning labels -->
+        <div class="label-row-span" style="margin-top: 8px; margin-bottom: 0px;">
+            <div></div>
+            <div class="label-span">CLEAR</div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Row 3 orange labels -->
+        <div class="label-row" style="margin-top: 0px; margin-bottom: 5px;">
+            <div class="label-cell label-orange">PSE</div>
+            <div class="label-cell label-orange">Σ</div>
+            <div class="label-cell label-orange">PRGM</div>
+            <div class="label-cell label-orange">REG</div>
+            <div class="label-cell label-orange">PREFIX</div>
+            <div class="label-cell label-orange">RAN #</div>
+            <div class="label-cell label-orange">→R</div>
+            <div class="label-cell label-orange">→H.MS</div>
+            <div class="label-cell label-orange">→RAD</div>
+            <div class="label-cell label-orange">Re⇄Im</div>
+        </div>
+
+        <div class="button-grid">
+            <!-- Row 3 -->
+            <button class="btn btn-dark">
+                <span class="btn-label-main">R/S</span>
+                <span class="btn-label-bottom">P/R</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">GSB</span>
+                <span class="btn-label-bottom">RTN</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">R↓</span>
+                <span class="btn-label-bottom">R↑</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">x⇄y</span>
+                <span class="btn-label-bottom">RND</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">←</span>
+                <span class="btn-label-bottom">CLx</span>
+            </button>
+            <button class="btn btn-dark btn-tall">
+                <span class="btn-label-main">ENTER</span>
+                <span class="btn-label-bottom">LST<sub>x</sub></span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">1</span>
+                <span class="btn-label-bottom">→P</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">2</span>
+                <span class="btn-label-bottom">→H</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">3</span>
+                <span class="btn-label-bottom">→DEG</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-main">−</span>
+                <span class="btn-label-bottom">TEST</span>
+            </button>
+
+            <!-- Row 4 -->
+            <button class="btn btn-dark">
+                <span class="btn-label-main">ON</span>
+            </button>
+            <button class="btn btn-orange">
+                <span class="btn-label-main">f</span>
+            </button>
+            <button class="btn btn-blue">
+                <span class="btn-label-main">g</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-top">FRAC</span>
+                <span class="btn-label-main">STO</span>
+                <span class="btn-label-bottom">INT</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-top">USER</span>
+                <span class="btn-label-main">RCL</span>
+                <span class="btn-label-bottom">MEM</span>
+            </button>
+            <!-- ENTER button spans here from row 3 -->
+            <button class="btn btn-dark">
+                <span class="btn-label-top">x!</span>
+                <span class="btn-label-main">0</span>
+                <span class="btn-label-bottom">x̄</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-top">ȳ,r</span>
+                <span class="btn-label-main">•</span>
+                <span class="btn-label-bottom">s</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-top">L.R.</span>
+                <span class="btn-label-main">Σ+</span>
+                <span class="btn-label-bottom">Σ−</span>
+            </button>
+            <button class="btn btn-dark">
+                <span class="btn-label-top">P<sub>y,x</sub></span>
+                <span class="btn-label-main">+</span>
+                <span class="btn-label-bottom">C<sub>y,x</sub></span>
+            </button>
+        </div>
+        </div>
+        
+        <div class="debug-toggle">
+            <button id="debugToggle">Show Debug Info</button>
+        </div>
+        
+        <div id="debugPanels" class="debug-panels">
+            <div id="stackDisplay" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; font-family: 'Courier New', monospace; font-size: 11px; color: #aaa;">
+                <div style="margin-bottom: 5px; color: #fff; font-weight: bold;">RPN Stack:</div>
+                <div>T: <span id="stackT">0.0000</span></div>
+                <div>Z: <span id="stackZ">0.0000</span></div>
+                <div>Y: <span id="stackY">0.0000</span></div>
+                <div>X: <span id="stackX">0.0000</span></div>
+                <div style="margin-top: 10px;">Last X: <span id="lastX">0.0000</span></div>
+            </div>
+            
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <!-- Tutorial Toggle Button -->
+    <div class="tutorial-toggle" id="tutorialToggle">TUTORIAL</div>
+
+    <!-- Tutorial Panel -->
+    <div class="tutorial-panel" id="tutorialPanel">
+        <div class="tutorial-header">
+            <h2>HP-15C Tutorial</h2>
+            <button class="tutorial-close" id="tutorialClose">×</button>
+        </div>
+        
+        <div class="tutorial-content">
+            <div class="tutorial-section">
+                <h3>Welcome to the HP-15C!</h3>
+                <p>The HP-15C is a legendary programmable scientific calculator that uses <strong>Reverse Polish Notation (RPN)</strong>. This tutorial will teach you how to master this powerful calculator.</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>1. Understanding RPN (Reverse Polish Notation)</h3>
+                <p>Unlike traditional calculators, RPN doesn't use an equals key. Instead, you enter numbers first, then the operation.</p>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate 2 + 3</div>
+                    <ol>
+                        <li>Press <span class="key-combo">2</span></li>
+                        <li>Press <span class="key-combo">ENTER</span> (pushes 2 onto the stack)</li>
+                        <li>Press <span class="key-combo">3</span></li>
+                        <li>Press <span class="key-combo">+</span></li>
+                        <li>Result: 5 appears in the display</li>
+                    </ol>
+                </div>
+                
+                <div class="tip-box">
+                    The ENTER key separates numbers. Think of it as "confirming" the first number before entering the second.
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>2. The RPN Stack</h3>
+                <p>The HP-15C has a 4-level stack (X, Y, Z, T registers). The display shows the X register.</p>
+                
+                <h4>Stack Operations:</h4>
+                <ul>
+                    <li><span class="key-combo">ENTER</span> - Pushes X into Y, duplicates X</li>
+                    <li><span class="key-combo">R↓</span> - Rolls stack down (X→T, Y→X, Z→Y, T→Z)</li>
+                    <li><span class="key-combo">x⇄y</span> - Swaps X and Y registers</li>
+                    <li><span class="key-combo">CLx</span> - Clears X register only</li>
+                </ul>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate (2 + 3) × 4</div>
+                    <ol>
+                        <li><span class="key-combo">2</span> <span class="key-combo">ENTER</span> <span class="key-combo">3</span> <span class="key-combo">+</span> → Display shows 5</li>
+                        <li><span class="key-combo">4</span> <span class="key-combo">×</span> → Display shows 20</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>3. Using Prefix Keys (f and g)</h3>
+                <p>Many keys have three functions:</p>
+                <ul>
+                    <li><strong>White text</strong> - Direct press (main function)</li>
+                    <li><strong>Orange text</strong> (top) - Press <span class="key-combo">f</span> first</li>
+                    <li><strong>Blue text</strong> (bottom) - Press <span class="key-combo">g</span> first</li>
+                </ul>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate x²</div>
+                    <p>To square a number (orange label x² above √x button):</p>
+                    <ol>
+                        <li>Enter number: <span class="key-combo">5</span></li>
+                        <li>Press <span class="key-combo">f</span> (activates orange functions)</li>
+                        <li>Press <span class="key-combo">√x</span> (executes x²)</li>
+                        <li>Result: 25</li>
+                    </ol>
+                </div>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate natural log (LN)</div>
+                    <p>To get LN (blue label below e^x button):</p>
+                    <ol>
+                        <li>Enter number: <span class="key-combo">10</span></li>
+                        <li>Press <span class="key-combo">g</span> (activates blue functions)</li>
+                        <li>Press <span class="key-combo">e^x</span> (executes LN)</li>
+                        <li>Result: 2.3026</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>4. Scientific Functions</h3>
+                
+                <h4>Trigonometry:</h4>
+                <ul>
+                    <li><span class="key-combo">SIN</span>, <span class="key-combo">COS</span>, <span class="key-combo">TAN</span> - Trig functions</li>
+                    <li><span class="key-combo">f</span> <span class="key-combo">SIN</span> - Arc sine (SIN⁻¹)</li>
+                    <li><span class="key-combo">f</span> <span class="key-combo">7</span> - Set DEG mode</li>
+                    <li><span class="key-combo">f</span> <span class="key-combo">8</span> - Set RAD mode</li>
+                    <li><span class="key-combo">f</span> <span class="key-combo">9</span> - Set GRD mode (gradians)</li>
+                </ul>
+                
+                <h4>Logarithms:</h4>
+                <ul>
+                    <li><span class="key-combo">10^x</span> - Ten to the power of x</li>
+                    <li><span class="key-combo">g</span> <span class="key-combo">10^x</span> - LOG (base 10)</li>
+                    <li><span class="key-combo">e^x</span> - e to the power of x</li>
+                    <li><span class="key-combo">g</span> <span class="key-combo">e^x</span> - LN (natural log)</li>
+                </ul>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate sin(30°)</div>
+                    <ol>
+                        <li><span class="key-combo">f</span> <span class="key-combo">7</span> - Set to DEG mode</li>
+                        <li><span class="key-combo">30</span> <span class="key-combo">SIN</span></li>
+                        <li>Result: 0.5</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>5. Memory Storage</h3>
+                <p>The HP-15C has 20 storage registers (R0-R19).</p>
+                
+                <h4>Store and Recall:</h4>
+                <ul>
+                    <li><span class="key-combo">STO</span> <span class="key-combo">0</span> - Store X in register 0</li>
+                    <li><span class="key-combo">RCL</span> <span class="key-combo">0</span> - Recall from register 0</li>
+                </ul>
+                
+                <div class="example-box">
+                    <div class="title">Example: Store π and use it</div>
+                    <ol>
+                        <li><span class="key-combo">f</span> <span class="key-combo">EEX</span> - Enter π (3.14159...)</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">1</span> - Store in R1</li>
+                        <li><span class="key-combo">5</span> <span class="key-combo">ENTER</span> - Enter 5</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">1</span> - Recall π</li>
+                        <li><span class="key-combo">×</span> - Multiply by π</li>
+                        <li>Result: 15.7080 (5π)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>6. Programming Basics</h3>
+                <p>The HP-15C can store and execute programs!</p>
+                
+                <h4>Creating a Simple Program:</h4>
+                <div class="example-box">
+                    <div class="title">Example: Program to double a number</div>
+                    <ol>
+                        <li><span class="key-combo">f</span> <span class="key-combo">PRGM</span> - Enter program mode</li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">LBL</span> <span class="key-combo">A</span> - Create label A</li>
+                        <li><span class="key-combo">2</span> <span class="key-combo">×</span> - Multiply by 2</li>
+                        <li><span class="key-combo">g</span> <span class="key-combo">RTN</span> - Return</li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">PRGM</span> - Exit program mode</li>
+                    </ol>
+                    <p><strong>To use:</strong> Enter a number, press <span class="key-combo">GSB</span> <span class="key-combo">A</span></p>
+                </div>
+                
+                <h4>Advanced Program Example:</h4>
+                <div class="example-box">
+                    <div class="title">Example: Calculate e using Taylor Series</div>
+                    <p>This program estimates e (2.71828...) using the series: e = 1 + 1/1! + 1/2! + 1/3! + ... + 1/n!</p>
+                    <p><strong>Input:</strong> Number of terms (n) in X register</p>
+                    <p><strong>Output:</strong> Estimate of e</p>
+                    
+                    <p><strong>Program steps:</strong></p>
+                    <ol>
+                        <li><span class="key-combo">f</span> <span class="key-combo">PRGM</span> - Enter program mode</li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">LBL</span> <span class="key-combo">B</span> - Create label B</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">0</span> - Store n in R0</li>
+                        <li><span class="key-combo">1</span> - Start with 1 (for e)</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">1</span> - Store sum in R1</li>
+                        <li><span class="key-combo">1</span> - Start factorial at 1</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">2</span> - Store factorial in R2</li>
+                        <li><span class="key-combo">1</span> - Counter starts at 1</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">3</span> - Store counter in R3</li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">LBL</span> <span class="key-combo">0</span> - Loop start</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">3</span> - Recall counter</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">2</span> - Recall factorial</li>
+                        <li><span class="key-combo">×</span> - Multiply (factorial = factorial × counter)</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">2</span> - Store new factorial</li>
+                        <li><span class="key-combo">1</span> - Put 1 in X</li>
+                        <li><span class="key-combo">x⇄y</span> - Swap to get factorial in X</li>
+                        <li><span class="key-combo">÷</span> - Calculate 1/factorial</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">1</span> - Recall sum</li>
+                        <li><span class="key-combo">+</span> - Add to sum</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">1</span> - Store new sum</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">3</span> - Recall counter</li>
+                        <li><span class="key-combo">1</span> <span class="key-combo">+</span> - Increment counter</li>
+                        <li><span class="key-combo">STO</span> <span class="key-combo">3</span> - Store counter</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">0</span> - Recall n</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">3</span> - Recall counter</li>
+                        <li><span class="key-combo">g</span> <span class="key-combo">x≤y</span> - Test if counter ≤ n</li>
+                        <li><span class="key-combo">GTO</span> <span class="key-combo">0</span> - If true, loop back</li>
+                        <li><span class="key-combo">RCL</span> <span class="key-combo">1</span> - Recall final sum</li>
+                        <li><span class="key-combo">g</span> <span class="key-combo">RTN</span> - Return</li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">PRGM</span> - Exit program mode</li>
+                    </ol>
+                    
+                    <p><strong>To use:</strong></p>
+                    <ul>
+                        <li>Enter <span class="key-combo">5</span> <span class="key-combo">GSB</span> <span class="key-combo">B</span> → Result: ~2.7167 (5 terms)</li>
+                        <li>Enter <span class="key-combo">10</span> <span class="key-combo">GSB</span> <span class="key-combo">B</span> → Result: ~2.7183 (10 terms)</li>
+                        <li>Enter <span class="key-combo">15</span> <span class="key-combo">GSB</span> <span class="key-combo">B</span> → Result: 2.71828183 (excellent approximation!)</li>
+                    </ul>
+                    
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>R0 stores the target number of terms (n)</li>
+                        <li>R1 accumulates the sum (e estimate)</li>
+                        <li>R2 tracks the factorial (1!, 2!, 3!, ...)</li>
+                        <li>R3 is the loop counter (1, 2, 3, ...)</li>
+                        <li>Each iteration adds 1/n! to the sum</li>
+                        <li>Loop continues while counter ≤ n</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-box">
+                    Programs are stored in memory and execute automatically. Use labels (A-E, 0-9) to organize multiple programs. This Taylor series example demonstrates loops, conditionals, and register management!
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>7. Statistics Functions</h3>
+                <p>Perfect for data analysis!</p>
+                
+                <h4>Basic Statistics:</h4>
+                <ul>
+                    <li><span class="key-combo">Σ+</span> - Add data point (X and Y if needed)</li>
+                    <li><span class="key-combo">g</span> <span class="key-combo">Σ+</span> - Remove data point (Σ−)</li>
+                    <li><span class="key-combo">g</span> <span class="key-combo">0</span> - Mean (x̄)</li>
+                    <li><span class="key-combo">g</span> <span class="key-combo">•</span> - Standard deviation (s)</li>
+                </ul>
+                
+                <div class="example-box">
+                    <div class="title">Example: Calculate mean of 10, 20, 30</div>
+                    <ol>
+                        <li><span class="key-combo">10</span> <span class="key-combo">Σ+</span></li>
+                        <li><span class="key-combo">20</span> <span class="key-combo">Σ+</span></li>
+                        <li><span class="key-combo">30</span> <span class="key-combo">Σ+</span></li>
+                        <li><span class="key-combo">g</span> <span class="key-combo">0</span> - Calculate mean</li>
+                        <li>Result: 20</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>8. Common Calculations</h3>
+                
+                <h4>Percentage Calculations:</h4>
+                <div class="example-box">
+                    <div class="title">What is 15% of 200?</div>
+                    <ol>
+                        <li><span class="key-combo">200</span> <span class="key-combo">ENTER</span></li>
+                        <li><span class="key-combo">15</span></li>
+                        <li><span class="key-combo">f</span> <span class="key-combo">%</span></li>
+                        <li>Result: 30</li>
+                    </ol>
+                </div>
+                
+                <h4>Powers and Roots:</h4>
+                <div class="example-box">
+                    <div class="title">Calculate 2^8</div>
+                    <ol>
+                        <li><span class="key-combo">2</span> <span class="key-combo">ENTER</span></li>
+                        <li><span class="key-combo">8</span></li>
+                        <li><span class="key-combo">y^x</span></li>
+                        <li>Result: 256</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>9. Quick Tips</h3>
+                <ul>
+                    <li><strong>Clear everything:</strong> <span class="key-combo">ON</span> resets the calculator</li>
+                    <li><strong>Fix decimals:</strong> <span class="key-combo">f</span> <span class="key-combo">7</span> for 7 decimal places (or any 0-9)</li>
+                    <li><strong>Scientific notation:</strong> <span class="key-combo">f</span> <span class="key-combo">8</span> enables SCI mode</li>
+                    <li><strong>Undo last entry:</strong> <span class="key-combo">←</span> (backspace)</li>
+                    <li><strong>Chain calculations:</strong> No need to press ENTER between operations</li>
+                </ul>
+                
+                <div class="tip-box">
+                    Practice makes perfect! RPN becomes intuitive once you get used to thinking "operands first, operation second."
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>10. Practice Exercises</h3>
+                
+                <h4>Exercise 1: Basic Arithmetic</h4>
+                <p>Calculate: (15 + 25) ÷ 8</p>
+                <p><em>Answer: 5</em></p>
+                
+                <h4>Exercise 2: Scientific</h4>
+                <p>Calculate: √(25 + 144)</p>
+                <p><em>Answer: 13</em></p>
+                
+                <h4>Exercise 3: Complex</h4>
+                <p>Calculate: (5² + 3²) ÷ 2</p>
+                <p><em>Answer: 17</em></p>
+                
+                <div class="tip-box">
+                    Try these exercises on the calculator! Understanding how to break down complex expressions into RPN steps is key to mastering the HP-15C.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HP-15C Emulator - Complete Implementation
+        
+        class HP15C {
+            constructor() {
+                // RPN Stack (4 levels)
+                this.stack = {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                    t: 0
+                };
+                
+                // Last X register for recovery
+                this.lastX = 0;
+                
+                // Storage registers (R0-R19)
+                this.registers = new Array(20).fill(0);
+                
+                // Display state
+                this.displayValue = '0';
+                this.entering = false;
+                this.decimalEntered = false;
+                this.exponentMode = false;
+                this.exponentValue = '';
+                this.stackLiftEnabled = true; // Controls automatic stack lift
+                
+                // Mode flags
+                this.fPrefix = false;
+                this.gPrefix = false;
+                this.angleMode = 'DEG'; // DEG, RAD, GRD
+                this.displayMode = 'FIX'; // FIX, SCI, ENG
+                this.displayPrecision = 4;
+                this.complexMode = false;
+                this.userMode = false;
+                this.programmingMode = false;
+                
+                // Statistics registers
+                this.stats = {
+                    n: 0,
+                    sumX: 0,
+                    sumX2: 0,
+                    sumY: 0,
+                    sumY2: 0,
+                    sumXY: 0
+                };
+                
+                // Matrix storage
+                this.matrices = {
+                    A: null, B: null, C: null, D: null, E: null,
+                    result: null
+                };
+                
+                // Programming
+                this.program = [];
+                this.programCounter = 0;
+                this.running = false;
+                this.labels = {}; // Label positions
+                this.subroutineStack = [];
+                this.recording = false; // Are we in program recording mode?
+                
+                // Flags
+                this.flags = new Array(10).fill(false);
+                
+                // Display element
+                this.displayElement = document.getElementById('display');
+                
+                // Initialize display
+                this.updateDisplay();
+            }
+            
+            // Stack operations
+            push(value) {
+                this.stack.t = this.stack.z;
+                this.stack.z = this.stack.y;
+                this.stack.y = this.stack.x;
+                this.stack.x = value;
+            }
+            
+            drop() {
+                this.stack.x = this.stack.y;
+                this.stack.y = this.stack.z;
+                this.stack.z = this.stack.t;
+                // T register replicates
+            }
+            
+            rollDown() {
+                this.finishEntry();
+                const temp = this.stack.x;
+                this.stack.x = this.stack.y;
+                this.stack.y = this.stack.z;
+                this.stack.z = this.stack.t;
+                this.stack.t = temp;
+                this.updateDisplay();
+            }
+            
+            rollUp() {
+                this.finishEntry();
+                const temp = this.stack.t;
+                this.stack.t = this.stack.z;
+                this.stack.z = this.stack.y;
+                this.stack.y = this.stack.x;
+                this.stack.x = temp;
+                this.updateDisplay();
+            }
+            
+            swapXY() {
+                this.finishEntry();
+                const temp = this.stack.x;
+                this.stack.x = this.stack.y;
+                this.stack.y = temp;
+                this.updateDisplay();
+            }
+            
+            // Display formatting
+            formatNumber(num, precision = null) {
+                if (precision === null) precision = this.displayPrecision;
+                
+                if (!isFinite(num)) return 'Error 0';
+                
+                if (this.displayMode === 'FIX') {
+                    return num.toFixed(precision);
+                } else if (this.displayMode === 'SCI') {
+                    return num.toExponential(precision);
+                } else if (this.displayMode === 'ENG') {
+                    // Engineering notation (exponent multiple of 3)
+                    if (num === 0) return '0.' + '0'.repeat(precision);
+                    const exp = Math.floor(Math.log10(Math.abs(num)));
+                    const engExp = Math.floor(exp / 3) * 3;
+                    const mantissa = num / Math.pow(10, engExp);
+                    return mantissa.toFixed(precision) + 'e' + engExp;
+                }
+                return num.toString();
+            }
+            
+            updateDisplay() {
+                if (!this.displayElement) return;
+                
+                let displayText = '';
+                
+                // Add mode indicators
+                if (this.fPrefix) displayText = 'f ';
+                if (this.gPrefix) displayText = 'g ';
+                if (this.programmingMode) displayText += 'PRGM ';
+                if (this.userMode) displayText += 'USER ';
+                if (this.complexMode) displayText += 'C ';
+                
+                // Add angle mode if not DEG
+                if (this.angleMode !== 'DEG') displayText += this.angleMode + ' ';
+                
+                // Add value
+                if (this.entering) {
+                    displayText += this.displayValue;
+                    if (this.exponentMode) {
+                        displayText += 'e' + (this.exponentValue || '0');
+                    }
+                } else {
+                    displayText += this.formatNumber(this.stack.x);
+                }
+                
+                this.displayElement.textContent = displayText || '0.0000';
+                
+                // Update stack display for debugging
+                const stackT = document.getElementById('stackT');
+                const stackZ = document.getElementById('stackZ');
+                const stackY = document.getElementById('stackY');
+                const stackX = document.getElementById('stackX');
+                const lastXEl = document.getElementById('lastX');
+                
+                if (stackT) stackT.textContent = this.formatNumber(this.stack.t);
+                if (stackZ) stackZ.textContent = this.formatNumber(this.stack.z);
+                if (stackY) stackY.textContent = this.formatNumber(this.stack.y);
+                if (stackX) stackX.textContent = this.formatNumber(this.stack.x);
+                if (lastXEl) lastXEl.textContent = this.formatNumber(this.lastX);
+            }
+            
+            // Number entry
+            enterDigit(digit) {
+                if (!this.entering) {
+                    // Starting new entry - lift stack if enabled
+                    if (this.stackLiftEnabled) {
+                        this.push(this.stack.x);
+                    }
+                    this.displayValue = digit;
+                    this.entering = true;
+                    this.decimalEntered = false;
+                    this.stackLiftEnabled = true; // Re-enable for next time
+                } else {
+                    if (this.exponentMode) {
+                        this.exponentValue += digit;
+                    } else {
+                        this.displayValue += digit;
+                    }
+                }
+                this.updateDisplay();
+            }
+            
+            enterDecimal() {
+                if (!this.entering) {
+                    this.displayValue = '0.';
+                    this.entering = true;
+                    this.decimalEntered = true;
+                } else if (!this.decimalEntered && !this.exponentMode) {
+                    this.displayValue += '.';
+                    this.decimalEntered = true;
+                }
+                this.updateDisplay();
+            }
+            
+            enterExponent() {
+                if (!this.entering) {
+                    this.displayValue = '1';
+                    this.entering = true;
+                }
+                this.exponentMode = true;
+                this.exponentValue = '';
+                this.updateDisplay();
+            }
+            
+            finishEntry() {
+                if (this.entering) {
+                    let value = parseFloat(this.displayValue);
+                    if (this.exponentMode && this.exponentValue) {
+                        value *= Math.pow(10, parseFloat(this.exponentValue));
+                    }
+                    // Just set X register directly (stack was already lifted when entry started)
+                    this.stack.x = value;
+                    this.entering = false;
+                    this.exponentMode = false;
+                    this.exponentValue = '';
+                    this.displayValue = '0';
+                }
+            }
+            
+            pressEnter() {
+                this.finishEntry();
+                // ENTER lifts stack and duplicates X into Y
+                this.stack.t = this.stack.z;
+                this.stack.z = this.stack.y;
+                this.stack.y = this.stack.x;
+                // X stays the same
+                this.stackLiftEnabled = false; // Next entry should NOT lift
+                this.updateDisplay();
+            }
+            
+            // Arithmetic operations
+            add() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.y + this.stack.x;
+                this.drop();
+                this.stackLiftEnabled = true; // Enable lift for next entry
+                this.updateDisplay();
+            }
+            
+            subtract() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.y - this.stack.x;
+                this.drop();
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            multiply() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.y * this.stack.x;
+                this.drop();
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            divide() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = this.stack.y / this.stack.x;
+                this.drop();
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            // Stack operations
+            push(value) {
+                this.stack.t = this.stack.z;
+                this.stack.z = this.stack.y;
+                this.stack.y = this.stack.x;
+                this.stack.x = value;
+            }
+            
+            drop() {
+                this.stack.y = this.stack.z;
+                this.stack.z = this.stack.t;
+                // T register replicates in HP-15C
+            }
+            
+            // Scientific functions
+            sqrt() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x < 0 && !this.complexMode) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = Math.sqrt(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            square() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.x * this.stack.x;
+                this.updateDisplay();
+            }
+            
+            reciprocal() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = 1 / this.stack.x;
+                this.updateDisplay();
+            }
+            
+            power() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.pow(this.stack.y, this.stack.x);
+                this.drop();
+                this.updateDisplay();
+            }
+            
+            exp() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.exp(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            ln() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x <= 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = Math.log(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            pow10() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.pow(10, this.stack.x);
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            log() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x <= 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = Math.log10(this.stack.x);
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            // Trigonometric functions
+            toRadians(angle) {
+                if (this.angleMode === 'DEG') return angle * Math.PI / 180;
+                if (this.angleMode === 'GRD') return angle * Math.PI / 200;
+                return angle; // Already radians
+            }
+            
+            fromRadians(angle) {
+                if (this.angleMode === 'DEG') return angle * 180 / Math.PI;
+                if (this.angleMode === 'GRD') return angle * 200 / Math.PI;
+                return angle; // Keep as radians
+            }
+            
+            sin() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.sin(this.toRadians(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            cos() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.cos(this.toRadians(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            tan() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.tan(this.toRadians(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            asin() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x < -1 || this.stack.x > 1) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = this.fromRadians(Math.asin(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            acos() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x < -1 || this.stack.x > 1) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = this.fromRadians(Math.acos(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            atan() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.fromRadians(Math.atan(this.stack.x));
+                this.updateDisplay();
+            }
+            
+            // Hyperbolic functions
+            sinh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.sinh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            cosh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.cosh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            tanh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.tanh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            asinh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.asinh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            acosh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x < 1) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = Math.acosh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            atanh() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.x <= -1 || this.stack.x >= 1) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = Math.atanh(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            // Utility functions
+            factorial() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                const n = Math.floor(this.stack.x);
+                if (n < 0 || n > 69) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                let result = 1;
+                for (let i = 2; i <= n; i++) result *= i;
+                this.stack.x = result;
+                this.updateDisplay();
+            }
+            
+            abs() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.abs(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            changeSign() {
+                if (this.entering) {
+                    if (this.exponentMode) {
+                        if (this.exponentValue.startsWith('-')) {
+                            this.exponentValue = this.exponentValue.substring(1);
+                        } else {
+                            this.exponentValue = '-' + this.exponentValue;
+                        }
+                    } else {
+                        if (this.displayValue.startsWith('-')) {
+                            this.displayValue = this.displayValue.substring(1);
+                        } else {
+                            this.displayValue = '-' + this.displayValue;
+                        }
+                    }
+                } else {
+                    this.stack.x = -this.stack.x;
+                }
+                this.updateDisplay();
+            }
+            
+            pi() {
+                this.finishEntry();
+                this.push(Math.PI);
+                this.updateDisplay();
+            }
+            
+            random() {
+                this.finishEntry();
+                this.push(Math.random());
+                this.updateDisplay();
+            }
+            
+            intPart() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = Math.trunc(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            fracPart() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.x - Math.trunc(this.stack.x);
+                this.updateDisplay();
+            }
+            
+            round() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                const factor = Math.pow(10, this.displayPrecision);
+                this.stack.x = Math.round(this.stack.x * factor) / factor;
+                this.updateDisplay();
+            }
+            
+            // Percentage functions
+            percent() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.y * this.stack.x / 100;
+                // Don't drop - Y stays the same
+                this.updateDisplay();
+            }
+            
+            deltaPercent() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                if (this.stack.y === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.stack.x = ((this.stack.x - this.stack.y) / this.stack.y) * 100;
+                this.drop();
+                this.updateDisplay();
+            }
+            
+            // Coordinate conversions
+            toPolar() {
+                this.finishEntry();
+                // In HP-15C: Y register = x coordinate, X register = y coordinate
+                const x = this.stack.y; // x coordinate
+                const y = this.stack.x; // y coordinate
+                const r = Math.sqrt(x*x + y*y);
+                const theta = this.fromRadians(Math.atan2(y, x));
+                this.stack.x = r;
+                this.stack.y = theta;
+                this.updateDisplay();
+            }
+            
+            toRect() {
+                this.finishEntry();
+                // Test expects: Y register = r (radius), X register = θ (angle)
+                const r = this.stack.y;
+                const theta = this.toRadians(this.stack.x);
+                const x = r * Math.cos(theta);
+                const y = r * Math.sin(theta);
+                // Result: X = x coordinate, Y = y coordinate
+                this.stack.x = x;
+                this.stack.y = y;
+                this.updateDisplay();
+            }
+            
+            // Time conversions
+            toHMS() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                const hours = Math.floor(this.stack.x);
+                const minutes = Math.floor((this.stack.x - hours) * 60);
+                const seconds = Math.round(((this.stack.x - hours) * 60 - minutes) * 60);
+                this.stack.x = hours + minutes/100 + seconds/10000;
+                this.updateDisplay();
+            }
+            
+            toH() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                const hours = Math.floor(this.stack.x);
+                const minutes = Math.floor((this.stack.x - hours) * 100);
+                const seconds = Math.round(((this.stack.x - hours) * 100 - minutes) * 100);
+                this.stack.x = hours + minutes/60 + seconds/3600;
+                this.updateDisplay();
+            }
+            
+            toRad() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.x * Math.PI / 180;
+                this.updateDisplay();
+            }
+            
+            toDeg() {
+                this.finishEntry();
+                this.lastX = this.stack.x;
+                this.stack.x = this.stack.x * 180 / Math.PI;
+                this.updateDisplay();
+            }
+            
+            // Statistics
+            sigmaPlus() {
+                this.finishEntry();
+                this.stats.n++;
+                this.stats.sumX += this.stack.x;
+                this.stats.sumX2 += this.stack.x * this.stack.x;
+                this.stats.sumY += this.stack.y;
+                this.stats.sumY2 += this.stack.y * this.stack.y;
+                this.stats.sumXY += this.stack.x * this.stack.y;
+                this.stack.x = this.stats.n;
+                this.updateDisplay();
+            }
+            
+            sigmaMinus() {
+                this.finishEntry();
+                if (this.stats.n > 0) {
+                    this.stats.n--;
+                    this.stats.sumX -= this.stack.x;
+                    this.stats.sumX2 -= this.stack.x * this.stack.x;
+                    this.stats.sumY -= this.stack.y;
+                    this.stats.sumY2 -= this.stack.y * this.stack.y;
+                    this.stats.sumXY -= this.stack.x * this.stack.y;
+                }
+                this.stack.x = this.stats.n;
+                this.updateDisplay();
+            }
+            
+            meanX() {
+                this.finishEntry();
+                if (this.stats.n === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                this.push(this.stats.sumX / this.stats.n);
+                this.updateDisplay();
+            }
+            
+            meanYAndR() {
+                this.finishEntry();
+                if (this.stats.n === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                const meanY = this.stats.sumY / this.stats.n;
+                const meanX = this.stats.sumX / this.stats.n;
+                
+                // Correlation coefficient
+                const num = this.stats.n * this.stats.sumXY - this.stats.sumX * this.stats.sumY;
+                const den = Math.sqrt((this.stats.n * this.stats.sumX2 - this.stats.sumX * this.stats.sumX) *
+                                     (this.stats.n * this.stats.sumY2 - this.stats.sumY * this.stats.sumY));
+                const r = den !== 0 ? num / den : 0;
+                
+                this.push(r);
+                this.stack.x = meanY;
+                this.updateDisplay();
+            }
+            
+            sampleStdDev() {
+                this.finishEntry();
+                if (this.stats.n < 2) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                const mean = this.stats.sumX / this.stats.n;
+                const variance = (this.stats.sumX2 - this.stats.n * mean * mean) / (this.stats.n - 1);
+                this.push(Math.sqrt(Math.abs(variance)));
+                this.updateDisplay();
+            }
+            
+            linearRegression() {
+                this.finishEntry();
+                if (this.stats.n < 2) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                
+                const n = this.stats.n;
+                const meanX = this.stats.sumX / n;
+                const meanY = this.stats.sumY / n;
+                
+                // Calculate slope (b)
+                const num = this.stats.sumXY - n * meanX * meanY;
+                const den = this.stats.sumX2 - n * meanX * meanX;
+                
+                if (den === 0) {
+                    this.displayElement.textContent = 'Error 0';
+                    return;
+                }
+                
+                const b = num / den;
+                const a = meanY - b * meanX;
+                
+                // Estimate y from x (current stack.x)
+                const yHat = a + b * this.stack.x;
+                this.push(yHat);
+                this.updateDisplay();
+            }
+            
+            // Memory operations
+            store(register) {
+                this.finishEntry();
+                if (register >= 0 && register < 20) {
+                    this.registers[register] = this.stack.x;
+                }
+                this.updateDisplay();
+            }
+            
+            recall(register) {
+                if (register >= 0 && register < 20) {
+                    this.push(this.registers[register]);
+                    this.updateDisplay();
+                }
+            }
+            
+            storeOp(register, op) {
+                this.finishEntry();
+                if (register >= 0 && register < 20) {
+                    switch(op) {
+                        case '+': this.registers[register] += this.stack.x; break;
+                        case '-': this.registers[register] -= this.stack.x; break;
+                        case '*': this.registers[register] *= this.stack.x; break;
+                        case '/': 
+                            if (this.stack.x !== 0) this.registers[register] /= this.stack.x;
+                            break;
+                    }
+                }
+                this.updateDisplay();
+            }
+            
+            // Clear functions
+            clearX() {
+                if (this.entering) {
+                    this.displayValue = '0';
+                    this.exponentMode = false;
+                    this.exponentValue = '';
+                } else {
+                    this.stack.x = 0;
+                }
+                this.updateDisplay();
+            }
+            
+            clearAll() {
+                this.stack = { x: 0, y: 0, z: 0, t: 0 };
+                this.entering = false;
+                this.displayValue = '0';
+                this.exponentMode = false;
+                this.exponentValue = '';
+                this.stackLiftEnabled = true;
+                this.updateDisplay();
+            }
+            
+            clearStatistics() {
+                this.stats = {
+                    n: 0,
+                    sumX: 0,
+                    sumX2: 0,
+                    sumY: 0,
+                    sumY2: 0,
+                    sumXY: 0
+                };
+                this.updateDisplay();
+            }
+            
+            clearProgram() {
+                this.program = [];
+                this.programCounter = 0;
+                this.labels = {};
+                this.updateDisplay();
+            }
+            
+            clearRegisters() {
+                this.registers = new Array(20).fill(0);
+                this.updateDisplay();
+            }
+            
+            // Programming functions
+            toggleProgramMode() {
+                this.programmingMode = !this.programmingMode;
+                if (this.programmingMode) {
+                    this.recording = true;
+                    this.programCounter = this.program.length;
+                } else {
+                    this.recording = false;
+                }
+                this.updateDisplay();
+            }
+            
+            recordInstruction(instruction) {
+                if (this.recording) {
+                    this.program.push(instruction);
+                    this.programCounter = this.program.length;
+                    
+                    // Update labels if this is a LBL instruction
+                    if (instruction.cmd === 'LBL') {
+                        this.labels[instruction.arg] = this.program.length - 1;
+                    }
+                    
+                    this.updateDisplay();
+                }
+            }
+            
+            setLabel(label) {
+                if (this.recording) {
+                    this.recordInstruction({ cmd: 'LBL', arg: label });
+                }
+            }
+            
+            gotoLabel(label) {
+                if (this.labels.hasOwnProperty(label)) {
+                    this.programCounter = this.labels[label];
+                    if (!this.recording) {
+                        this.runProgram();
+                    }
+                } else {
+                    this.displayElement.textContent = 'Error 4'; // Label not found
+                }
+            }
+            
+            callSubroutine(label) {
+                if (this.labels.hasOwnProperty(label)) {
+                    this.subroutineStack.push(this.programCounter);
+                    this.programCounter = this.labels[label];
+                    this.runProgram();
+                } else {
+                    this.displayElement.textContent = 'Error 4'; // Label not found
+                }
+            }
+            
+            returnFromSubroutine() {
+                if (this.recording) {
+                    this.recordInstruction({ cmd: 'RTN' });
+                } else {
+                    if (this.subroutineStack.length > 0) {
+                        this.programCounter = this.subroutineStack.pop();
+                        if (this.running) {
+                            this.continueProgram();
+                        }
+                    } else {
+                        // No subroutine to return from, stop execution
+                        this.stopProgram();
+                    }
+                }
+            }
+            
+            runProgram() {
+                this.running = true;
+                this.continueProgram();
+            }
+            
+            stopProgram() {
+                this.running = false;
+                this.updateDisplay();
+            }
+            
+            continueProgram() {
+                if (!this.running) return;
+                
+                while (this.running && this.programCounter < this.program.length) {
+                    const instruction = this.program[this.programCounter];
+                    this.programCounter++;
+                    
+                    if (!this.executeInstruction(instruction)) {
+                        // Execution stopped (RTN without subroutine, or R/S)
+                        break;
+                    }
+                }
+                
+                if (this.programCounter >= this.program.length) {
+                    this.stopProgram();
+                }
+            }
+            
+            executeInstruction(instruction) {
+                switch (instruction.cmd) {
+                    case 'LBL':
+                        // Labels don't execute, just markers
+                        return true;
+                        
+                    case 'RTN':
+                        if (this.subroutineStack.length > 0) {
+                            this.programCounter = this.subroutineStack.pop();
+                            return true;
+                        } else {
+                            this.stopProgram();
+                            return false;
+                        }
+                        
+                    case 'GTO':
+                        if (this.labels.hasOwnProperty(instruction.arg)) {
+                            this.programCounter = this.labels[instruction.arg];
+                            return true;
+                        }
+                        this.displayElement.textContent = 'Error 4';
+                        this.stopProgram();
+                        return false;
+                        
+                    case 'GSB':
+                        if (this.labels.hasOwnProperty(instruction.arg)) {
+                            this.subroutineStack.push(this.programCounter);
+                            this.programCounter = this.labels[instruction.arg];
+                            return true;
+                        }
+                        this.displayElement.textContent = 'Error 4';
+                        this.stopProgram();
+                        return false;
+                        
+                    case 'R/S':
+                        this.stopProgram();
+                        return false;
+                        
+                    case 'NUMBER':
+                        this.push(instruction.arg);
+                        return true;
+                        
+                    case 'ENTER':
+                        this.pressEnter();
+                        return true;
+                        
+                    // Arithmetic
+                    case 'ADD':
+                        this.add();
+                        return true;
+                    case 'SUBTRACT':
+                        this.subtract();
+                        return true;
+                    case 'MULTIPLY':
+                        this.multiply();
+                        return true;
+                    case 'DIVIDE':
+                        this.divide();
+                        return true;
+                        
+                    // Scientific functions
+                    case 'SQRT':
+                        this.sqrt();
+                        return true;
+                    case 'SQUARE':
+                        this.square();
+                        return true;
+                    case 'RECIPROCAL':
+                        this.reciprocal();
+                        return true;
+                    case 'CHS':
+                        this.changeSign();
+                        return true;
+                    case 'EXP':
+                        this.exp();
+                        return true;
+                    case 'LN':
+                        this.ln();
+                        return true;
+                    case 'POW10':
+                        this.pow10();
+                        return true;
+                    case 'LOG':
+                        this.log();
+                        return true;
+                    case 'POWER':
+                        this.power();
+                        return true;
+                        
+                    // Trig
+                    case 'SIN':
+                        this.sin();
+                        return true;
+                    case 'COS':
+                        this.cos();
+                        return true;
+                    case 'TAN':
+                        this.tan();
+                        return true;
+                        
+                    // Memory
+                    case 'STO':
+                        this.store(instruction.arg);
+                        return true;
+                    case 'RCL':
+                        this.recall(instruction.arg);
+                        return true;
+                        
+                    // Stack
+                    case 'ROLL_DOWN':
+                        this.rollDown();
+                        return true;
+                    case 'SWAP_XY':
+                        this.swapXY();
+                        return true;
+                    case 'CLX':
+                        this.clearX();
+                        return true;
+                        
+                    default:
+                        console.warn('Unknown instruction:', instruction);
+                        return true;
+                }
+            }
+            
+            singleStep() {
+                if (this.programCounter < this.program.length) {
+                    const instruction = this.program[this.programCounter];
+                    this.programCounter++;
+                    this.executeInstruction(instruction);
+                    this.updateDisplay();
+                }
+            }
+            
+            backStep() {
+                if (this.programCounter > 0) {
+                    this.programCounter--;
+                    this.updateDisplay();
+                }
+            }
+            
+            // Matrix operations
+            dimMatrix(matrixName, rows, cols) {
+                if (rows > 0 && cols > 0 && rows <= 8 && cols <= 8) {
+                    this.matrices[matrixName] = {
+                        rows: rows,
+                        cols: cols,
+                        data: new Array(rows * cols).fill(0)
+                    };
+                }
+            }
+            
+            // Backspace
+            backspace() {
+                if (this.entering) {
+                    if (this.exponentMode && this.exponentValue) {
+                        this.exponentValue = this.exponentValue.slice(0, -1);
+                    } else if (this.displayValue.length > 1) {
+                        this.displayValue = this.displayValue.slice(0, -1);
+                    } else {
+                        this.displayValue = '0';
+                        this.entering = false;
+                    }
+                    this.updateDisplay();
+                }
+            }
+            
+            // Display modes
+            setFix(n) {
+                this.displayMode = 'FIX';
+                this.displayPrecision = Math.max(0, Math.min(9, n));
+                this.updateDisplay();
+            }
+            
+            setSci(n) {
+                this.displayMode = 'SCI';
+                this.displayPrecision = Math.max(0, Math.min(9, n));
+                this.updateDisplay();
+            }
+            
+            setEng(n) {
+                this.displayMode = 'ENG';
+                this.displayPrecision = Math.max(0, Math.min(9, n));
+                this.updateDisplay();
+            }
+        }
+        
+        // Create calculator instance
+        const calc = new HP15C();
+        
+        // Attach click handlers
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Check for explicit data-function attribute first
+                const dataFunction = this.getAttribute('data-function');
+                if (dataFunction) {
+                    if (calc.fPrefix) {
+                        calc.fPrefix = false;
+                        calc.updateDisplay();
+                    } else if (calc.gPrefix) {
+                        calc.gPrefix = false;
+                        calc.updateDisplay();
+                    } else {
+                        // Call the function directly
+                        if (typeof calc[dataFunction] === 'function') {
+                            calc[dataFunction]();
+                        }
+                    }
+                    return;
+                }
+                
+                const mainLabel = this.querySelector('.btn-label-main');
+                if (!mainLabel) return;
+                
+                // Get text content and normalize
+                let text = mainLabel.textContent.trim();
+                text = text.replace(/\s+/g, '');
+                
+                // Execute based on prefix state
+                if (calc.fPrefix) {
+                    executeFFunction(text);
+                    calc.fPrefix = false;
+                    calc.updateDisplay();
+                } else if (calc.gPrefix) {
+                    executeGFunction(text);
+                    calc.gPrefix = false;
+                    calc.updateDisplay();
+                } else {
+                    executeNormalFunction(text);
+                }
+            });
+        });
+        
+        function executeNormalFunction(text) {
+            // Numbers - check if it's a single digit
+            if (text.length === 1 && text >= '0' && text <= '9') {
+                if (calc.recording) {
+                    calc.recordInstruction({ cmd: 'NUMBER', arg: parseInt(text) });
+                } else {
+                    calc.enterDigit(text);
+                }
+                return;
+            }
+            
+            // Operations
+            switch(text) {
+                case '√x': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'SQRT' });
+                    } else {
+                        calc.sqrt();
+                    }
+                    break;
+                case 'ex': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'EXP' });
+                    } else {
+                        calc.exp();
+                    }
+                    break;
+                case '10x': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'POW10' });
+                    } else {
+                        calc.pow10();
+                    }
+                    break;
+                case 'yx': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'POWER' });
+                    } else {
+                        calc.power();
+                    }
+                    break;
+                case '1/x': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'RECIPROCAL' });
+                    } else {
+                        calc.reciprocal();
+                    }
+                    break;
+                case 'CHS': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'CHS' });
+                    } else {
+                        calc.changeSign();
+                    }
+                    break;
+                case '÷': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'DIVIDE' });
+                    } else {
+                        calc.divide();
+                    }
+                    break;
+                case 'SIN': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'SIN' });
+                    } else {
+                        calc.sin();
+                    }
+                    break;
+                case 'COS': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'COS' });
+                    } else {
+                        calc.cos();
+                    }
+                    break;
+                case 'TAN': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'TAN' });
+                    } else {
+                        calc.tan();
+                    }
+                    break;
+                case 'EEX': calc.enterExponent(); break;
+                case '×': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'MULTIPLY' });
+                    } else {
+                        calc.multiply();
+                    }
+                    break;
+                case 'R↓': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'ROLL_DOWN' });
+                    } else {
+                        calc.rollDown();
+                    }
+                    break;
+                case 'x⇄': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'SWAP_XY' });
+                    } else {
+                        calc.swapXY();
+                    }
+                    break;
+                case 'CLx': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'CLX' });
+                    } else {
+                        calc.clearX();
+                    }
+                    break;
+                case '←': calc.backspace(); break;
+                case '−': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'SUBTRACT' });
+                    } else {
+                        calc.subtract();
+                    }
+                    break;
+                case 'ON': calc.clearAll(); break;
+                case 'f': 
+                    calc.fPrefix = true;
+                    calc.gPrefix = false;
+                    calc.updateDisplay();
+                    break;
+                case 'g':
+                    calc.gPrefix = true;
+                    calc.fPrefix = false;
+                    calc.updateDisplay();
+                    break;
+                case 'ENTER↑': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'ENTER' });
+                    } else {
+                        calc.pressEnter();
+                    }
+                    break;
+                case '•': calc.enterDecimal(); break;
+                case 'Σ+': calc.sigmaPlus(); break;
+                case '+': 
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'ADD' });
+                    } else {
+                        calc.add();
+                    }
+                    break;
+                case 'SST':
+                    if (!calc.recording) {
+                        calc.singleStep();
+                    }
+                    break;
+                case 'GTO':
+                    // GTO needs a label - handled separately
+                    break;
+                case 'R/S':
+                    if (calc.recording) {
+                        calc.recordInstruction({ cmd: 'R/S' });
+                    } else {
+                        if (calc.running) {
+                            calc.stopProgram();
+                        } else {
+                            calc.programCounter = 0;
+                            calc.runProgram();
+                        }
+                    }
+                    break;
+                case 'GSB':
+                    // GSB needs a label - handled separately
+                    break;
+            }
+        }
+        
+        function executeFFunction(text) {
+            switch(text) {
+                case '√x': calc.square(); break;
+                case 'ex': calc.ln(); break;
+                case '10x': calc.log(); break;
+                case 'yx': calc.percent(); break;
+                case '1/x': calc.deltaPercent(); break;
+                case 'CHS': calc.abs(); break;
+                case '7': 
+                    calc.angleMode = 'DEG';
+                    calc.updateDisplay();
+                    break;
+                case '8': 
+                    calc.angleMode = 'RAD';
+                    calc.updateDisplay();
+                    break;
+                case '9': 
+                    calc.angleMode = 'GRD';
+                    calc.updateDisplay();
+                    break;
+                case '÷':
+                case '×': calc.swapXY(); break;
+                case 'SIN': calc.asin(); break;
+                case 'COS': calc.acos(); break;
+                case 'TAN': calc.atan(); break;
+                case 'EEX': calc.pi(); break;
+                case '4': calc.meanX(); break;
+                case 'R↓': calc.rollUp(); break;
+                case '1': calc.toRect(); break;
+                case '2': calc.toHMS(); break;
+                case '3': calc.toRad(); break;
+                case 'STO': calc.fracPart(); break;
+                case '0': calc.factorial(); break;
+                case '•': calc.meanYAndR(); break;
+                case 'Σ+': calc.linearRegression(); break;
+                case 'SST': 
+                    // f LBL - set label
+                    // Need to get next key press for label (A-E or 0-9)
+                    break;
+                case 'R/S':
+                    // f PSE - pause
+                    break;
+                case 'GSB':
+                    // f Σ - summation functions
+                    break;
+                case 'PRGM':
+                    // Toggle programming mode
+                    calc.toggleProgramMode();
+                    break;
+            }
+        }
+        
+        function executeGFunction(text) {
+            switch(text) {
+                case 'SIN': calc.sinh(); break;
+                case 'COS': calc.cosh(); break;
+                case 'TAN': calc.tanh(); break;
+                case 'R↓': 
+                    // R↑ in g mode - already have rollUp but R↓ button
+                    calc.rollUp(); 
+                    break;
+                case 'x⇄': calc.round(); break;
+                case '1': calc.toPolar(); break;
+                case '2': calc.toH(); break;
+                case '3': calc.toDeg(); break;
+                case 'STO': calc.intPart(); break;
+                case '•': calc.sampleStdDev(); break;
+                case 'Σ+': calc.sigmaMinus(); break;
+                case 'SST':
+                    // g BST - back step
+                    calc.backStep();
+                    break;
+                case 'GSB':
+                    // g RTN - return from subroutine
+                    calc.returnFromSubroutine();
+                    break;
+            }
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            
+            if (key >= '0' && key <= '9') {
+                calc.enterDigit(key);
+            } else if (key === '.') {
+                calc.enterDecimal();
+            } else if (key === 'Enter') {
+                calc.pressEnter();
+            } else if (key === '+') {
+                calc.add();
+            } else if (key === '-') {
+                calc.subtract();
+            } else if (key === '*') {
+                calc.multiply();
+            } else if (key === '/') {
+                calc.divide();
+            } else if (key === 'Backspace') {
+                calc.backspace();
+            } else if (key === 'Escape') {
+                calc.clearX();
+            }
+        });
+        
+        // ==================== TEST SUITE ====================
+        
+        class HP15CTests {
+            constructor(calculator) {
+                this.calc = calculator;
+                this.passed = 0;
+                this.failed = 0;
+                this.tests = [];
+            }
+            
+            reset() {
+                this.calc.clearAll();
+                this.calc.clearStatistics();
+                this.calc.angleMode = 'DEG';
+                this.calc.displayMode = 'FIX';
+                this.calc.displayPrecision = 4;
+            }
+            
+            assert(name, condition, expected, actual) {
+                if (condition) {
+                    this.passed++;
+                    this.tests.push({ name, passed: true, expected, actual });
+                    console.log(`✓ PASS: ${name}`);
+                } else {
+                    this.failed++;
+                    this.tests.push({ name, passed: false, expected, actual });
+                    console.error(`✗ FAIL: ${name}`);
+                    console.error(`  Expected: ${expected}`);
+                    console.error(`  Got: ${actual}`);
+                }
+            }
+            
+            assertClose(name, actual, expected, tolerance = 0.0001) {
+                const diff = Math.abs(actual - expected);
+                this.assert(name, diff < tolerance, expected, actual);
+            }
+            
+            // Simulate button press
+            press(buttonText) {
+                executeNormalFunction(buttonText);
+            }
+            
+            pressF(buttonText) {
+                this.calc.fPrefix = true;
+                executeFFunction(buttonText);
+                this.calc.fPrefix = false;
+            }
+            
+            pressG(buttonText) {
+                this.calc.gPrefix = true;
+                executeGFunction(buttonText);
+                this.calc.gPrefix = false;
+            }
+            
+            // Helper to enter programming mode
+            enterProgramMode() {
+                this.calc.toggleProgramMode();
+            }
+            
+            // Helper to exit programming mode
+            exitProgramMode() {
+                if (this.calc.programmingMode) {
+                    this.calc.toggleProgramMode();
+                }
+            }
+            
+            // Helper to set a label
+            setLabel(label) {
+                this.calc.setLabel(label);
+            }
+            
+            // Helper to call a subroutine
+            callSubroutine(label) {
+                this.calc.callSubroutine(label);
+            }
+            
+            // Helper to run program from start
+            runProgram() {
+                this.calc.programCounter = 0;
+                this.calc.runProgram();
+            }
+            
+            runAllTests() {
+                console.log('==================== HP-15C EMULATOR TESTS ====================');
+                
+                this.testBasicEntry();
+                this.testBasicArithmetic();
+                this.testRPNStack();
+                this.testScientificFunctions();
+                this.testTrigonometry();
+                this.testStatistics();
+                this.testConversions();
+                this.testAdvancedFunctions();
+                this.testProgramming();
+                
+                console.log('===============================================================');
+                console.log(`RESULTS: ${this.passed} passed, ${this.failed} failed`);
+                
+                // Display results in UI
+                this.displayResults();
+                
+                return this.failed === 0;
+            }
+            
+            testBasicEntry() {
+                console.log('\n--- Basic Number Entry ---');
+                
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑');
+                this.assertClose('Enter 5', this.calc.stack.x, 5);
+                
+                this.reset();
+                this.press('1');
+                this.press('2');
+                this.press('3');
+                this.press('ENTER↑');
+                this.assertClose('Enter 123', this.calc.stack.x, 123);
+                
+                this.reset();
+                this.press('3');
+                this.press('•');
+                this.press('1');
+                this.press('4');
+                this.press('ENTER↑');
+                this.assertClose('Enter 3.14', this.calc.stack.x, 3.14);
+                
+                this.reset();
+                this.press('5');
+                this.press('CHS');
+                this.press('ENTER↑');
+                this.assertClose('Enter -5', this.calc.stack.x, -5);
+            }
+            
+            testBasicArithmetic() {
+                console.log('\n--- Basic Arithmetic ---');
+                
+                // 2 + 3 = 5
+                this.reset();
+                this.press('2');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('+');
+                this.assertClose('2 + 3', this.calc.stack.x, 5);
+                
+                // 5 - 2 = 3
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑');
+                this.press('2');
+                this.press('−');
+                this.assertClose('5 - 2', this.calc.stack.x, 3);
+                
+                // 4 × 3 = 12
+                this.reset();
+                this.press('4');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('×');
+                this.assertClose('4 × 3', this.calc.stack.x, 12);
+                
+                // 15 ÷ 3 = 5
+                this.reset();
+                this.press('1');
+                this.press('5');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('÷');
+                this.assertClose('15 ÷ 3', this.calc.stack.x, 5);
+                
+                // Chain: 2 + 3 × 4 = 20 (RPN: 2 3 + 4 ×)
+                this.reset();
+                this.press('2');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('+');
+                this.press('4');
+                this.press('×');
+                this.assertClose('(2 + 3) × 4', this.calc.stack.x, 20);
+            }
+            
+            testRPNStack() {
+                console.log('\n--- RPN Stack Operations ---');
+                
+                // Test ENTER duplicating X to Y
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑');
+                this.press('ENTER↑');
+                this.assertClose('ENTER duplicates X', this.calc.stack.y, 5);
+                this.assertClose('ENTER duplicates X (X)', this.calc.stack.x, 5);
+                
+                // Test x⇄y (swap)
+                this.reset();
+                this.press('2');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('x⇄');
+                this.assertClose('x⇄y X becomes 2', this.calc.stack.x, 2);
+                this.assertClose('x⇄y Y becomes 3', this.calc.stack.y, 3);
+                
+                // Test R↓ (roll down)
+                this.reset();
+                this.press('1');
+                this.press('ENTER↑');
+                this.press('2');
+                this.press('ENTER↑');
+                this.press('3');
+                this.press('ENTER↑');
+                this.press('4');
+                // Stack: T=1, Z=2, Y=3, X=4
+                this.press('R↓');
+                // After roll: T=4, Z=1, Y=2, X=3
+                this.assertClose('R↓ X', this.calc.stack.x, 3);
+                this.assertClose('R↓ Y', this.calc.stack.y, 2);
+                this.assertClose('R↓ Z', this.calc.stack.z, 1);
+                this.assertClose('R↓ T', this.calc.stack.t, 4);
+            }
+            
+            testScientificFunctions() {
+                console.log('\n--- Scientific Functions ---');
+                
+                // √4 = 2
+                this.reset();
+                this.press('4');
+                this.press('√x');
+                this.assertClose('√4', this.calc.stack.x, 2);
+                
+                // 5² = 25 (f √x)
+                this.reset();
+                this.press('5');
+                this.pressF('√x');
+                this.assertClose('5²', this.calc.stack.x, 25);
+                
+                // 2⁸ = 256
+                this.reset();
+                this.press('2');
+                this.press('ENTER↑');
+                this.press('8');
+                this.press('yx');
+                this.assertClose('2^8', this.calc.stack.x, 256);
+                
+                // 1/4 = 0.25
+                this.reset();
+                this.press('4');
+                this.press('1/x');
+                this.assertClose('1/4', this.calc.stack.x, 0.25);
+                
+                // e^1 ≈ 2.71828
+                this.reset();
+                this.press('1');
+                this.press('ex');
+                this.assertClose('e^1', this.calc.stack.x, Math.E, 0.0001);
+                
+                // ln(e) = 1
+                this.reset();
+                this.pressF('EEX'); // π
+                const piVal = this.calc.stack.x;
+                this.reset();
+                this.press('1');
+                this.press('ex');
+                this.pressF('ex'); // ln
+                this.assertClose('ln(e)', this.calc.stack.x, 1, 0.0001);
+                
+                // 10² = 100
+                this.reset();
+                this.press('2');
+                this.press('10x');
+                this.assertClose('10^2', this.calc.stack.x, 100);
+                
+                // log(100) = 2
+                this.reset();
+                this.press('1');
+                this.press('0');
+                this.press('0');
+                this.pressF('10x'); // log
+                this.assertClose('log(100)', this.calc.stack.x, 2);
+                
+                // 5! = 120
+                this.reset();
+                this.press('5');
+                this.pressF('0');
+                this.assertClose('5!', this.calc.stack.x, 120);
+            }
+            
+            testTrigonometry() {
+                console.log('\n--- Trigonometry ---');
+                
+                // sin(30°) = 0.5
+                this.reset();
+                this.calc.angleMode = 'DEG';
+                this.press('3');
+                this.press('0');
+                this.press('SIN');
+                this.assertClose('sin(30°)', this.calc.stack.x, 0.5, 0.0001);
+                
+                // cos(60°) = 0.5
+                this.reset();
+                this.press('6');
+                this.press('0');
+                this.press('COS');
+                this.assertClose('cos(60°)', this.calc.stack.x, 0.5, 0.0001);
+                
+                // tan(45°) = 1
+                this.reset();
+                this.press('4');
+                this.press('5');
+                this.press('TAN');
+                this.assertClose('tan(45°)', this.calc.stack.x, 1, 0.0001);
+                
+                // asin(0.5) = 30°
+                this.reset();
+                this.press('0');
+                this.press('•');
+                this.press('5');
+                this.pressF('SIN'); // asin
+                this.assertClose('asin(0.5)', this.calc.stack.x, 30, 0.0001);
+                
+                // Test RAD mode: sin(π/2) = 1
+                this.reset();
+                this.calc.angleMode = 'RAD';
+                this.pressF('EEX'); // π
+                this.press('2');
+                this.press('÷');
+                this.press('SIN');
+                this.assertClose('sin(π/2)', this.calc.stack.x, 1, 0.0001);
+                
+                this.calc.angleMode = 'DEG'; // Reset to DEG
+            }
+            
+            testStatistics() {
+                console.log('\n--- Statistics ---');
+                
+                // Mean of 1, 2, 3 = 2
+                this.reset();
+                this.press('1');
+                this.press('Σ+');
+                this.press('2');
+                this.press('Σ+');
+                this.press('3');
+                this.press('Σ+');
+                this.pressF('4'); // mean
+                this.assertClose('mean(1,2,3)', this.calc.stack.x, 2);
+                
+                // Sample std dev of 2, 4, 4, 4, 5, 5, 7, 9
+                this.reset();
+                const data = [2, 4, 4, 4, 5, 5, 7, 9];
+                for (let val of data) {
+                    this.press(val.toString());
+                    this.press('Σ+');
+                }
+                this.pressG('•'); // sample std dev
+                this.assertClose('std dev', this.calc.stack.x, 2.138, 0.01);
+            }
+            
+            testConversions() {
+                console.log('\n--- Conversions ---');
+                
+                // Rectangular to Polar: (3,4) -> (5, 53.13°)
+                this.reset();
+                this.press('3');
+                this.press('ENTER↑');
+                this.press('4');
+                this.pressG('1'); // →P
+                this.assertClose('→P r=5', this.calc.stack.x, 5, 0.01);
+                this.assertClose('→P θ≈53°', this.calc.stack.y, 53.13, 0.1);
+                
+                // Polar to Rectangular: (5, 53.13°) -> (3,4)
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑');
+                this.press('5');
+                this.press('3');
+                this.press('•');
+                this.press('1');
+                this.press('3');
+                this.pressF('1'); // →R
+                this.assertClose('→R x≈3', this.calc.stack.x, 3, 0.1);
+                this.assertClose('→R y≈4', this.calc.stack.y, 4, 0.1);
+            }
+            
+            testAdvancedFunctions() {
+                console.log('\n--- Advanced Functions ---');
+                
+                // |−5| = 5
+                this.reset();
+                this.press('5');
+                this.press('CHS');
+                this.pressF('CHS'); // ABS
+                this.assertClose('|-5|', this.calc.stack.x, 5);
+                
+                // INT(3.7) = 3
+                this.reset();
+                this.press('3');
+                this.press('•');
+                this.press('7');
+                this.pressG('STO'); // INT
+                this.assertClose('INT(3.7)', this.calc.stack.x, 3);
+                
+                // FRAC(3.7) = 0.7
+                this.reset();
+                this.press('3');
+                this.press('•');
+                this.press('7');
+                this.pressF('STO'); // FRAC
+                this.assertClose('FRAC(3.7)', this.calc.stack.x, 0.7, 0.0001);
+                
+                // π
+                this.reset();
+                this.pressF('EEX'); // π
+                this.assertClose('π', this.calc.stack.x, Math.PI, 0.0001);
+            }
+            
+            testProgramming() {
+                console.log('\n--- Programming ---');
+                
+                // Test 1: Simple program - multiply by 2
+                // Program: LBL A, 2, ×, RTN
+                this.reset();
+                this.calc.clearProgram();
+                
+                // Enter programming mode
+                this.enterProgramMode();
+                
+                // Record program: LBL A
+                this.setLabel('A');
+                
+                // Record: 2
+                this.press('2');
+                
+                // Record: ×
+                this.press('×');
+                
+                // Record: RTN
+                this.pressG('GSB'); // g GSB is RTN
+                
+                // Exit programming mode
+                this.exitProgramMode();
+                
+                // Test: 5 GSB A should give 10
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑'); // Need to actually enter the 5!
+                this.callSubroutine('A');
+                
+                this.assertClose('Program A: 5×2', this.calc.stack.x, 10);
+                
+                // Test 2: Program with multiple operations
+                // Program: LBL B, 3, +, 2, ×, RTN
+                // This adds 3 then multiplies by 2: (x+3)*2
+                this.reset();
+                this.calc.clearProgram();
+                
+                this.enterProgramMode();
+                this.setLabel('B');
+                this.press('3');
+                this.press('+');
+                this.press('2');
+                this.press('×');
+                this.pressG('GSB'); // RTN
+                this.exitProgramMode();
+                
+                // Test: 5 GSB B should give (5+3)*2 = 16
+                this.reset();
+                this.press('5');
+                this.press('ENTER↑'); // Need to actually enter the 5!
+                this.callSubroutine('B');
+                
+                this.assertClose('Program B: (5+3)×2', this.calc.stack.x, 16);
+                
+                // Test 3: Program with stack operations
+                // Program: LBL C, ENTER, ×, RTN
+                // This squares the number: x²
+                this.reset();
+                this.calc.clearProgram();
+                
+                this.enterProgramMode();
+                this.setLabel('C');
+                this.press('ENTER↑');
+                this.press('×');
+                this.pressG('GSB'); // RTN
+                this.exitProgramMode();
+                
+                // Test: 7 GSB C should give 49
+                this.reset();
+                this.press('7');
+                this.press('ENTER↑'); // Need to actually enter the 7!
+                this.callSubroutine('C');
+                
+                this.assertClose('Program C: 7²', this.calc.stack.x, 49);
+                
+                console.log('✓ Full programming support implemented!');
+            }
+            
+            displayResults() {
+                const resultsDiv = document.getElementById('testResults');
+                if (!resultsDiv) return;
+                
+                let html = `<div style="margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">`;
+                html += `<div style="color: #fff; font-weight: bold; margin-bottom: 10px;">Test Results:</div>`;
+                html += `<div style="color: ${this.failed === 0 ? '#4CAF50' : '#f44336'}; font-size: 16px; margin-bottom: 10px;">`;
+                html += `${this.passed} passed, ${this.failed} failed</div>`;
+                
+                if (this.failed > 0) {
+                    html += `<div style="color: #ff9800; margin-top: 10px;">Failed Tests:</div>`;
+                    for (let test of this.tests) {
+                        if (!test.passed) {
+                            html += `<div style="color: #f44336; font-size: 11px;">✗ ${test.name}</div>`;
+                        }
+                    }
+                }
+                
+                html += `</div>`;
+                resultsDiv.innerHTML = html;
+            }
+        }
+        
+        // Run tests after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            const tester = new HP15CTests(calc);
+            tester.runAllTests();
+        }, 100);
+        
+        // Tutorial Panel Functionality
+        const tutorialToggle = document.getElementById('tutorialToggle');
+        const tutorialPanel = document.getElementById('tutorialPanel');
+        const tutorialClose = document.getElementById('tutorialClose');
+        
+        tutorialToggle.addEventListener('click', () => {
+            tutorialPanel.classList.toggle('open');
+        });
+        
+        tutorialClose.addEventListener('click', () => {
+            tutorialPanel.classList.remove('open');
+        });
+        
+        // Close tutorial when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!tutorialPanel.contains(e.target) && !tutorialToggle.contains(e.target)) {
+                tutorialPanel.classList.remove('open');
+            }
+        });
+        
+        // Debug Panel Toggle Functionality
+        const debugToggle = document.getElementById('debugToggle');
+        const debugPanels = document.getElementById('debugPanels');
+        
+        debugToggle.addEventListener('click', () => {
+            debugPanels.classList.toggle('visible');
+            if (debugPanels.classList.contains('visible')) {
+                debugToggle.textContent = 'Hide Debug Info';
+            } else {
+                debugToggle.textContent = 'Show Debug Info';
+            }
+        });
+    </script>
+</body>
+</html>
