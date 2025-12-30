@@ -526,6 +526,11 @@ img, video, iframe, embed, object {
 
     .experiment-thumbnail {
         max-width: 100%;
+        order: -1;
+    }
+
+    .experiment-description {
+        order: 1;
     }
 
     .experiment-header h2 {
@@ -549,6 +554,10 @@ img, video, iframe, embed, object {
         opacity: 1 !important;
     }
 
+    .article-text {
+        order: 1;
+    }
+
     .illustration-container {
         padding: 1.5rem !important;
     }
@@ -562,6 +571,11 @@ img, video, iframe, embed, object {
         width: 100%;
         height: auto;
         max-height: 200px;
+        order: -1;
+    }
+
+    .article-info {
+        order: 1;
     }
 
     .main-nav {
