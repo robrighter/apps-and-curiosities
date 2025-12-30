@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
             image: "retro-computing/trs-80-emulator/t80.png",
             description: "I was twelve years old when my grandmother handed me a heavy beige box from a garage sale—a Radio Shack TRS-80 Model I that would change my life. Now I've built a browser-based emulator to recapture that magic. Experience the dawn of personal computing with an authentic recreation featuring green phosphor display, working BASIC interpreter, and eight classic programs on virtual floppy diskettes. Load up Space Invaders, write your own BASIC programs, or type LIST to see source code just like curious kids did in 1977. This is what personal computing felt like at the very beginning.",
             category: "Category: Retro-Computing"
+        },
+        {
+            title: "BRINGING BACK A LEGEND: MY HP-15C CALCULATOR EMULATOR",
+            url: "retro-computing/hp15c-web-emulator/index.html",
+            image: "retro-computing/hp15c-web-emulator/hero.png",
+            description: "When I was a kid, my dad always had an HP-15C on his desk—a legendary scientific calculator that became the tool of choice for engineers and mathematicians worldwide. Now I've recreated it as a fully functional web-based emulator. Experience authentic RPN operation, write sophisticated programs with 448 steps of memory, perform matrix operations and complex number arithmetic, and discover why this 1982 calculator is still sought after today. Click the TUTORIAL button to learn the elegant simplicity of Reverse Polish Notation and understand why engineers held onto these calculators for decades.",
+            category: "Category: Retro-Computing"
         }
     ];
 
