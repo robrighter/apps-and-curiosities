@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The TRS-80: A Journey Back to 1977 - Rob Righter's Apps & Curiosities</title>
+    <title>Bringing Back a Legend: My HP-15C Calculator Emulator - Rob Righter's Apps & Curiosities</title>
+    <meta name="description" content="A fully functional web-based emulator of the legendary HP-15C calculator, featuring RPN operation, programmability, and advanced scientific functions.">
+    <meta name="keywords" content="HP-15C, RPN calculator, scientific calculator, calculator emulator, Reverse Polish Notation, vintage computing, engineering tools, HP Voyager series, programmable calculator">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfbf6'/><rect x='5' y='5' width='90' height='90' fill='none' stroke='%231a1a1a' stroke-width='4'/><text x='50' y='78' font-family='Georgia, serif' font-size='75' font-weight='bold' text-anchor='middle' fill='%231a1a1a'>R</text></svg>">
     <link rel="stylesheet" href="../../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,10 +28,10 @@
 
     <article>
         <header class="article-header">
-            <h1 class="article-title">The TRS-80: A Journey Back to 1977</h1>
+            <h1 class="article-title">Bringing Back a Legend: My HP-15C Calculator Emulator</h1>
             <div class="article-meta">
                 <span>By Rob Righter</span>
-                <span>Published: November 29, 2025</span>
+                <span>Published: December 30, 2024</span>
                 <span>Category: Retro-Computing</span>
             </div>
         </header>
@@ -37,193 +39,146 @@
         <div class="article-content">
             <div class="article-text">
 
-            <p>I was twelve years old when my grandmother handed me a heavy beige box she'd picked up at a garage sale. "I thought you might like this computer thing," she said with a knowing smile. That "computer thing" was a Radio Shack TRS-80 Model I, and it would change the trajectory of my entire life.</p>
+            <p>When I was a kid, my dad always had an HP-15C on his desk. As an engineer, he used it constantly for his work—calculations, programming, problem-solving. While I was too young to understand what he was doing with it, I was fascinated by the device itself: more buttons than a regular calculator, a display that showed numbers in scientific notation, and a layout that seemed designed for serious technical work.</p>
 
-            <p>She had no idea what it was, really—just that her grandson was curious about technology, and this contraption with its chunky keyboard and mysterious cables seemed like it might spark something. She paid maybe twenty dollars for it. What she actually gave me was a portal into a world of infinite possibility.</p>
+            <p>Today, I'm excited to share my fully functional web-based emulator of this legendary calculator, built both as a technical project and as a way to recreate a tool I remember from those days.</p>
 
-            <p>I spent countless hours in my bedroom, the green phosphor glow of the monitor illuminating my face late into the night, typing in BASIC programs from magazines, debugging line by line, learning that a missing semicolon could bring everything crashing down. That TRS-80 taught me patience, logic, and the pure joy of making a machine do exactly what you tell it to do.</p>
+            <h2>The Legend of the HP-15C</h2>
 
-            <p>Now, decades later, I've built a browser-based emulator to recapture that magic—and to share it with anyone who wants to experience what personal computing felt like at the very beginning.</p>
+            <p>Released by Hewlett-Packard in 1982, the HP-15C quickly became one of the most beloved scientific calculators ever made. It was part of HP's Voyager series, which included several calculator models, but the 15C stood out for its unique combination of features that made it the calculator of choice for engineers, scientists, and mathematicians worldwide.</p>
 
-            <h2>The Birth of a Revolution: A History of the TRS-80</h2>
+            <h3>What Made It Special?</h3>
 
-            <h3>The Trinity of 1977</h3>
+            <p>The HP-15C wasn't just another scientific calculator. It packed an impressive array of capabilities into a pocket-sized package:</p>
 
-            <p>The year 1977 was a watershed moment in computing history. Three machines arrived almost simultaneously, forever changing the relationship between humans and computers: the Apple II, the Commodore PET, and the TRS-80. These were the "1977 Trinity," and they brought computing out of hobbyist garages and into living rooms across America.</p>
+            <p><strong>RPN (Reverse Polish Notation)</strong>: The HP-15C used RPN entry, which eliminated the need for parentheses and made complex calculations more efficient once you learned to think in its elegant, stack-based logic.</p>
 
-            <p>The TRS-80—officially the TRS-80 Micro Computer System, with "TRS" standing for Tandy Radio Shack—was announced on August 3, 1977. It was the brainchild of Don French, a buyer for Radio Shack who saw the potential for a pre-assembled personal computer, and Steve Leininger, the engineer who designed it.</p>
+            <p><strong>Programmability</strong>: With 448 program steps (or more in various configurations), you could write sophisticated programs to automate repetitive calculations or implement complex algorithms.</p>
 
-            <h3>An Unexpected Phenomenon</h3>
+            <p><strong>Matrix Operations</strong>: Unlike most calculators of its era, the 15C could handle matrix operations, making it invaluable for linear algebra work.</p>
 
-            <p>Radio Shack's parent company, Tandy Corporation, was conservative in its expectations. They manufactured only 3,000 units initially, figuring they might sell them over the course of a year to electronics hobbyists. They were spectacularly wrong.</p>
+            <p><strong>Complex Numbers</strong>: Native support for complex number arithmetic was a rarity in portable calculators.</p>
 
-            <p>The TRS-80 sold out in less than a month. Orders flooded in—over 10,000 in the first month alone. By the end of 1977, Radio Shack had a backlog of over 100,000 orders. The demand was so overwhelming that the company had to scramble to ramp up production.</p>
+            <p><strong>Advanced Functions</strong>: From numerical integration to equation solving, the 15C packed capabilities that rivaled much larger machines.</p>
 
-            <h3>Why the TRS-80 Won (At First)</h3>
+            <p>The calculator was in production from 1982 to 1989, but its reputation only grew after it was discontinued. Used HP-15C calculators began selling for hundreds of dollars on the secondary market, and engineers would hold onto theirs for decades. The demand was so persistent that HP released a limited edition in 2011, and later made it available again in 2023.</p>
 
-            <p>Several factors contributed to the TRS-80's explosive success:</p>
+            <h2>Building the Emulator</h2>
 
-            <p><strong>Price Point</strong>: At $599.95 for a complete system (including monitor, keyboard, and 4KB of RAM), the TRS-80 undercut the Apple II ($1,298 without a monitor) and was comparable to the Commodore PET ($795).</p>
+            <p>Creating this web-based emulator has been a journey of both technical challenge and nostalgic exploration. Every feature I implemented brought back memories and deepened my appreciation for the original engineers who packed so much capability into such a small device.</p>
 
-            <p><strong>Retail Distribution</strong>: Radio Shack had over 3,000 stores across America. You could walk into your local mall, see a working computer, and buy one on the spot. Apple and Commodore had nothing close to this retail presence.</p>
+            <h3>Key Features</h3>
 
-            <p><strong>Complete Package</strong>: Unlike many competitors, the TRS-80 came as a complete, ready-to-use system. No soldering, no hunting for compatible monitors, no assembly required.</p>
+            <p>The emulator faithfully recreates the HP-15C experience:</p>
 
-            <p><strong>Level II BASIC</strong>: The included BASIC interpreter, developed by Microsoft (one of their earliest major contracts), was powerful and relatively easy to learn.</p>
-
-            <h3>The Hardware</h3>
-
-            <p>The original TRS-80 Model I was built around the Zilog Z80 processor running at 1.77 MHz. It came with 4KB of RAM (expandable to 16KB, later 48KB with the Expansion Interface), and could display 64 characters across 16 lines in glowing green phosphor.</p>
-
-            <p>Storage was initially via cassette tape—programs could take several minutes to load, accompanied by the distinctive warbling and screeching sounds that anyone who lived through the era remembers viscerally. Later, the Expansion Interface added floppy disk support, transforming the machine into a more serious computing platform.</p>
-
-            <p>The keyboard was integrated into the main unit, a silver-gray housing that would become iconic. The separate monitor sat atop it, creating the distinctive silhouette that graced countless dens and bedrooms throughout the late 1970s and early 1980s.</p>
-
-            <h3>The "Trash-80" and Its Legacy</h3>
-
-            <p>Critics and competitors mockingly called it the "Trash-80," but owners wore the nickname as a badge of honor. Yes, the keyboard had issues (early models suffered from "keyboard bounce," registering multiple keystrokes). Yes, the cassette storage was unreliable. Yes, the graphics were primitive even by the standards of the day.</p>
-
-            <p>But none of that mattered. The TRS-80 was <em>accessible</em>. It invited experimentation. It came with a manual that assumed you knew nothing and taught you everything. It spawned magazines (80 Micro, 80-US), user groups, and a thriving software ecosystem.</p>
-
-            <p>The TRS-80 line continued with the Model II (aimed at business), Model III (an integrated design), Model 4, and the portable Model 100. Radio Shack also released the TRS-80 Color Computer ("CoCo"), which developed its own devoted following.</p>
-
-            <h3>The End of an Era</h3>
-
-            <p>By the mid-1980s, the IBM PC and its clones had come to dominate business computing, while the Commodore 64 ruled the home market. Radio Shack struggled to keep pace, and the TRS-80 line gradually faded away. The last models were discontinued in the early 1990s.</p>
-
-            <p>But the TRS-80's influence endures. It was many people's first computer. It launched careers. It demonstrated that computers weren't just for corporations and universities—they were for everyone.</p>
-
-            <h2>The Emulator: Bringing the TRS-80 to Your Browser</h2>
-
-            <p>I built this emulator as an act of preservation and nostalgia. It recreates the experience of using a TRS-80 Model I, complete with the iconic green phosphor display, the warm wood-grain aesthetic of 1970s electronics, and a library of software on virtual floppy diskettes.</p>
-
-            <h3>Features</h3>
-
-            <p><strong>Authentic Presentation</strong>: The emulator is housed in a virtual wood-grain cabinet, true to the furniture-style electronics of the era. The CRT monitor features subtle scanlines and the characteristic green glow of phosphor displays.</p>
-
-            <p><strong>Working BASIC Interpreter</strong>: The heart of the TRS-80 experience was Level II BASIC, and this emulator includes a functional BASIC interpreter. You can write programs, save them in memory, and run them just like you would have in 1978.</p>
-
-            <p><strong>Software Library</strong>: Eight virtual diskettes contain ready-to-run programs:</p>
+            <p><strong>Authentic RPN Operation</strong></p>
             <ul>
-                <li><strong>Level II BASIC</strong> — Boot directly to the BASIC prompt</li>
-                <li><strong>Space Invaders</strong> — Defend Earth from alien invasion</li>
-                <li><strong>Snake</strong> — The classic snake game</li>
-                <li><strong>Lunar Lander</strong> — Land your spacecraft safely on the moon</li>
-                <li><strong>Cave Adventure</strong> — A text adventure game with treasures and dragons</li>
-                <li><strong>Scientific Calculator</strong> — A full-featured calculator with trig functions</li>
-                <li><strong>Blackjack</strong> — Try your luck at the card table</li>
-                <li><strong>Memory Match</strong> — Test your memory with this card-matching game</li>
+                <li>4-level stack (X, Y, Z, T registers)</li>
+                <li>Proper stack lift behavior</li>
+                <li>All the stack manipulation operations (ENTER, R↓, x⇄y)</li>
             </ul>
 
-            <p><strong>View the Source Code</strong>: After playing any game, you can type <code>LIST</code> at the BASIC prompt to see its complete source code—just like curious kids did in the 1970s and 80s, learning to program by studying and modifying existing programs.</p>
-
-            <h3>How to Use the Emulator</h3>
-
-            <h4>Getting Started</h4>
-
-            <ol>
-                <li><strong>Click the screen</strong> to give it focus (this allows keyboard input to be captured).</li>
-                <li><strong>Insert a diskette</strong> by clicking on any of the floppy disks in the Software Library at the bottom. The disk drive LED will flash red as the program loads.</li>
-                <li><strong>Wait for the prompt</strong> — after loading, you'll either see a game start or the <code>READY</code> prompt, depending on the software.</li>
-            </ol>
-
-            <h4>Playing the Games</h4>
-
-            <p>Each game displays its controls when it starts. Common controls include:</p>
-
-            <table>
-                <tr>
-                    <th>Game</th>
-                    <th>Controls</th>
-                </tr>
-                <tr>
-                    <td>Space Invaders</td>
-                    <td><code>A</code>/<code>D</code> or Arrow Keys to move, <code>SPACE</code> to fire, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Snake</td>
-                    <td><code>W</code>/<code>A</code>/<code>S</code>/<code>D</code> or Arrow Keys to change direction, <code>Q</code> to quit</td>
-                </tr>
-                <tr>
-                    <td>Lunar Lander</td>
-                    <td><code>A</code>/<code>D</code> to rotate, <code>SPACE</code> for thrust, <code>Q</code> to abort</td>
-                </tr>
-                <tr>
-                    <td>Adventure</td>
-                    <td><code>N</code>/<code>S</code>/<code>E</code>/<code>W</code> to move, <code>GET</code>/<code>DROP</code>/<code>INV</code>/<code>LOOK</code>/<code>ATTACK</code> commands</td>
-                </tr>
-                <tr>
-                    <td>Blackjack</td>
-                    <td><code>H</code> to hit, <code>S</code> to stand, enter bet amounts when prompted</td>
-                </tr>
-                <tr>
-                    <td>Memory Match</td>
-                    <td>Enter coordinates like <code>A1</code>, <code>B3</code>, etc.</td>
-                </tr>
-            </table>
-
-            <h4>Using BASIC</h4>
-
-            <p>When you're at the <code>READY</code> prompt, you can type BASIC commands:</p>
-
-            <p><strong>Immediate Commands:</strong></p>
+            <p><strong>Scientific Functions</strong></p>
             <ul>
-                <li><code>PRINT 2+2</code> — Calculate and display results</li>
-                <li><code>CLS</code> — Clear the screen</li>
-                <li><code>LIST</code> — Show the current program in memory</li>
-                <li><code>RUN</code> — Execute the current program</li>
-                <li><code>NEW</code> — Clear the program from memory</li>
+                <li>Trigonometric functions (sin, cos, tan and their inverses)</li>
+                <li>Hyperbolic functions</li>
+                <li>Logarithms and exponentials</li>
+                <li>Powers and roots</li>
+                <li>Complex number support</li>
             </ul>
 
-            <p><strong>Writing Programs:</strong></p>
+            <p><strong>Programming Capabilities</strong></p>
+            <ul>
+                <li>Full program recording and playback</li>
+                <li>Labels (A-E, 0-9) for subroutines</li>
+                <li>Conditional and unconditional branching (GTO, GSB)</li>
+                <li>Subroutine calls with proper stack handling</li>
+                <li>Single-step debugging (SST/BST)</li>
+            </ul>
 
-            <p>Type line numbers followed by BASIC statements:</p>
+            <p><strong>Memory and Statistics</strong></p>
+            <ul>
+                <li>20 storage registers</li>
+                <li>Statistical functions (mean, standard deviation)</li>
+                <li>Linear regression</li>
+                <li>Summation operations</li>
+            </ul>
 
-            <pre><code>10 PRINT "HELLO, WORLD!"
-20 FOR I = 1 TO 10
-30 PRINT I
-40 NEXT I
-50 END
-RUN</code></pre>
+            <p><strong>User Interface</strong></p>
+            <ul>
+                <li>Pixel-perfect recreation of the original button layout</li>
+                <li>Proper color coding (orange for f-prefix, blue for g-prefix)</li>
+                <li>Authentic HP aesthetic with gradient buttons and proper bezels</li>
+                <li>Interactive tutorial panel to help newcomers learn RPN</li>
+                <li>Debug panel for developers and curious users</li>
+            </ul>
 
-            <p><strong>Breaking Out of Programs:</strong></p>
+            <h3>The Joy of RPN</h3>
 
-            <p>Press <code>ESC</code> at any time to break out of a running program. You'll see <code>?BREAK AT LINE XXX</code> and return to the <code>READY</code> prompt.</p>
+            <p>One of the most rewarding aspects of this project has been rediscovering RPN. At first, it seems backward—you enter the numbers before the operation. But after you adjust to thinking in terms of the stack, it becomes incredibly elegant.</p>
 
-            <p><strong>Returning to BASIC:</strong></p>
+            <p>Consider calculating <code>(5 + 3) × 4</code>:</p>
+            <ul>
+                <li>Traditional: <code>( 5 + 3 ) × 4 =</code></li>
+                <li>RPN: <code>5 ENTER 3 + 4 ×</code></li>
+            </ul>
 
-            <p>Type <code>SYSTEM</code> from anywhere to reset and return to the BASIC prompt.</p>
+            <p>No parentheses needed. No ambiguity. The stack naturally handles the order of operations. Once you internalize the pattern, complex calculations flow naturally, and you wonder why we ever needed an equals key in the first place.</p>
 
-            <h4>Viewing Game Source Code</h4>
+            <h3>Programming Example: Calculating e</h3>
 
-            <p>One of the joys of early computing was learning by reading code. After loading any game:</p>
+            <p>To showcase the programming capabilities, I included a tutorial with an advanced example: calculating Euler's number (e) using the Taylor series expansion:</p>
 
-            <ol>
-                <li>Quit the game (press <code>Q</code> or let it end naturally)</li>
-                <li>At the <code>READY</code> prompt, type <code>LIST</code></li>
-                <li>Scroll through to see the complete BASIC source code</li>
-            </ol>
+            <pre><code>e = 1 + 1/1! + 1/2! + 1/3! + ... + 1/n!</code></pre>
 
-            <p>The code is written in authentic TRS-80 BASIC style, with line numbers, <code>GOSUB</code> subroutines, <code>FOR</code>/<code>NEXT</code> loops, and all the idioms of the era.</p>
+            <p>The program uses a loop to calculate successive factorials and accumulate the sum. With just 15 terms, it produces an estimate accurate to 8 decimal places: 2.71828183. It's the kind of program that demonstrates why the HP-15C was so beloved by mathematicians and engineers—you can implement sophisticated algorithms on a pocket calculator.</p>
+
+            <h2>Technical Implementation</h2>
+
+            <p>The emulator is built entirely in vanilla HTML, CSS, and JavaScript—no frameworks, no dependencies. This was a deliberate choice to keep it accessible and to challenge myself to implement everything from scratch.</p>
+
+            <p><strong>Key technical challenges:</strong></p>
+            <ul>
+                <li>Proper RPN stack behavior with lift enable/disable</li>
+                <li>Floating-point precision management</li>
+                <li>Program execution engine with proper flow control</li>
+                <li>Memory management for registers and programs</li>
+                <li>CSS recreation of the classic HP styling</li>
+            </ul>
+
+            <p>The entire calculator runs client-side, so there's no server required. It works offline once loaded, just like the original battery-powered calculator.</p>
 
             <h2>Why This Matters</h2>
 
-            <p>There's a reason so many technologists of a certain age get misty-eyed talking about their first computers. These machines weren't just tools—they were teachers, playgrounds, and windows into a new way of thinking.</p>
+            <p>In an age of smartphone apps and cloud computing, you might wonder why anyone would care about a calculator from 1982. But the HP-15C represents something important: thoughtful design, mathematical elegance, and tools built to last.</p>
 
-            <p>The TRS-80 arrived at the perfect moment: powerful enough to be useful, simple enough to be understood, and cheap enough to be accessible. It invited you to look under the hood, to type <code>LIST</code> and see how things worked, to modify and experiment and break things and fix them again.</p>
+            <p>The original HP-15C calculators are still working today, 40+ years later. Engineers who learned RPN decades ago can pick one up and immediately be productive. The interface hasn't dated because it was designed around timeless principles of human-computer interaction and mathematical logic.</p>
 
-            <p>That spirit of accessible, explorable computing is something we've lost in the age of sealed devices and app stores. Modern computers are vastly more powerful, but they're also more opaque. The journey from curiosity to creation is longer and more obscured.</p>
+            <p>This emulator preserves that legacy and makes it accessible to a new generation. Whether you're a student learning RPN for the first time, an engineer who remembers these calculators, or just someone curious about how people solved complex problems before modern computers, this provides hands-on experience with a piece of computing history.</p>
 
-            <p>This emulator is my small attempt to preserve a piece of that original magic. Whether you're a veteran of the 8-bit era revisiting old memories, or a curious newcomer wondering what all the fuss was about, I hope you'll spend a few minutes with this virtual TRS-80.</p>
+            <h2>Origins</h2>
 
-            <p>Load up Space Invaders. Type <code>10 PRINT "HELLO"</code> and press <code>RUN</code>. Feel the satisfying clunk of those virtual keys and watch the green phosphor glow.</p>
+            <p>This project was inspired by my dad's constant use of the HP-15C in his engineering work. While I never used his calculator professionally—by the time I was old enough, software had largely replaced hardware calculators—recreating it in code gave me a deeper understanding of both the tool and the work he did with it.</p>
 
-            <p>And maybe, just maybe, you'll understand why a twelve-year-old kid stayed up way past his bedtime, bathed in that eerie green light, absolutely certain that the future had arrived in his bedroom—courtesy of a grandmother who found a treasure at a garage sale.</p>
+            <p>The emulator is dedicated to the engineers who used HP-15C calculators to solve real problems, and to anyone who appreciates well-designed tools that stand the test of time.</p>
+
+            <h2>Try It Yourself</h2>
+
+            <p>The emulator is available online with a complete interactive tutorial that walks you through RPN basics, scientific functions, and even advanced programming. Whether you want to:</p>
+            <ul>
+                <li>Learn RPN and understand why it was so popular</li>
+                <li>Experience a piece of computing history</li>
+                <li>Program algorithms on a classic platform</li>
+                <li>Just play with a beautifully designed interface</li>
+            </ul>
+
+            <p>I invite you to give it a try. Click the "TUTORIAL" button on the side panel, and let the journey begin. And if you find yourself enjoying the elegant simplicity of RPN, you'll understand why people still seek out these calculators four decades later.</p>
+
         </div>
 
             <aside class="article-illustration">
                 <div class="illustration-container">
-                    <img src="./hero.png" alt="hp15c emulator">
+                    <img src="./hero.png" alt="HP-15C calculator emulator">
                     <p class="illustration-caption">HP-15C emulator</p>
                 </div>
 

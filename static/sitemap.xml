@@ -79,6 +79,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.robrighter.com/retro-computing/hp15c-web-emulator/index.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.robrighter.com/retro-computing/trs-80-emulator/index.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
