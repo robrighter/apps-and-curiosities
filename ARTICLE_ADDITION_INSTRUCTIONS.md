@@ -49,6 +49,113 @@ When the user provides markdown content for a new article, the coding agent must
 </script>
 ```
 
+### 2.6. Search Engine Optimization (SEO) Requirements
+- **File**: `static/{category}/{article-slug}/index.html`
+- **Action**: Add comprehensive SEO meta tags and structured data to EVERY article page
+- **CRITICAL**: All of the following components are required for proper SEO
+
+#### A. Meta Description
+Add a meta description tag (150-160 characters, keyword-rich):
+```html
+<meta name="description" content="Detailed, keyword-rich description of the article content. Should be compelling and include relevant search terms.">
+```
+
+#### B. Canonical URL
+Add a canonical URL to prevent duplicate content issues:
+```html
+<link rel="canonical" href="https://www.robrighter.com/{category}/{article-slug}/index.html">
+```
+
+#### C. Open Graph Tags (Facebook/LinkedIn Sharing)
+Add Open Graph meta tags for social media sharing:
+```html
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.robrighter.com/{category}/{article-slug}/index.html">
+<meta property="og:title" content="{Article Title}">
+<meta property="og:description" content="{Same as meta description or shortened version}">
+<meta property="og:image" content="https://www.robrighter.com/{category}/{article-slug}/{image-file}.png">
+<meta property="article:published_time" content="{YYYY-MM-DD format}">
+```
+
+#### D. Twitter Card Tags
+Add Twitter Card meta tags:
+```html
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+```
+
+#### E. JSON-LD Article Schema
+Add structured data for search engines (insert before closing `</head>` tag):
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{Article Title}",
+  "author": {
+    "@type": "Person",
+    "name": "Rob Righter"
+  },
+  "datePublished": "{YYYY-MM-DD format}",
+  "image": "https://www.robrighter.com/{category}/{article-slug}/{image-file}.png",
+  "articleSection": "{Category Name}"
+}
+</script>
+```
+
+#### F. JSON-LD Breadcrumb Schema
+Add breadcrumb structured data (insert before closing `</head>` tag):
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.robrighter.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{Category Name}",
+      "item": "https://www.robrighter.com/{category}.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{Article Title}"
+    }
+  ]
+}
+</script>
+```
+
+#### G. SEO Order in `<head>` Section
+The proper order for SEO elements in the `<head>` section should be:
+1. `<meta charset="UTF-8">`
+2. `<meta name="viewport">`
+3. Google Analytics tracking code
+4. `<title>` tag
+5. `<meta name="description">`
+6. `<link rel="canonical">`
+7. Open Graph tags
+8. Twitter Card tags
+9. Favicon
+10. Stylesheets
+11. Font preconnects
+12. JSON-LD schemas (Article and BreadcrumbList)
+
+#### H. Category-Specific Keywords
+When writing meta descriptions and content, target these keywords by category:
+- **Games**: browser game, HTML5 game, JavaScript game, interactive game
+- **Mathematics**: visualizer, simulator, interactive, educational, learn [topic]
+- **Retro-Computing**: emulator, vintage computer, retro computing, [brand/model] emulator
+- **Notes & Inquiries**: AI-assisted development, simulation, interactive, educational
+
 ### 3. Home Page Updates
 **File**: `static/index.html`
 
@@ -107,14 +214,17 @@ Add the article to the appropriate category page in **chronological order (desce
 ### 6. Sitemap Update
 **File**: `static/sitemap.xml`
 
-Add a new URL entry in the appropriate category section:
+Add a new URL entry in the appropriate category section with lastmod date:
 ```xml
 <url>
   <loc>https://www.robrighter.com/{category}/{article-slug}/index.html</loc>
+  <lastmod>{YYYY-MM-DD format - publication date}</lastmod>
   <changefreq>yearly</changefreq>
   <priority>0.6</priority>
 </url>
 ```
+
+**IMPORTANT**: The `<lastmod>` date should match the article's publication date from the Article schema.
 
 ## Directory Structure Reference
 ```
@@ -181,13 +291,19 @@ Before completing the task, verify that:
 - [ ] Article content is properly updated in `index.html` (NOT app.html)
 - [ ] Favicon is added to `app.html`
 - [ ] **Google Analytics tracking code is added to BOTH `index.html` AND `app.html`**
-- [ ] All dates are current and accurate
+- [ ] **SEO meta description is added (150-160 characters, keyword-rich)**
+- [ ] **Canonical URL is added to article index.html**
+- [ ] **Open Graph tags are added (og:type, og:url, og:title, og:description, og:image, article:published_time)**
+- [ ] **Twitter Card tag is added (twitter:card)**
+- [ ] **JSON-LD Article schema is added with all required fields**
+- [ ] **JSON-LD BreadcrumbList schema is added**
+- [ ] All dates are current and accurate (in YYYY-MM-DD format)
 - [ ] Article is added to home page (`index.html`) in chronological order
 - [ ] All articles on home page are in chronological order (newest first)
 - [ ] Article is added to featured rotator (`script.js`)
 - [ ] Article is added to appropriate category page in chronological order
 - [ ] All articles on category page are in chronological order (newest first)
-- [ ] Sitemap is updated with new URL
+- [ ] Sitemap is updated with new URL and lastmod date
 - [ ] All links are using correct paths
 - [ ] Image references are correct
 - [ ] Titles and descriptions are consistent across all locations
@@ -203,6 +319,9 @@ After completing all updates:
 - **DON'T put article content in app.html** - it goes in index.html
 - **DON'T forget the favicon** - always add it to app.html
 - **DON'T forget Google Analytics** - must be added to BOTH index.html AND app.html
+- **DON'T skip SEO requirements** - all meta tags, Open Graph, Twitter Cards, and JSON-LD schemas are mandatory
+- **DON'T write generic meta descriptions** - make them keyword-rich and compelling (150-160 chars)
+- **DON'T forget the lastmod date in sitemap** - it should match the article publication date
 - **DON'T add articles randomly** - maintain chronological order everywhere
 - Don't forget to update ALL locations (home, category page, rotator, sitemap)
 - Ensure article slug consistency across all references
@@ -219,16 +338,23 @@ The agent should:
 1. Update the article's **`index.html`** (NOT app.html) with the provided content
 2. Add favicon to the article's `app.html` if missing
 3. Add Google Analytics tracking code to BOTH `index.html` AND `app.html` if missing
-4. Set the publication date (current date or as specified by user)
-5. Determine correct chronological position based on publication date
-6. Add the article to home page `index.html` in correct order
-7. Verify all articles on home page are in chronological order; reorder if needed
-8. Add the article to `script.js` rotator
-9. Add the article to the appropriate category page in correct order
-10. Verify all articles on category page are in chronological order; reorder if needed
-11. Add the article to `sitemap.xml`
-12. Verify all changes
-13. Commit and push
+4. **Add all SEO requirements to article's `index.html`:**
+   - Meta description (150-160 characters, keyword-rich)
+   - Canonical URL
+   - Open Graph tags (og:type, og:url, og:title, og:description, og:image, article:published_time)
+   - Twitter Card tag
+   - JSON-LD Article schema
+   - JSON-LD BreadcrumbList schema
+5. Set the publication date (current date or as specified by user)
+6. Determine correct chronological position based on publication date
+7. Add the article to home page `index.html` in correct order
+8. Verify all articles on home page are in chronological order; reorder if needed
+9. Add the article to `script.js` rotator
+10. Add the article to the appropriate category page in correct order
+11. Verify all articles on category page are in chronological order; reorder if needed
+12. Add the article to `sitemap.xml` with lastmod date
+13. Verify all changes using the verification checklist
+14. Commit and push
 
 ## Questions to Clarify (if needed)
 If any of the following are unclear from context, ask the user:
