@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris Hero Image Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+        }
+        #canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Background - vintage cream color
+        ctx.fillStyle = '#F5F1E3';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Title
+        ctx.fillStyle = '#2C2416';
+        ctx.font = 'bold 36px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('TETRIS: THE FALLING BLOCKS PUZZLE', canvas.width / 2, 60);
+
+        ctx.font = '20px Georgia, serif';
+        ctx.fillText('A Study in Spatial Reasoning and Real-Time Strategy', canvas.width / 2, 95);
+
+        // Draw main game grid
+        const gridX = 150;
+        const gridY = 150;
+        const cellSize = 25;
+        const gridWidth = 10;
+        const gridHeight = 16;
+
+        // Grid border
+        ctx.strokeStyle = '#2C2416';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(gridX, gridY, gridWidth * cellSize, gridHeight * cellSize);
+
+        // Grid lines
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#8B8677';
+        for (let i = 1; i < gridWidth; i++) {
+            ctx.beginPath();
+            ctx.moveTo(gridX + i * cellSize, gridY);
+            ctx.lineTo(gridX + i * cellSize, gridY + gridHeight * cellSize);
+            ctx.stroke();
+        }
+        for (let i = 1; i < gridHeight; i++) {
+            ctx.beginPath();
+            ctx.moveTo(gridX, gridY + i * cellSize);
+            ctx.lineTo(gridX + gridWidth * cellSize, gridY + i * cellSize);
+            ctx.stroke();
+        }
+
+        // Draw some filled blocks (creating a partial tetris pattern)
+        const blocks = [
+            // Bottom rows
+            [0, 15], [1, 15], [2, 15], [4, 15], [5, 15], [6, 15], [7, 15], [8, 15], [9, 15],
+            [0, 14], [1, 14], [2, 14], [3, 14], [4, 14], [6, 14], [7, 14], [8, 14], [9, 14],
+            [1, 13], [2, 13], [3, 13], [4, 13], [5, 13], [6, 13], [8, 13], [9, 13],
+            // Middle scattered blocks
+            [0, 12], [8, 12], [9, 12],
+            [0, 11], [1, 11], [8, 11], [9, 11],
+            [5, 10], [6, 10], [7, 10],
+            [5, 9]
+        ];
+
+        ctx.fillStyle = '#2C2416';
+        blocks.forEach(([x, y]) => {
+            ctx.fillRect(gridX + x * cellSize + 2, gridY + y * cellSize + 2, cellSize - 4, cellSize - 4);
+        });
+
+        // Draw falling T-piece
+        const fallingPiece = [
+            [3, 3], [4, 3], [5, 3], [4, 4]
+        ];
+
+        ctx.strokeStyle = '#2C2416';
+        ctx.lineWidth = 2;
+        fallingPiece.forEach(([x, y]) => {
+            ctx.strokeRect(gridX + x * cellSize + 2, gridY + y * cellSize + 2, cellSize - 4, cellSize - 4);
+            // Add diagonal lines to show it's falling
+            ctx.beginPath();
+            ctx.moveTo(gridX + x * cellSize + 4, gridY + y * cellSize + 4);
+            ctx.lineTo(gridX + (x + 1) * cellSize - 2, gridY + (y + 1) * cellSize - 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(gridX + (x + 1) * cellSize - 2, gridY + y * cellSize + 4);
+            ctx.lineTo(gridX + x * cellSize + 4, gridY + (y + 1) * cellSize - 2);
+            ctx.stroke();
+        });
+
+        // Draw the 7 tetromino shapes on the right
+        const tetrominoX = 500;
+        const tetrominoY = 150;
+        const pieceSize = 18;
+
+        ctx.font = 'bold 18px Courier, monospace';
+        ctx.fillStyle = '#2C2416';
+        ctx.textAlign = 'left';
+        ctx.fillText('THE SEVEN TETROMINOES:', tetrominoX, tetrominoY - 10);
+
+        // I-piece
+        ctx.font = '14px Courier, monospace';
+        ctx.fillText('I-PIECE (Line)', tetrominoX + 100, tetrominoY + 20);
+        for (let i = 0; i < 4; i++) {
+            ctx.fillRect(tetrominoX + i * pieceSize, tetrominoY, pieceSize - 2, pieceSize - 2);
+        }
+
+        // O-piece
+        ctx.fillText('O-PIECE (Square)', tetrominoX + 100, tetrominoY + 70);
+        [[0, 0], [1, 0], [0, 1], [1, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 50 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // T-piece
+        ctx.fillText('T-PIECE', tetrominoX + 100, tetrominoY + 120);
+        [[0, 0], [1, 0], [2, 0], [1, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 100 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // S-piece
+        ctx.fillText('S-PIECE (Zigzag)', tetrominoX + 100, tetrominoY + 170);
+        [[1, 0], [2, 0], [0, 1], [1, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 150 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // Z-piece
+        ctx.fillText('Z-PIECE (Zigzag)', tetrominoX + 100, tetrominoY + 220);
+        [[0, 0], [1, 0], [1, 1], [2, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 200 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // J-piece
+        ctx.fillText('J-PIECE', tetrominoX + 100, tetrominoY + 270);
+        [[0, 0], [0, 1], [1, 1], [2, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 250 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // L-piece
+        ctx.fillText('L-PIECE', tetrominoX + 100, tetrominoY + 320);
+        [[2, 0], [0, 1], [1, 1], [2, 1]].forEach(([x, y]) => {
+            ctx.fillRect(tetrominoX + x * pieceSize, tetrominoY + 300 + y * pieceSize, pieceSize - 2, pieceSize - 2);
+        });
+
+        // Game info panel
+        const infoX = 850;
+        const infoY = 150;
+
+        ctx.strokeStyle = '#2C2416';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(infoX, infoY, 280, 400);
+
+        ctx.font = 'bold 16px Courier, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('GAME MECHANICS:', infoX + 10, infoY + 30);
+
+        ctx.font = '13px Courier, monospace';
+        const mechanics = [
+            '',
+            '• Blocks fall from top',
+            '• Rotate pieces 90°',
+            '• Move left/right',
+            '• Complete rows vanish',
+            '• Score increases',
+            '• Speed accelerates',
+            '',
+            'SCORING SYSTEM:',
+            '',
+            '1 Line:  100 pts',
+            '2 Lines: 300 pts',
+            '3 Lines: 500 pts',
+            '4 Lines: 800 pts',
+            '  (TETRIS!)',
+            '',
+            'STRATEGY:',
+            '',
+            '• Plan ahead',
+            '• Leave gaps for',
+            '  I-pieces',
+            '• Build flat',
+            '• Avoid stacking',
+            '  too high'
+        ];
+
+        let yOffset = infoY + 55;
+        mechanics.forEach(line => {
+            ctx.fillText(line, infoX + 15, yOffset);
+            yOffset += 16;
+        });
+
+        // Bottom caption
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('From Soviet Computing to Global Phenomenon', canvas.width / 2, canvas.height - 30);
+
+        // Decorative border
+        ctx.strokeStyle = '#2C2416';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+        // Add download button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = 'Download Hero Image';
+        downloadBtn.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #2C2416; color: white; border: none; cursor: pointer; font-size: 16px;';
+        downloadBtn.onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'hero.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+        document.body.appendChild(downloadBtn);
+
+        console.log('Hero image generated! Click the download button to save.');
+    </script>
+</body>
+</html>
