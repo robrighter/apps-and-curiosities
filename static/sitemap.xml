@@ -3,6 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.robrighter.com/</loc>
+    <lastmod>2026-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -10,21 +11,25 @@
   <!-- Main Category Pages -->
   <url>
     <loc>https://www.robrighter.com/games.html</loc>
+    <lastmod>2026-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/mathematics.html</loc>
+    <lastmod>2026-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/notes.html</loc>
+    <lastmod>2026-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/retro.html</loc>
+    <lastmod>2026-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -34,6 +39,7 @@
   <!-- Games Section -->
   <url>
     <loc>https://www.robrighter.com/games/luner-lander/index.html</loc>
+    <lastmod>2025-11-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -41,26 +47,31 @@
   <!-- Mathematics Section -->
   <url>
     <loc>https://www.robrighter.com/mathematics/riemann-sums/index.html</loc>
+    <lastmod>2025-12-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/mathematics/cannon-math-game/index.html</loc>
+    <lastmod>2025-12-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/mathematics/statistical-distributions/index.html</loc>
+    <lastmod>2025-11-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/mathematics/neural-network-simulator/index.html</loc>
+    <lastmod>2025-11-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/mathematics/solar-system-simulator/index.html</loc>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -68,23 +79,21 @@
   <!-- Notes & Inquiries Section -->
   <url>
     <loc>https://www.robrighter.com/notes/traffic-simulation/index.html</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- Retro-Computing Section -->
   <url>
-    <loc>https://www.robrighter.com/retro</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.robrighter.com/retro-computing/hp15c-web-emulator/index.html</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.robrighter.com/retro-computing/trs-80-emulator/index.html</loc>
+    <lastmod>2025-11-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
