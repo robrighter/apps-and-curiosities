@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP-15C Program Collection</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            line-height: 1.7;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #c9a227;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #c9a227;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+        
+        .calculator-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .toc {
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .toc h3 {
+            color: #c9a227;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .toc-section {
+            margin-bottom: 1rem;
+        }
+        
+        .toc-section h4 {
+            color: #888;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .toc ol {
+            margin: 0;
+            padding-left: 1.5rem;
+            columns: 2;
+            column-gap: 2rem;
+        }
+        
+        .toc li {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #b8b8b8;
+        }
+        
+        .program {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid #c9a227;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem 2rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .program h2 {
+            color: #c9a227;
+            margin-top: 0;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .program-number {
+            background: #c9a227;
+            color: #1a1a2e;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .narrative {
+            color: #b8b8b8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            padding: 1rem;
+            background: rgba(201, 162, 39, 0.05);
+            border-radius: 4px;
+        }
+        
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 1rem 1.25rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        
+        .comment {
+            color: #6a9955;
+        }
+        
+        .instruction {
+            color: #569cd6;
+        }
+        
+        .label {
+            color: #dcdcaa;
+        }
+        
+        .number {
+            color: #b5cea8;
+        }
+        
+        .usage {
+            background: rgba(86, 156, 214, 0.1);
+            border: 1px solid rgba(86, 156, 214, 0.3);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .usage h4 {
+            margin: 0 0 0.5rem 0;
+            color: #569cd6;
+            font-size: 0.95rem;
+        }
+        
+        .usage code {
+            background: #0d1117;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+        }
+        
+        .math {
+            color: #ce9178;
+            font-style: italic;
+        }
+        
+        .keypress {
+            background: #2d2d2d;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 0 #1a1a1a;
+        }
+        
+        .section-divider {
+            text-align: center;
+            margin: 3rem 0;
+            color: #c9a227;
+            letter-spacing: 8px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin: 3rem 0 2rem 0;
+            padding: 1rem;
+            background: rgba(201, 162, 39, 0.1);
+            border-radius: 8px;
+        }
+        
+        .section-header h3 {
+            color: #c9a227;
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .tip {
+            background: rgba(78, 154, 6, 0.15);
+            border: 1px solid rgba(78, 154, 6, 0.4);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .tip::before {
+            content: "💡 ";
+        }
+        
+        .registers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+        
+        .register {
+            background: #1e1e1e;
+            padding: 0.4rem 0.6rem;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="calculator-icon">⬛</div>
+            <h1>HP-15C Programs</h1>
+            <p class="subtitle">A Collection of 20 Elegant Algorithms for the Voyager Series</p>
+        </header>
+
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <div class="toc-section">
+                <h4>Part I: Number Theory & Fundamentals</h4>
+                <ol>
+                    <li>Prime Number Tester</li>
+                    <li>Euclidean GCD Algorithm</li>
+                    <li>Fibonacci Generator</li>
+                    <li>Pascal's Triangle (Binomial Coefficients)</li>
+                    <li>Digital Root (Casting Out Nines)</li>
+                    <li>Collatz Conjecture</li>
+                </ol>
+            </div>
+            <div class="toc-section">
+                <h4>Part II: Approximating Constants</h4>
+                <ol start="7">
+                    <li>Monte Carlo π Estimator</li>
+                    <li>Wallis Product for π</li>
+                    <li>e via Limit Definition</li>
+                    <li>Continued Fraction Expansion</li>
+                    <li>Harmonic Numbers</li>
+                </ol>
+            </div>
+            <div class="toc-section">
+                <h4>Part III: Numerical Methods</h4>
+                <ol start="12">
+                    <li>Newton-Raphson Square Root</li>
+                    <li>Babylonian Square Root</li>
+                    <li>Numerical Derivative</li>
+                    <li>Quadratic Solver (Complex Roots)</li>
+                    <li>Matrix Determinant</li>
+                </ol>
+            </div>
+            <div class="toc-section">
+                <h4>Part IV: Dynamics & Applications</h4>
+                <ol start="17">
+                    <li>Logistic Map (Chaos)</li>
+                    <li>Compound Interest Calculator</li>
+                    <li>Day of Week (Zeller's Congruence)</li>
+                    <li>Gamma Function Integral</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="section-header">
+            <h3>PART I: NUMBER THEORY & FUNDAMENTALS</h3>
+        </div>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Program 1: Prime Tester -->
+        <div class="program">
+            <h2><span class="program-number">1</span> Prime Number Tester</h2>
+            
+            <div class="narrative">
+                The primes are the atoms of arithmetic—every integer factors uniquely into primes. Yet they scatter through the number line with maddening irregularity. This program uses trial division, the most ancient primality test: divide by every integer up to √n. If none divide evenly, the number is prime. It's not fast for large numbers, but it's foolproof, and watching the HP-15C methodically test divisors connects you to mathematicians who did this by hand for centuries.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL A</span>        <span class="comment">; Entry point - number in X</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store n in R0</span>
+<span class="number">2</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Start divisor at 2</span>
+<span class="label">LBL 0</span>        <span class="comment">; Loop start</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">x²</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x≤y?</span>         <span class="comment">; If divisor² > n, it's prime</span>
+<span class="instruction">GTO 1</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">÷</span>
+<span class="instruction">FRAC</span>
+<span class="instruction">x=0?</span>         <span class="comment">; If evenly divisible, not prime</span>
+<span class="instruction">GTO 2</span>
+<span class="number">1</span>
+<span class="instruction">STO+ 1</span>       <span class="comment">; Increment divisor</span>
+<span class="instruction">GTO 0</span>        <span class="comment">; Continue loop</span>
+<span class="label">LBL 1</span>        <span class="comment">; Prime exit</span>
+<span class="number">1</span>
+<span class="instruction">RTN</span>
+<span class="label">LBL 2</span>        <span class="comment">; Composite exit</span>
+<span class="number">0</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number, press <span class="keypress">GSB A</span>. Returns 1 (prime) or 0 (composite).</p>
+                <p><strong>Examples:</strong> 97 → 1 (prime), 91 → 0 (= 7 × 13)</p>
+            </div>
+        </div>
+
+        <!-- Program 2: GCD -->
+        <div class="program">
+            <h2><span class="program-number">2</span> Euclidean GCD Algorithm</h2>
+            
+            <div class="narrative">
+                Euclid's algorithm for finding the greatest common divisor appears in his Elements around 300 BCE, making it one of the oldest algorithms still in daily use. The insight is beautiful: GCD(a,b) = GCD(b, a mod b). Keep replacing the larger with the remainder until you hit zero. What remains is the GCD. It's fast, elegant, and the foundation for everything from reducing fractions to modern cryptography.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL B</span>        <span class="comment">; Y: a, X: b</span>
+<span class="label">LBL 0</span>
+<span class="instruction">x=0?</span>         <span class="comment">; If b = 0, done</span>
+<span class="instruction">GTO 1</span>
+<span class="instruction">LastX</span>        <span class="comment">; Recall b</span>
+<span class="instruction">x&lt;&gt;y</span>         <span class="comment">; Stack: b, a</span>
+<span class="instruction">LastX</span>        <span class="comment">; Stack: b, a, b</span>
+<span class="instruction">÷</span>
+<span class="instruction">FRAC</span>
+<span class="instruction">LastX</span>
+<span class="instruction">×</span>            <span class="comment">; a mod b</span>
+<span class="instruction">GTO 0</span>
+<span class="label">LBL 1</span>
+<span class="instruction">R↓</span>           <span class="comment">; Result in X</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter <code>a ENTER b</code>, press <span class="keypress">GSB B</span>. Returns GCD(a,b).</p>
+                <p><strong>Example:</strong> <code>48 ENTER 18 GSB B</code> → 6</p>
+            </div>
+        </div>
+
+        <!-- Program 3: Fibonacci -->
+        <div class="program">
+            <h2><span class="program-number">3</span> Fibonacci Generator</h2>
+            
+            <div class="narrative">
+                Leonardo of Pisa introduced these numbers to Europe in 1202, describing rabbit population growth. Each number is the sum of the two before it: 1, 1, 2, 3, 5, 8, 13... The ratio of consecutive Fibonacci numbers converges to the golden ratio φ = (1+√5)/2 ≈ 1.618. These numbers appear in pine cones, sunflower seeds, and the branching of trees—nature's favorite sequence.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL C</span>        <span class="comment">; Initialize: puts 0, 1 in registers</span>
+<span class="number">0</span>
+<span class="instruction">STO 0</span>
+<span class="number">1</span>
+<span class="instruction">STO 1</span>
+<span class="instruction">RTN</span>
+
+<span class="label">LBL 1</span>        <span class="comment">; Generate next Fibonacci</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">STO 0</span>        <span class="comment">; F(n-1) becomes F(n-2)</span>
+<span class="instruction">+</span>
+<span class="instruction">STO 1</span>        <span class="comment">; F(n) = F(n-1) + F(n-2)</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p><span class="keypress">GSB C</span> to initialize, then <span class="keypress">GSB 1</span> repeatedly.</p>
+                <p><strong>Sequence:</strong> 1, 2, 3, 5, 8, 13, 21, 34, 55, 89...</p>
+            </div>
+            
+            <div class="tip">
+                Divide consecutive outputs to watch the ratio converge to φ ≈ 1.6180339887...
+            </div>
+        </div>
+
+        <!-- Program 4: Pascal's Triangle -->
+        <div class="program">
+            <h2><span class="program-number">4</span> Pascal's Triangle: Binomial Coefficients</h2>
+            
+            <div class="narrative">
+                Pascal's triangle contains the binomial coefficients C(n,k)—the number of ways to choose k items from n. Each entry is the sum of the two entries above it. This simple rule generates numbers that appear in probability, combinatorics, and algebra. The triangle also hides Fibonacci numbers, powers of 2, and countless other patterns. This program computes any entry using the formula C(n,k) = n!/(k!(n-k)!), optimized to avoid overflow.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL D</span>        <span class="comment">; Y=n, X=k, compute C(n,k)</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store k</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Store n</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">-</span>            <span class="comment">; n - k</span>
+<span class="instruction">x&lt;y?</span>         <span class="comment">; Is k > n-k?</span>
+<span class="instruction">x&lt;&gt;y</span>         <span class="comment">; Use smaller for efficiency</span>
+<span class="instruction">STO 0</span>        <span class="comment">; k = min(k, n-k)</span>
+<span class="number">1</span>
+<span class="instruction">STO 2</span>        <span class="comment">; Result = 1</span>
+<span class="number">1</span>
+<span class="instruction">STO 3</span>        <span class="comment">; i = 1</span>
+<span class="label">LBL 0</span>        <span class="comment">; Main loop</span>
+<span class="instruction">RCL 3</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x&lt;y?</span>         <span class="comment">; i > k?</span>
+<span class="instruction">GTO 1</span>        <span class="comment">; Done</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">RCL 3</span>
+<span class="instruction">-</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; n - i + 1</span>
+<span class="instruction">STO× 2</span>       <span class="comment">; result *= (n-i+1)</span>
+<span class="instruction">RCL 3</span>
+<span class="instruction">STO÷ 2</span>       <span class="comment">; result /= i</span>
+<span class="number">1</span>
+<span class="instruction">STO+ 3</span>       <span class="comment">; i++</span>
+<span class="instruction">GTO 0</span>
+<span class="label">LBL 1</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter <code>n ENTER k</code>, press <span class="keypress">GSB D</span>.</p>
+                <p><strong>Examples:</strong> C(10,3) = 120, C(52,5) = 2,598,960 (poker hands!)</p>
+            </div>
+        </div>
+
+        <!-- Program 5: Digital Root -->
+        <div class="program">
+            <h2><span class="program-number">5</span> Digital Root: Casting Out Nines</h2>
+            
+            <div class="narrative">
+                Add the digits of any number. If the sum has more than one digit, add those digits. Repeat until you get a single digit. This is the digital root, and it equals the number's remainder when divided by 9 (except 9 maps to 9, not 0). Medieval accountants used "casting out nines" to check arithmetic. The technique has deep connections to modular arithmetic and has been used for centuries to catch calculation errors.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL E</span>        <span class="comment">; n in X</span>
+<span class="label">LBL 0</span>        <span class="comment">; Digit sum loop</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store current n</span>
+<span class="number">0</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Digit sum = 0</span>
+<span class="label">LBL 1</span>        <span class="comment">; Sum digits loop</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x=0?</span>
+<span class="instruction">GTO 2</span>        <span class="comment">; Done with this round</span>
+<span class="number">10</span>
+<span class="instruction">÷</span>
+<span class="instruction">FRAC</span>
+<span class="number">10</span>
+<span class="instruction">×</span>            <span class="comment">; Extract last digit</span>
+<span class="instruction">STO+ 1</span>       <span class="comment">; Add to sum</span>
+<span class="instruction">RCL 0</span>
+<span class="number">10</span>
+<span class="instruction">÷</span>
+<span class="instruction">INT</span>          <span class="comment">; Remove last digit</span>
+<span class="instruction">STO 0</span>
+<span class="instruction">GTO 1</span>
+<span class="label">LBL 2</span>
+<span class="instruction">RCL 1</span>        <span class="comment">; Current digit sum</span>
+<span class="number">10</span>
+<span class="instruction">x&lt;y?</span>         <span class="comment">; Sum < 10?</span>
+<span class="instruction">RTN</span>          <span class="comment">; Yes: done</span>
+<span class="instruction">R↓</span>
+<span class="instruction">RCL 1</span>        <span class="comment">; No: continue reducing</span>
+<span class="instruction">GTO 0</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number, press <span class="keypress">GSB E</span>.</p>
+                <p><strong>Examples:</strong> 12345 → 6, 999 → 9, 19683 → 9</p>
+            </div>
+        </div>
+
+        <!-- Program 6: Collatz -->
+        <div class="program">
+            <h2><span class="program-number">6</span> The Collatz Conjecture: Mathematics' Simplest Unsolved Problem</h2>
+            
+            <div class="narrative">
+                Take any positive integer. If it's even, halve it. If it's odd, triple it and add one. Repeat. The Collatz Conjecture claims every starting number eventually reaches 1. It's been verified for numbers up to 2⁶⁸, yet no one can prove it must always be true. Paul Erdős said "Mathematics may not be ready for such problems." Your HP-15C can trace these hailstone sequences—called that because they rise and fall unpredictably like hailstones in a thundercloud before finally dropping to earth.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .0</span>       <span class="comment">; Enter n in X</span>
+<span class="label">LBL .1</span>       <span class="comment">; Main loop</span>
+<span class="instruction">x=0?</span>
+<span class="instruction">RTN</span>          <span class="comment">; Safety check</span>
+<span class="number">1</span>
+<span class="instruction">x=y?</span>         <span class="comment">; Reached 1?</span>
+<span class="instruction">RTN</span>          <span class="comment">; Done!</span>
+<span class="instruction">R↓</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>            <span class="comment">; n/2</span>
+<span class="instruction">FRAC</span>
+<span class="instruction">x=0?</span>         <span class="comment">; Was n even?</span>
+<span class="instruction">GTO .2</span>       <span class="comment">; Yes: go halve it</span>
+<span class="instruction">LastX</span>        <span class="comment">; No: recall n/2</span>
+<span class="number">2</span>
+<span class="instruction">×</span>            <span class="comment">; Restore n</span>
+<span class="number">3</span>
+<span class="instruction">×</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; 3n + 1</span>
+<span class="instruction">PSE</span>          <span class="comment">; Pause to display</span>
+<span class="instruction">GTO .1</span>
+<span class="label">LBL .2</span>       <span class="comment">; Even case</span>
+<span class="instruction">LastX</span>        <span class="comment">; Recall n/2</span>
+<span class="number">2</span>
+<span class="instruction">×</span>            <span class="comment">; n</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>            <span class="comment">; n/2 (integer)</span>
+<span class="instruction">PSE</span>          <span class="comment">; Pause to display</span>
+<span class="instruction">GTO .1</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter starting number, press <span class="keypress">GSB .0</span>.</p>
+                <p>Watch the sequence unfold with pauses. Ends when reaching 1.</p>
+                <p><strong>Try:</strong> 27 → Takes 111 steps, reaches a peak of 9,232!</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="section-header">
+            <h3>PART II: APPROXIMATING CONSTANTS</h3>
+        </div>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Program 7: Monte Carlo Pi -->
+        <div class="program">
+            <h2><span class="program-number">7</span> Monte Carlo π Estimator</h2>
+            
+            <div class="narrative">
+                Imagine throwing darts randomly at a square with an inscribed quarter-circle. The ratio of darts landing inside the circle to total darts approximates π/4. This is Monte Carlo simulation—using randomness to solve deterministic problems. The method was formalized during the Manhattan Project, but the underlying idea is ancient. Each dart throw is an experiment; aggregate enough experiments and order emerges from chaos.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .3</span>       <span class="comment">; n = iterations in X</span>
+<span class="instruction">STO I</span>        <span class="comment">; Save original n</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Loop counter</span>
+<span class="number">0</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Hits counter = 0</span>
+<span class="label">LBL .4</span>       <span class="comment">; Loop</span>
+<span class="instruction">RAN#</span>         <span class="comment">; Random x ∈ [0,1)</span>
+<span class="instruction">x²</span>
+<span class="instruction">RAN#</span>         <span class="comment">; Random y ∈ [0,1)</span>
+<span class="instruction">x²</span>
+<span class="instruction">+</span>            <span class="comment">; x² + y²</span>
+<span class="number">1</span>
+<span class="instruction">x≤y?</span>         <span class="comment">; If x² + y² ≤ 1, inside circle</span>
+<span class="number">1</span>
+<span class="instruction">STO+ 1</span>       <span class="comment">; Increment hits (conditional)</span>
+<span class="number">1</span>
+<span class="instruction">STO- 0</span>       <span class="comment">; Decrement counter</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x≠0?</span>
+<span class="instruction">GTO .4</span>       <span class="comment">; Continue if counter > 0</span>
+<span class="instruction">RCL 1</span>        <span class="comment">; Recall hits</span>
+<span class="number">4</span>
+<span class="instruction">×</span>
+<span class="instruction">RCL I</span>        <span class="comment">; Recall original n</span>
+<span class="instruction">÷</span>            <span class="comment">; 4 × hits / n ≈ π</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter iteration count (try 100-500), press <span class="keypress">GSB .3</span>.</p>
+                <p>More iterations = better estimate (but slower).</p>
+            </div>
+            
+            <div class="tip">
+                The error decreases as 1/√n, so quadrupling iterations only halves the error. Still, watching π emerge from random noise is magical.
+            </div>
+        </div>
+
+        <!-- Program 8: Wallis Product -->
+        <div class="program">
+            <h2><span class="program-number">8</span> Wallis Product: A 17th Century Path to π</h2>
+            
+            <div class="narrative">
+                In 1655, John Wallis discovered an infinite product that converges to π/2. It's hauntingly simple: (2/1)·(2/3)·(4/3)·(4/5)·(6/5)·(6/7)·... Each fraction pairs an even number with its odd neighbors. Wallis found this while trying to compute the area under a circle—the same problem that would later inspire Newton to develop calculus. The convergence is glacially slow, but there's something meditative about watching your calculator inch toward transcendence.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .5</span>       <span class="comment">; n = number of terms in X</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Loop counter</span>
+<span class="number">1</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Running product</span>
+<span class="number">2</span>
+<span class="instruction">STO 2</span>        <span class="comment">; Current even number</span>
+<span class="label">LBL .6</span>       <span class="comment">; Main loop</span>
+<span class="instruction">RCL 2</span>        <span class="comment">; even</span>
+<span class="instruction">ENTER</span>
+<span class="instruction">ENTER</span>
+<span class="number">1</span>
+<span class="instruction">-</span>            <span class="comment">; even - 1</span>
+<span class="instruction">÷</span>            <span class="comment">; even/(even-1)</span>
+<span class="instruction">STO× 1</span>       <span class="comment">; Multiply into product</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">RCL 2</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; even + 1</span>
+<span class="instruction">÷</span>            <span class="comment">; even/(even+1)</span>
+<span class="instruction">STO× 1</span>       <span class="comment">; Multiply into product</span>
+<span class="number">2</span>
+<span class="instruction">STO+ 2</span>       <span class="comment">; Next even number</span>
+<span class="number">1</span>
+<span class="instruction">STO- 0</span>       <span class="comment">; Decrement counter</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x≠0?</span>
+<span class="instruction">GTO .6</span>
+<span class="instruction">RCL 1</span>
+<span class="number">2</span>
+<span class="instruction">×</span>            <span class="comment">; Product × 2 = π approximation</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number of terms, press <span class="keypress">GSB .5</span>.</p>
+                <p><strong>Results:</strong> 10 terms → 3.067..., 100 terms → 3.133..., 1000 terms → 3.140...</p>
+            </div>
+        </div>
+
+        <!-- Program 9: e via Limit -->
+        <div class="program">
+            <h2><span class="program-number">9</span> e via Its Limit Definition</h2>
+            
+            <div class="narrative">
+                Euler's number e = 2.71828... can be defined as the limit of (1 + 1/n)ⁿ as n approaches infinity. This captures the essence of continuous compounding: if you earn 100% interest compounded n times, as n grows the final amount approaches e. This program lets you explore this convergence. Watch how the approximation improves as n increases, approaching but never quite reaching the irrational limit.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .7</span>       <span class="comment">; n in X</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store n</span>
+<span class="number">1</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">÷</span>            <span class="comment">; 1/n</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; 1 + 1/n</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">y^x</span>          <span class="comment">; (1 + 1/n)ⁿ</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter n, press <span class="keypress">GSB .7</span>.</p>
+                <p><strong>Convergence:</strong> n=10 → 2.5937..., n=100 → 2.7048..., n=10000 → 2.7181...</p>
+            </div>
+            
+            <div class="tip">
+                The series e = 1 + 1/1! + 1/2! + 1/3! + ... converges much faster, but the limit definition reveals e's connection to compound interest.
+            </div>
+        </div>
+
+        <!-- Program 10: Continued Fractions -->
+        <div class="program">
+            <h2><span class="program-number">10</span> Continued Fraction Expansion</h2>
+            
+            <div class="narrative">
+                Every real number can be expressed as a continued fraction: a₀ + 1/(a₁ + 1/(a₂ + 1/(a₃ + ...))). For rationals, this terminates; for irrationals, it goes forever. The remarkable thing is that truncating a continued fraction gives you the *best* rational approximation with that denominator size. This is how we know 355/113 is an extraordinary approximation to π—it comes directly from π's continued fraction.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .8</span>       <span class="comment">; Number in X</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Working value</span>
+<span class="label">LBL .9</span>       <span class="comment">; Extract next coefficient</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">INT</span>          <span class="comment">; aₙ = floor(x)</span>
+<span class="instruction">PSE</span>          <span class="comment">; Display coefficient</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">FRAC</span>         <span class="comment">; Fractional part</span>
+<span class="instruction">x=0?</span>         <span class="comment">; If zero, we're done</span>
+<span class="instruction">RTN</span>
+<span class="instruction">1/x</span>          <span class="comment">; 1 / frac(x)</span>
+<span class="instruction">STO 0</span>        <span class="comment">; This is new x</span>
+<span class="instruction">GTO .9</span>       <span class="comment">; Continue</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number, press <span class="keypress">GSB .8</span>. Watch coefficients display.</p>
+                <p><strong>Examples:</strong></p>
+                <p>π → [3; 7, 15, 1, 292, ...] (that 292 explains why 355/113 is so good)</p>
+                <p>√2 → [1; 2, 2, 2, 2, ...] (all 2s forever!)</p>
+                <p>φ → [1; 1, 1, 1, 1, ...] (all 1s—the "most irrational" number)</p>
+            </div>
+        </div>
+
+        <!-- Program 11: Harmonic Numbers -->
+        <div class="program">
+            <h2><span class="program-number">11</span> Harmonic Numbers: The Slow March to Infinity</h2>
+            
+            <div class="narrative">
+                The harmonic series 1 + 1/2 + 1/3 + 1/4 + ... diverges, but with excruciating slowness. To exceed 10, you need 12,367 terms. To exceed 100, you need about 10⁴³ terms—more than atoms in the universe. The partial sums, called harmonic numbers Hₙ, appear everywhere: in probability (the coupon collector problem), in computer science (quicksort analysis), and in number theory.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL 2</span>        <span class="comment">; n in X, compute Hₙ</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store n</span>
+<span class="number">0</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Sum = 0</span>
+<span class="number">1</span>
+<span class="instruction">STO 2</span>        <span class="comment">; k = 1</span>
+<span class="label">LBL 3</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">1/x</span>          <span class="comment">; 1/k</span>
+<span class="instruction">STO+ 1</span>       <span class="comment">; Add to sum</span>
+<span class="number">1</span>
+<span class="instruction">STO+ 2</span>       <span class="comment">; k++</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">x≤y?</span>         <span class="comment">; k > n?</span>
+<span class="instruction">GTO 4</span>
+<span class="instruction">GTO 3</span>
+<span class="label">LBL 4</span>
+<span class="instruction">RCL 1</span>        <span class="comment">; Return Hₙ</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter n, press <span class="keypress">GSB 2</span>.</p>
+                <p><strong>Values:</strong> H₁₀ = 2.9289..., H₁₀₀ = 5.1873..., H₁₀₀₀ = 7.4854...</p>
+            </div>
+            
+            <div class="tip">
+                For large n, Hₙ ≈ ln(n) + γ, where γ ≈ 0.5772... is the Euler-Mascheroni constant.
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="section-header">
+            <h3>PART III: NUMERICAL METHODS</h3>
+        </div>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Program 12: Newton-Raphson -->
+        <div class="program">
+            <h2><span class="program-number">12</span> Newton-Raphson Square Root</h2>
+            
+            <div class="narrative">
+                Newton's method finds roots by iterating: xₙ₊₁ = xₙ - f(xₙ)/f'(xₙ). For square roots, f(x) = x² - n, giving xₙ₊₁ = ½(xₙ + n/xₙ). The convergence is quadratic—each iteration roughly doubles the correct digits. This is the algorithm inside every CPU's floating-point unit, and it runs beautifully on the HP-15C.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL 5</span>        <span class="comment">; n in X, find √n</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store n</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Initial guess = n/2</span>
+<span class="label">LBL 6</span>        <span class="comment">; Iteration loop</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">÷</span>            <span class="comment">; n/x</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">+</span>            <span class="comment">; x + n/x</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>            <span class="comment">; New estimate</span>
+<span class="instruction">STO 2</span>        <span class="comment">; Store temporarily</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">-</span>
+<span class="instruction">ABS</span>
+<span class="instruction">EEX</span>
+<span class="number">8</span>
+<span class="instruction">CHS</span>          <span class="comment">; 1e-8 tolerance</span>
+<span class="instruction">x&lt;y?</span>         <span class="comment">; Converged?</span>
+<span class="instruction">GTO 7</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Update x</span>
+<span class="instruction">GTO 6</span>
+<span class="label">LBL 7</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number, press <span class="keypress">GSB 5</span>. Converges rapidly.</p>
+                <p><strong>Example:</strong> <code>2 GSB 5</code> → 1.414213562</p>
+            </div>
+        </div>
+
+        <!-- Program 13: Babylonian -->
+        <div class="program">
+            <h2><span class="program-number">13</span> Babylonian Square Root: Ancient Wisdom</h2>
+            
+            <div class="narrative">
+                Over 3,500 years ago, Babylonian mathematicians discovered an algorithm for square roots that we now recognize as Newton's method applied to f(x) = x² - n. Start with a guess, average it with n/guess, repeat. The convergence is quadratic—each iteration roughly doubles the correct digits. This algorithm was carved into clay tablets in cuneiform, and it runs beautifully on silicon.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL 8</span>        <span class="comment">; n in X, find √n</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store n</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Initial guess = n/2</span>
+<span class="label">LBL 9</span>        <span class="comment">; Iteration loop</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">÷</span>            <span class="comment">; n/guess</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">+</span>            <span class="comment">; guess + n/guess</span>
+<span class="number">2</span>
+<span class="instruction">÷</span>            <span class="comment">; (guess + n/guess)/2</span>
+<span class="instruction">STO 2</span>        <span class="comment">; New guess</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">-</span>
+<span class="instruction">ABS</span>
+<span class="number">1</span>
+<span class="instruction">EEX</span>
+<span class="number">9</span>
+<span class="instruction">CHS</span>          <span class="comment">; 10⁻⁹ tolerance</span>
+<span class="instruction">x&gt;y?</span>         <span class="comment">; Converged?</span>
+<span class="instruction">GTO .0</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Update guess</span>
+<span class="instruction">GTO 9</span>
+<span class="label">LBL .0</span>
+<span class="instruction">RCL 2</span>        <span class="comment">; Return √n</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter number, press <span class="keypress">GSB 8</span>.</p>
+                <p><strong>Example:</strong> <code>2 GSB 8</code> → 1.414213562 (√2)</p>
+            </div>
+        </div>
+
+        <!-- Program 14: Numerical Derivative -->
+        <div class="program">
+            <h2><span class="program-number">14</span> Numerical Derivative: Calculus Without Limits</h2>
+            
+            <div class="narrative">
+                Every calculus student learns that the derivative is the limit of a difference quotient. But what if you can't find the limit symbolically? The HP-15C's elegant solution uses the central difference formula: sample the function at x+h and x-h, then divide by 2h. With a small enough step size, you get remarkable accuracy. This transforms the calculator into a numerical differentiating machine.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="comment">; First, define your function in LBL .1</span>
+<span class="comment">; Example: f(x) = x³ - 2x + 1</span>
+<span class="label">LBL .1</span>
+<span class="instruction">ENTER</span>
+<span class="instruction">ENTER</span>
+<span class="instruction">×</span>
+<span class="instruction">×</span>            <span class="comment">; x³</span>
+<span class="instruction">LastX</span>
+<span class="number">2</span>
+<span class="instruction">×</span>
+<span class="instruction">-</span>            <span class="comment">; x³ - 2x</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; x³ - 2x + 1</span>
+<span class="instruction">RTN</span>
+
+<span class="comment">; Derivative routine</span>
+<span class="label">LBL .2</span>       <span class="comment">; x in X register</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store x</span>
+<span class="number">1</span>
+<span class="instruction">EEX</span>
+<span class="number">5</span>
+<span class="instruction">CHS</span>          <span class="comment">; h = 0.00001</span>
+<span class="instruction">STO 1</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">+</span>            <span class="comment">; x + h</span>
+<span class="instruction">GSB .1</span>       <span class="comment">; f(x + h)</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">-</span>            <span class="comment">; x - h</span>
+<span class="instruction">GSB .1</span>       <span class="comment">; f(x - h)</span>
+<span class="instruction">-</span>            <span class="comment">; f(x+h) - f(x-h)</span>
+<span class="instruction">RCL 1</span>
+<span class="number">2</span>
+<span class="instruction">×</span>            <span class="comment">; 2h</span>
+<span class="instruction">÷</span>            <span class="comment">; [f(x+h) - f(x-h)] / 2h</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Modify LBL .1 with your function. Enter x value, press <span class="keypress">GSB .2</span>.</p>
+                <p><strong>Example:</strong> For f(x) = x³ - 2x + 1, derivative at x=2:</p>
+                <p><code>2 GSB .2</code> → 10 (exact answer: 3(2)² - 2 = 10 ✓)</p>
+            </div>
+        </div>
+
+        <!-- Program 15: Quadratic Solver -->
+        <div class="program">
+            <h2><span class="program-number">15</span> Quadratic Solver with Complex Roots</h2>
+            
+            <div class="narrative">
+                The HP-15C was one of the first handheld calculators with true complex number support. This quadratic solver exploits that capability: when the discriminant is negative, it doesn't give up—it returns the complex roots. The formula is the same quadratic formula from high school, but now it works for every equation, real or complex.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .3</span>       <span class="comment">; Enter: Z=a, Y=b, X=c</span>
+<span class="instruction">STO 0</span>        <span class="comment">; c in R0</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 1</span>        <span class="comment">; b in R1</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 2</span>        <span class="comment">; a in R2</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">x²</span>           <span class="comment">; b²</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">×</span>
+<span class="number">4</span>
+<span class="instruction">×</span>            <span class="comment">; 4ac</span>
+<span class="instruction">-</span>            <span class="comment">; discriminant = b² - 4ac</span>
+<span class="instruction">SF 8</span>         <span class="comment">; Set complex mode</span>
+<span class="instruction">SQRT</span>         <span class="comment">; √(discriminant) - complex if negative!</span>
+<span class="instruction">STO 3</span>        <span class="comment">; Store √discriminant</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">CHS</span>          <span class="comment">; -b</span>
+<span class="instruction">RCL 3</span>
+<span class="instruction">+</span>            <span class="comment">; -b + √d</span>
+<span class="instruction">RCL 2</span>
+<span class="number">2</span>
+<span class="instruction">×</span>
+<span class="instruction">÷</span>            <span class="comment">; First root: (-b + √d)/(2a)</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">CHS</span>
+<span class="instruction">RCL 3</span>
+<span class="instruction">-</span>            <span class="comment">; -b - √d</span>
+<span class="instruction">RCL 2</span>
+<span class="number">2</span>
+<span class="instruction">×</span>
+<span class="instruction">÷</span>            <span class="comment">; Second root in X, first in Y</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter <code>a ENTER b ENTER c</code>, press <span class="keypress">GSB .3</span>.</p>
+                <p>Press <span class="keypress">Re&lt;&gt;Im</span> to see imaginary parts.</p>
+                <p><strong>Example:</strong> <code>1 ENTER 2 ENTER 5 GSB .3</code></p>
+                <p>Roots of x² + 2x + 5 = 0 are -1 ± 2i</p>
+            </div>
+        </div>
+
+        <!-- Program 16: Matrix Determinant -->
+        <div class="program">
+            <h2><span class="program-number">16</span> Matrix Determinant: The Power of the HP-15C</h2>
+            
+            <div class="narrative">
+                The HP-15C was revolutionary for including matrix operations in a handheld calculator. With 64 registers configurable as matrices, it could handle serious linear algebra. The determinant tells you if a system of equations has a unique solution (non-zero) or is degenerate (zero). It's the first question to ask about any linear system.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="comment">; First, configure and enter your matrix</span>
+<span class="comment">; Example: 2×2 matrix</span>
+
+<span class="instruction">f DIM</span>        <span class="comment">; Enter matrix dimension mode</span>
+<span class="number">2</span>
+<span class="instruction">ENTER</span>
+<span class="number">2</span>
+<span class="instruction">f MATRIX 1</span>  <span class="comment">; Dimension Matrix A as 2×2</span>
+
+<span class="instruction">f USER</span>       <span class="comment">; Enter User mode (optional)</span>
+<span class="instruction">f MATRIX 1</span>  <span class="comment">; Select Matrix A for input</span>
+
+<span class="comment">; Enter elements row by row:</span>
+<span class="number">1</span> <span class="instruction">STO A</span>     <span class="comment">; a₁₁</span>
+<span class="number">2</span> <span class="instruction">STO A</span>     <span class="comment">; a₁₂</span>
+<span class="number">3</span> <span class="instruction">STO A</span>     <span class="comment">; a₂₁</span>
+<span class="number">4</span> <span class="instruction">STO A</span>     <span class="comment">; a₂₂</span>
+
+<span class="comment">; Now compute determinant:</span>
+<span class="instruction">RCL MATRIX A</span>
+<span class="instruction">f MATRIX 7</span>  <span class="comment">; Compute determinant</span>
+<span class="comment">; Result: -2 (for this example)</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>This is more of a workflow than a program—the HP-15C's matrix functions are built in.</p>
+                <p><strong>Key matrix commands:</strong></p>
+                <p><code>f MATRIX 7</code> → Determinant, <code>f MATRIX 9</code> → Transpose</p>
+            </div>
+            
+            <div class="tip">
+                The HP-15C can invert matrices up to 8×8 directly. For a 3×3 system of equations, enter the coefficient matrix, invert it, and multiply by the constants vector.
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="section-header">
+            <h3>PART IV: DYNAMICS & APPLICATIONS</h3>
+        </div>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Program 17: Logistic Map -->
+        <div class="program">
+            <h2><span class="program-number">17</span> The Logistic Map: Chaos in Your Pocket</h2>
+            
+            <div class="narrative">
+                In 1976, biologist Robert May showed that a simple population model could produce chaos. The equation xₙ₊₁ = r·xₙ·(1-xₙ) looks innocent enough—multiply, subtract, scale. But for certain values of r, the system never settles down. It bounces forever, never repeating, yet never escaping a bounded region. The HP-15C can explore this mathematical wilderness one iteration at a time, letting you watch order dissolve into beautiful chaos.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .4</span>       <span class="comment">; Initialize: X=x₀, Y=r</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store x in R0</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Store r in R1</span>
+<span class="instruction">RCL 0</span>        <span class="comment">; Return initial x</span>
+<span class="instruction">RTN</span>
+
+<span class="label">LBL .5</span>       <span class="comment">; Iterate: compute next x</span>
+<span class="instruction">RCL 0</span>        <span class="comment">; x</span>
+<span class="number">1</span>
+<span class="instruction">RCL 0</span>
+<span class="instruction">-</span>            <span class="comment">; (1 - x)</span>
+<span class="instruction">×</span>            <span class="comment">; x(1-x)</span>
+<span class="instruction">RCL 1</span>
+<span class="instruction">×</span>            <span class="comment">; r·x·(1-x)</span>
+<span class="instruction">STO 0</span>        <span class="comment">; Store new x</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter <code>r ENTER x₀</code> then <span class="keypress">GSB .4</span> to initialize.</p>
+                <p>Press <span class="keypress">GSB .5</span> repeatedly to iterate.</p>
+                <p><strong>Try it:</strong> r=3.2, x₀=0.5 → Period-2 oscillation</p>
+                <p><strong>Then try:</strong> r=3.57 → Edge of chaos, r=4.0 → Full chaos</p>
+            </div>
+            
+            <div class="tip">
+                For r between 3.57 and 4, the orbit becomes chaotic—tiny changes in x₀ lead to completely different trajectories. This is the famous "sensitive dependence on initial conditions."
+            </div>
+        </div>
+
+        <!-- Program 18: Compound Interest -->
+        <div class="program">
+            <h2><span class="program-number">18</span> Compound Interest with Regular Deposits</h2>
+            
+            <div class="narrative">
+                Einstein allegedly called compound interest the eighth wonder of the world. Whether or not he said it, the math is undeniably powerful. This program answers the practical question: if I start with some principal, add a fixed amount regularly, and earn compound interest, what will I have after n periods? It's the equation underlying every retirement calculator.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .6</span>       <span class="comment">; R0=principal, R1=rate, R2=deposit, R3=periods</span>
+<span class="comment">; Setup: Store values first, then GSB .6</span>
+<span class="instruction">RCL 3</span>        <span class="comment">; n periods</span>
+<span class="instruction">STO 4</span>        <span class="comment">; Loop counter</span>
+<span class="instruction">RCL 0</span>        <span class="comment">; Starting principal</span>
+<span class="label">LBL .7</span>       <span class="comment">; Compound loop</span>
+<span class="instruction">RCL 1</span>
+<span class="number">1</span>
+<span class="instruction">+</span>            <span class="comment">; 1 + rate</span>
+<span class="instruction">×</span>            <span class="comment">; balance × (1 + rate)</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">+</span>            <span class="comment">; + deposit</span>
+<span class="number">1</span>
+<span class="instruction">STO- 4</span>
+<span class="instruction">RCL 4</span>
+<span class="instruction">x≠0?</span>
+<span class="instruction">GTO .7</span>
+<span class="instruction">RTN</span>          <span class="comment">; Final balance in X</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <div class="registers">
+                    <span class="register">R0: Principal</span>
+                    <span class="register">R1: Rate (decimal)</span>
+                    <span class="register">R2: Deposit/period</span>
+                    <span class="register">R3: # Periods</span>
+                </div>
+                <p><strong>Example:</strong> $10,000 initial, 0.5% monthly rate, $500/month, 30 years:</p>
+                <p><code>10000 STO 0</code>, <code>.005 STO 1</code>, <code>500 STO 2</code>, <code>360 STO 3</code>, <span class="keypress">GSB .6</span></p>
+                <p>Result: ≈ $502,257</p>
+            </div>
+        </div>
+
+        <!-- Program 19: Zeller's Congruence -->
+        <div class="program">
+            <h2><span class="program-number">19</span> Day of Week: Zeller's Congruence</h2>
+            
+            <div class="narrative">
+                Christian Zeller devised this formula in 1887 to compute the day of week for any date. It's a beautiful piece of mathematical engineering, encoding calendar quirks (leap years, the irregular months) into a single modular arithmetic expression. Enter any date and know instantly whether it was a Monday or Friday.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL .8</span>       <span class="comment">; Z=year, Y=month, X=day</span>
+<span class="instruction">STO 0</span>        <span class="comment">; day</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 1</span>        <span class="comment">; month</span>
+<span class="instruction">R↓</span>
+<span class="instruction">STO 2</span>        <span class="comment">; year</span>
+<span class="instruction">RCL 1</span>
+<span class="number">2</span>
+<span class="instruction">x≤y?</span>
+<span class="instruction">GTO .9</span>
+<span class="instruction">RCL 1</span>
+<span class="number">12</span>
+<span class="instruction">+</span>
+<span class="instruction">STO 1</span>        <span class="comment">; Adjust month (Jan=13, Feb=14)</span>
+<span class="number">1</span>
+<span class="instruction">STO- 2</span>       <span class="comment">; Adjust year</span>
+<span class="label">LBL .9</span>
+<span class="instruction">RCL 0</span>        <span class="comment">; d</span>
+<span class="instruction">RCL 1</span>
+<span class="number">1</span>
+<span class="instruction">+</span>
+<span class="number">13</span>
+<span class="instruction">×</span>
+<span class="number">5</span>
+<span class="instruction">÷</span>
+<span class="instruction">INT</span>
+<span class="instruction">+</span>            <span class="comment">; + floor(13(m+1)/5)</span>
+<span class="instruction">RCL 2</span>
+<span class="instruction">+</span>            <span class="comment">; + K</span>
+<span class="instruction">RCL 2</span>
+<span class="number">4</span>
+<span class="instruction">÷</span>
+<span class="instruction">INT</span>
+<span class="instruction">+</span>            <span class="comment">; + floor(K/4)</span>
+<span class="instruction">RCL 2</span>
+<span class="number">100</span>
+<span class="instruction">÷</span>
+<span class="instruction">INT</span>
+<span class="instruction">STO 3</span>        <span class="comment">; J = century</span>
+<span class="number">4</span>
+<span class="instruction">÷</span>
+<span class="instruction">INT</span>
+<span class="instruction">+</span>            <span class="comment">; + floor(J/4)</span>
+<span class="instruction">RCL 3</span>
+<span class="number">2</span>
+<span class="instruction">×</span>
+<span class="instruction">-</span>            <span class="comment">; - 2J</span>
+<span class="number">7</span>
+<span class="instruction">÷</span>
+<span class="instruction">FRAC</span>
+<span class="number">7</span>
+<span class="instruction">×</span>
+<span class="instruction">INT</span>          <span class="comment">; mod 7</span>
+<span class="instruction">RTN</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter <code>year ENTER month ENTER day</code>, press <span class="keypress">GSB .8</span>.</p>
+                <p><strong>Result:</strong> 0=Sat, 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri</p>
+                <p><strong>Example:</strong> <code>2024 ENTER 7 ENTER 4</code> → July 4, 2024 was a Thursday (5)</p>
+            </div>
+        </div>
+
+        <!-- Program 20: Gamma Function -->
+        <div class="program">
+            <h2><span class="program-number">20</span> Gamma Function via Integration</h2>
+            
+            <div class="narrative">
+                The gamma function extends factorial to non-integers: Γ(n+1) = n! for positive integers, but it's defined for all complex numbers (except non-positive integers). The integral definition is Γ(n+1) = ∫₀^∞ tⁿe⁻ᵗ dt. The HP-15C's built-in numerical integration can evaluate this directly, giving you factorials of fractions.
+            </div>
+            
+            <div class="code-block">
+<pre><span class="label">LBL A</span>        <span class="comment">; n in X (setup for gamma)</span>
+<span class="instruction">STO 4</span>        <span class="comment">; Store n</span>
+<span class="instruction">RTN</span>          <span class="comment">; Return to setup</span>
+
+<span class="label">LBL B</span>        <span class="comment">; Integrand: t^n × e^(-t)</span>
+<span class="comment">; t is in X from integrate</span>
+<span class="instruction">RCL 4</span>        <span class="comment">; n</span>
+<span class="instruction">y^x</span>          <span class="comment">; t^n</span>
+<span class="instruction">LastX</span>
+<span class="instruction">CHS</span>
+<span class="instruction">e^x</span>          <span class="comment">; e^(-t)</span>
+<span class="instruction">×</span>
+<span class="instruction">RTN</span>
+
+<span class="comment">; To use:</span>
+<span class="comment">; 1. Enter n, GSB A (stores n)</span>
+<span class="comment">; 2. Enter: 0 ENTER 20</span>
+<span class="comment">; 3. f ∫ B (integrate label B)</span>
+<span class="comment">; Result: Γ(n+1) = n!</span></pre>
+            </div>
+            
+            <div class="usage">
+                <h4>Usage</h4>
+                <p>Enter n, <span class="keypress">GSB A</span> (stores n)</p>
+                <p>Enter <code>0 ENTER 20</code> (integration limits)</p>
+                <p>Press <span class="keypress">f ∫ B</span> (integrate label B)</p>
+                <p><strong>Example:</strong> n=0.5 gives Γ(1.5) = 0.5! ≈ 0.886 = √π/2</p>
+            </div>
+            
+            <div class="tip">
+                The famous result Γ(1/2) = √π means that (-1/2)! = √π. The gamma function connects factorials to the circle in unexpected ways.
+            </div>
+        </div>
+
+        <div class="section-divider">◆ ◆ ◆</div>
+
+        <footer>
+            <p>These programs were written for the HP-15C, Hewlett-Packard's legendary scientific programmable calculator introduced in 1982.</p>
+            <p>Program memory: 448 bytes (≈67 lines) • 10 general registers (expandable to 66) • RPN entry • Complex number support • Matrix operations</p>
+            <p style="margin-top: 1rem; color: #888;">Some programs share label names—load only the programs you need, or rename labels as necessary.</p>
+        </footer>
+    </div>
+</body>
+</html>
