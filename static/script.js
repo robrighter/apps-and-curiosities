@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Select and display random featured experiment
     const articles = [
         {
+            title: "THE HP-15C: PROGRAMMING MATHEMATICS IN YOUR POCKET",
+            url: "retro-computing/hp15c-programs/index.html",
+            image: "retro-computing/hp15c-programs/hero.png",
+            description: "There's something deeply satisfying about programming a calculator from 1982. The HP-15C has 448 bytes of program memory—not megabytes, not kilobytes, bytes. And yet, within those 448 bytes, you can implement algorithms spanning three millennia of mathematical thought. This collection of 20 programs covers number theory, constant approximation, numerical methods, and chaos theory—from Euclid's GCD to the logistic map—all executable on a device that runs on three button cells.",
+            category: "Category: Retro-Computing"
+        },
+        {
             title: "UNDERSTANDING RIEMANN SUMS: FROM ANCIENT INTUITION TO MODERN COMPUTATION",
             url: "mathematics/riemann-sums/index.html",
             image: "mathematics/riemann-sums/rs.png",
