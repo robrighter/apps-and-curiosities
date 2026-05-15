@@ -745,6 +745,147 @@ img, video, iframe, embed, object {
     margin: 0;
 }
 
+/* Homepage Profile Styles */
+.profile-tagline {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    color: var(--accent-color);
+    margin-top: 0.5rem;
+}
+
+.bio-section {
+    max-width: 720px;
+    margin: 0 auto 3rem auto;
+    padding: 2.5rem;
+    background: white;
+    border: 2px solid var(--border-color);
+    box-shadow: 5px 5px 15px var(--shadow-color);
+}
+
+.bio-text {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.profile-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    border: 2px solid var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.profile-link-btn:hover {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.link-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.projects-section {
+    margin-bottom: 3rem;
+}
+
+.section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section-heading::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 2px;
+    background: var(--border-color);
+    margin: 0.6rem auto 0;
+}
+
+.profile-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.profile-project-card {
+    display: block;
+    background: white;
+    border: 2px solid var(--border-color);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    box-shadow: 3px 3px 8px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-project-card:visited {
+    color: var(--text-color);
+}
+
+.profile-project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 5px 5px 14px var(--shadow-color);
+}
+
+.profile-project-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.25rem;
+}
+
+.profile-project-logo svg {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-project-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.02em;
+}
+
+.profile-project-domain {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    margin-bottom: 0.75rem;
+}
+
+.profile-project-card p:last-child {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.85;
+}
+
 /* Print Styles */
 @media print {
     body {
