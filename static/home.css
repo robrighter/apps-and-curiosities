@@ -144,6 +144,16 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
     radial-gradient(420px 320px at 3% 85%, rgba(100, 140, 170, 0.05), transparent 70%);
 }
 
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('dots.png') center / cover no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
 
 .hero .hero__bio { color: #8a96aa; }
 .hero .hero__eyebrow {
@@ -156,6 +166,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
 
 .hero__inner {
   position: relative;
+  z-index: 1;
   max-width: 760px;
   margin: 0 auto;
   padding: 0 24px;
