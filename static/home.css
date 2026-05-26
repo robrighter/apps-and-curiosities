@@ -130,7 +130,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   padding: 100px 0 88px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #262b35 0%, #2e3340 100%);
+  background: linear-gradient(180deg, #191d27 0%, #262b38 45%, #343b4e 100%);
 }
 
 .hero::before {
@@ -144,7 +144,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
     radial-gradient(420px 320px at 3% 85%, rgba(100, 140, 170, 0.05), transparent 70%);
 }
 
-.hero h1 { color: #e4e8ed; }
+.hero h1 { color: #f0f4f8; }
 .hero .hero__bio { color: #8a96aa; }
 .hero .hero__eyebrow {
   background: rgba(255, 255, 255, 0.07);
