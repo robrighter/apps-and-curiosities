@@ -150,7 +150,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   inset: 0;
   background: url('dots.png') center / cover no-repeat;
   mix-blend-mode: screen;
-  opacity: 0.18;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
