@@ -144,7 +144,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
     radial-gradient(420px 320px at 3% 85%, rgba(100, 140, 170, 0.05), transparent 70%);
 }
 
-.hero h1 { color: #f0f4f8; }
+
 .hero .hero__bio { color: #8a96aa; }
 .hero .hero__eyebrow {
   background: rgba(255, 255, 255, 0.07);
@@ -202,7 +202,8 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.0;
-  color: var(--ink);
+  color: #f0f4f8;
+  -webkit-text-stroke: 1px rgba(20, 25, 38, 0.55);
 }
 
 .hero__bio {
