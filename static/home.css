@@ -377,6 +377,12 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   flex: 1 1 auto;
 }
 
+.project-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
 .project-card__cta {
   display: inline-flex;
   align-items: center;
@@ -384,14 +390,15 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
-  margin-top: 4px;
+  text-decoration: none;
 }
 .project-card__cta svg {
   width: 12px;
   height: 12px;
   transition: transform 120ms ease;
 }
-.project-card:hover .project-card__cta svg {
+.project-card:hover .project-card__cta svg,
+.project-card__cta:hover svg {
   transform: translate(2px, -2px);
 }
 
