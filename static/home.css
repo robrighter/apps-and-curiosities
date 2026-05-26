@@ -130,7 +130,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   padding: 100px 0 88px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #191d27 0%, #262b38 45%, #343b4e 100%);
+  background: linear-gradient(180deg, #0e1118 0%, #181d28 45%, #222840 100%);
 }
 
 .hero::before {
