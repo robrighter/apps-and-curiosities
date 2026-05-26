@@ -1,26 +1,26 @@
 /* home.css — robrighter.com homepage */
 
 :root {
-  color-scheme: dark;
-  --bg:            #0c0e12;
-  --bg-soft:       #0f1116;
-  --bg-strong:     #1c1f28;
-  --panel:         #161920;
-  --panel-muted:   #111418;
-  --border:        rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
-  --ink:           #e4e8ed;
-  --ink-soft:      #8a96a6;
-  --ink-muted:     #44505f;
-  --accent:        #bcc8d8;
-  --accent-strong: #dce4ee;
-  --accent-wash:   rgba(188, 200, 216, 0.08);
-  --sky:           #7898b4;
-  --teal:          #6a9e96;
-  --amber:         #b89250;
-  --nav-text:      #c0c8d4;
-  --shadow:        0 8px 28px rgba(0, 0, 0, 0.40);
-  --shadow-lg:     0 24px 64px rgba(0, 0, 0, 0.60);
+  color-scheme: light;
+  --bg:            #eef0f4;
+  --bg-soft:       #f4f5f8;
+  --bg-strong:     #e2e5ea;
+  --panel:         #ffffff;
+  --panel-muted:   #f3f4f7;
+  --border:        rgba(0, 0, 0, 0.09);
+  --border-strong: rgba(0, 0, 0, 0.17);
+  --ink:           #1a1d25;
+  --ink-soft:      #484f60;
+  --ink-muted:     #8a92a2;
+  --accent:        #2e3444;
+  --accent-strong: #1a1d25;
+  --accent-wash:   rgba(46, 52, 68, 0.07);
+  --sky:           #3a6e8a;
+  --teal:          #3a7a70;
+  --amber:         #8a6428;
+  --nav-text:      #2a3040;
+  --shadow:        0 8px 28px rgba(0, 0, 0, 0.09);
+  --shadow-lg:     0 24px 64px rgba(0, 0, 0, 0.17);
   --radius-lg:     14px;
   --radius-md:     10px;
   --radius-sm:     7px;
@@ -55,11 +55,11 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(12, 14, 18, 0.92);
+  background: rgba(244, 245, 248, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .site-nav__inner {
@@ -130,7 +130,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   padding: 100px 0 88px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+  background: linear-gradient(180deg, #262b35 0%, #2e3340 100%);
 }
 
 .hero::before {
@@ -139,10 +139,20 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(860px 300px at 50% -60px, rgba(188, 200, 216, 0.05), transparent 70%),
-    radial-gradient(500px 400px at 94% 55%, rgba(188, 200, 216, 0.03), transparent 70%),
-    radial-gradient(420px 320px at 3% 85%, rgba(188, 200, 216, 0.03), transparent 70%);
+    radial-gradient(860px 300px at 50% -60px, rgba(200, 212, 228, 0.07), transparent 70%),
+    radial-gradient(500px 400px at 94% 55%, rgba(90, 148, 140, 0.05), transparent 70%),
+    radial-gradient(420px 320px at 3% 85%, rgba(100, 140, 170, 0.05), transparent 70%);
 }
+
+.hero h1 { color: #e4e8ed; }
+.hero .hero__bio { color: #8a96aa; }
+.hero .hero__eyebrow {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.13);
+  color: #8a96a8;
+}
+.hero .hero__eyebrow-dot { background: #5a9490; }
+.hero .hero__eyebrow-sep { background: rgba(255, 255, 255, 0.18); }
 
 .hero__inner {
   position: relative;
@@ -252,6 +262,17 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   background: var(--panel-muted);
   color: var(--ink);
   border-color: var(--accent);
+}
+
+.hero .btn--ghost {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.20);
+  color: #c4ccd8;
+}
+.hero .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #e4eaf2;
 }
 
 .btn__icon {
@@ -501,7 +522,7 @@ a:hover { color: var(--accent-strong); text-decoration: underline; }
   .hero h1 { letter-spacing: -0.02em; }
   .curiosities-grid { grid-template-columns: 1fr; }
 
-  .site-nav__inner { flex-wrap: wrap; gap: 8px 12px; padding: 8px 16px 10px; background: rgba(12, 14, 18, 0.98); }
+  .site-nav__inner { flex-wrap: wrap; gap: 8px 12px; padding: 8px 16px 10px; background: rgba(244, 245, 248, 0.98); }
   .site-nav__links { width: 100%; margin-left: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .site-nav__links a { display: inline-flex; justify-content: center; font-size: 11.5px; padding: 5px 4px; }
 }
